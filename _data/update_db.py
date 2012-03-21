@@ -1,8 +1,9 @@
-import sqlite3, cPickle, re, time
+import sqlite3, cPickle, re, time, psycopg2
 
 def get_conn():
-    c = sqlite3.connect('../db.sqlite')
-    c.text_factory = str
+    #c = sqlite3.connect('../db.sqlite')
+    c = psycopg2.connect('dbname=knowevo user=knowevo host=localhost password=12345c7890')
+    #c.text_factory = str
     return c
 
 def format_name(name):
@@ -29,7 +30,7 @@ def insert_articles(path, ed):
         print name
 
         c.execute('insert into incunabula_article\n'+
-                  'values(null,?,?,?,?)', (name, art_id, art_ed, text))
+                  'values(null,%s,%d,%d,%s)', (name, art_id, art_ed, text))
 
     conn.commit()
     c.close()
@@ -49,7 +50,7 @@ def insert_master_list(revw):
 
     for k in revw.keys():
         c.execute('insert into incunabula_masterarticle\n'+
-                  'values(null,?)', (k,))
+                  '(name) values(%s)', (k,))
     conn.commit()
     c.close()
 
@@ -59,7 +60,7 @@ def insert_matching_articles(revw):
 
     for k in revw.keys():
         c.execute('select id from incunabula_masterarticle\n'+
-                  'where name = ?', (k,))
+                  'where name = %s', (k,))
         for row in c:
             aid, = row
         print aid
@@ -67,13 +68,16 @@ def insert_matching_articles(revw):
             a = revw[k]['editions'][ed][0]
 
             c.execute('insert into incunabula_article\n'+
-                      'values(null,?,?,?,?,?,?)', 
+                      '(name,art_id,art_ed,text,prank,volume_score)\n'+
+                      'values(%s,%s,%s,%s,%s,%s) returning id', 
                       (a['name'], a['id'], ed, a['txt'],0.0,0.0))
 
-            match_id = c.lastrowid
+            for row in c:
+                match_id, = row
             
             c.execute('insert into incunabula_match\n'+
-                      'values(null,?,?,?,?)', (aid, ed, match_id, -1.0))
+                      '(article_id,match_ed,match_id,match_score)\n'+
+                      'values(%s,%s,%s,%s)', (aid, ed, match_id, -1.0))
             
     conn.commit()
     c.close()
