@@ -1,0 +1,8 @@
+<html>
+  <head>
+    <title>Welcome to the Digital Incunabula Website</title>
+  </head>
+  <body>
+    <form>
+      <label for="title_inp">Title</label>
+      <input type="text" id="title_inp

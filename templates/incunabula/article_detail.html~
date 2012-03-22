@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>{{ article.name }}</title>
+  </head>
+  <body>
+
+    {% if arts %} 
+    <table id="res_table" name="res_table" border="1">
+      <tr><th>Name</th><th>Edition 3</th><th>Edition 9</th><th>Edition 11</th><th>Edition 15</th></tr>
+    {% endif %}
+      <tr><td>{{ master_name }}</td>
+      {% for art in arts %}
+        <td>
+	  <a href="/incunabula/{{ art.id }}/">{{ art.name }}</a></br>
+	  Page Rank: {{ art.prank }} </br>
+	  Volume Size: {{ art.volume_score }} </br>
+	</td>
+      {% endfor %}
+      </tr>
+    {% if arts %}
+    </table>
+    {% endif %}    
+  </body>
+</html>

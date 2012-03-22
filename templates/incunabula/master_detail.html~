@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>Welcome to the Digital Incunabula Website</title>
+  </head>
+  <body>
+    <form name="search_form" action="" method="post">
+      {% csrf_token %}
+      <label for="title_inp">Article Title</label>
+      <input type="text" id="title_inp" name="title_inp" />
+      <input type="submit" value="Go" />
+    </form>
+
+    {% if master_arts %} 
+    <table id="res_table" name="res_table" border="1">
+      <tr><th>Name</th><th>Edition 3</th><th>Edition 9</th><th>Edition 11</th><th>Edition 15</th></tr>
+    {% endif %}
+      {% for master_name, alist in master_arts %}
+      <tr><td><a href="/incunabula/{{ master_name }}/">{{ master_name }}</td>
+	{% for art in alist %}
+          <td>{{ art.name }}</td>
+	{% endfor %}
+      </tr>
+      {% endfor %}
+    {% if master_arts %}
+    </table>
+    {% endif %}
+    
+  </body>
+</html>
