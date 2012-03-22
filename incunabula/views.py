@@ -47,7 +47,7 @@ def index(request):
                 name__icontains=master_words[0])
 
             for mw in master_words[1:]:
-                masters = masters.fillter(name__icontains=mw)
+                masters = masters.filter(name__icontains=mw)
 
         else: #empty title, will take a while
             masters = MasterArticle.objects.all()
