@@ -4,6 +4,10 @@
   </head>
   <body>
     <h2>{{ article.name }}</h2>
+    {% if article.art_ed != 15 %}
     <p>{{ article.text }}</p>
+    {% else %}
+    <p>Sorry, current edition texts are not viewable</p>
+    {% endif %}
   </body>
 </html>
