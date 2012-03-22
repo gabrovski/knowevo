@@ -3,27 +3,47 @@ from incunabula.models import MasterArticle, Match, Article
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
+import re
+
 EMPTY_ART = {'name':'#NA'}
 
-def get_master_alist(master):
+def get_master_alist(master, keywords=[]):
     res_m = [EMPTY_ART for x in xrange(4)]
     matches = Match.objects.filter(article = master.id)
+    
+    kword_match = (len(keywords) == 0)
+    pats = [re.compile(keyword+'(?i)') for keyword in keywords]        
 
     for match in matches:
         art = Article.objects.get(id=match.match_id)
+        
+        #filter by anding keywords
+        if not kword_match:
+            for pat in pats:
+                kword_match = kword_match or (pat.search(art.text)!=None)
+
         if art.art_ed == 3:  res_m[0] = art
         if art.art_ed == 9:  res_m[1] = art
         if art.art_ed == 11: res_m[2] = art
         if art.art_ed == 15: res_m[3] = art
-    return res_m
+        
+    if kword_match:
+        return res_m
+    else:
+        return None
 
 def index(request):
     if request.method == 'POST':
-        masters = MasterArticle.objects.filter(name__icontains=str(request.POST['title_inp']))
+        keywords = filter(lambda x: len(x) > 0, str(request.POST['keyword_inp']).split(' '))
+        #get masters by specified name
+        masters = MasterArticle.objects.filter(
+            name__icontains=str(request.POST['title_inp']))
+
         res = []
         for master in masters:
-            res_m = get_master_alist(master)
-            res.append((master.name, res_m))
+            res_m = get_master_alist(master, keywords)
+            if res_m != None:
+                res.append((master.name, res_m))
         return render_to_response('incunabula/index.html', 
                                   {'master_arts':res}, 
                                   context_instance=RequestContext(request))

@@ -7,8 +7,17 @@
       {% csrf_token %}
       <label for="title_inp">Article Title</label>
       <input type="text" id="title_inp" name="title_inp" />
+      </br>
+      
+      <label for="keyword_inp">Keywords</label>
+      <input type="text" id="keyword_inp" name="keyword_inp" />
+
       <input type="submit" value="Go" />
     </form>
+
+    {% if not master_arts %}
+    <p>Sorry, no results found for the provided parameters</p>
+    {% endif %}
 
     {% if master_arts %} 
     <table id="res_table" name="res_table" border="1">
