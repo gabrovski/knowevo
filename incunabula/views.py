@@ -56,14 +56,15 @@ def index(request):
         for master in masters:
             res_m = get_master_alist(master, keywords)
             if res_m != None: res.append((master.name, res_m))
-
+        
+        print res
         return render_to_response('incunabula/index.html', 
                                   {'master_arts':res}, 
                                   context_instance=RequestContext(request))
 
     else: #nothing submitted
         return render_to_response('incunabula/index.html', 
-                                  {'master_arts':[]}, 
+                                  {},
                                   RequestContext(request))
 
 def master_detail(request, master_name):
