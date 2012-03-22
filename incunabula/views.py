@@ -36,20 +36,32 @@ def get_master_alist(master, keywords=[]):
 
 def index(request):
     if request.method == 'POST':
-        keywords = filter(lambda x: len(x) > 0, str(request.POST['keyword_inp']).split(' '))
-        #get masters by specified name
-        masters = MasterArticle.objects.filter(
-            name__icontains=str(request.POST['title_inp']))
+        keywords = filter(lambda x: len(x) > 0, 
+                          str(request.POST['keyword_inp']).split(' '))
+        master_words = filter(lambda x: len(x) > 0, 
+                              str(request.POST['title_inp']).split(' '))
+
+        if master_words != []:
+            #get masters by specified name, and title words
+            masters = MasterArticle.objects.filter(
+                name__icontains=master_words[0])
+
+            for mw in master_words[1:]:
+                masters = masters.fillter(name__icontains=mw)
+
+        else: #empty title, will take a while
+            masters = MasterArticle.objects.all()
 
         res = []
         for master in masters:
             res_m = get_master_alist(master, keywords)
-            if res_m != None:
-                res.append((master.name, res_m))
+            if res_m != None: res.append((master.name, res_m))
+
         return render_to_response('incunabula/index.html', 
                                   {'master_arts':res}, 
                                   context_instance=RequestContext(request))
-    else:
+
+    else: #nothing submitted
         return render_to_response('incunabula/index.html', 
                                   {'master_arts':[]}, 
                                   RequestContext(request))
