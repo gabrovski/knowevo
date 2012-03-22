@@ -19,8 +19,10 @@ def get_master_alist(master, keywords=[]):
         
         #filter by anding keywords
         if not kword_match:
+            curr = True
             for pat in pats:
-                kword_match = kword_match or (pat.search(art.text)!=None)
+                curr = curr and (pat.search(art.text)!=None)
+            kword_match = kword_match or curr
 
         if art.art_ed == 3:  res_m[0] = art
         if art.art_ed == 9:  res_m[1] = art
