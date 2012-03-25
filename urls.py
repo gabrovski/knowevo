@@ -6,17 +6,20 @@ admin.autodiscover()
 USER_LOCALHOST = False
 
 if USER_LOCALHOST:
-        urlpatterns = patterns('',
-                           url(r'^$', 'incunabula.views.index'),
-                           url(r'^incunabula/$', 'incunabula.views.index'),
-                           url(r'^incunabula/(?P<article_id>\d+)/$', 'incunabula.views.article_detail'),
-                           url(r'^incunabula/(?P<master_name>.+?)/$', 'incunabula.views.master_detail'),
-
-                           # Uncomment the admin/doc line below to enable admin documentation:
-                           url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-                           # Uncomment the next line to enable the admin:
-                           url(r'^admin/', include(admin.site.urls)),
+	urlpatterns = patterns('',
+			       url(r'^$', 'incunabula.views.index'),
+			       url(r'^incunabula/$', 'incunabula.views.index'),
+			       url(r'^incunabula/(?P<article_id>\d+)/$', 'incunabula.views.article_detail'),
+			       url(r'^incunabula/(?P<master_name>.+?)/$', 'incunabula.views.master_detail'),
+			       
+			       #gravebook links
+			       url(r'^gravebook/$', 'gravebook.views.index'),
+			       url(r'^gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
+			       
+			   
+			       # Uncomment the admin/doc line below to enable admin documentation
+			       url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+			       url(r'^admin/', include(admin.site.urls)),
 )
 
 #for Apache deployment
