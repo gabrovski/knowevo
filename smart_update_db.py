@@ -60,10 +60,10 @@ def build_people_graph(path):
             except:
                 continue
             
-            if us.death < them.birth:
+            if us.death < them.birth and us.death != -1:
                 us.influenced.add(them)
                 them.influences.add(us)
-            elif us.birth > them.death:
+            elif us.birth > them.death and them.death != -1:
                 us.influences.add(them)
                 them.influenced.add(us)
             else:
