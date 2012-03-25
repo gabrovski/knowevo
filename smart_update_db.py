@@ -1,7 +1,8 @@
-import re, os, sys
+import re, os, sys, traceback
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from gravebook.models import Article, Category, Other
+from django.db import transaction
 
 
 tpat    = re.compile('title="(.+?)"')
@@ -19,9 +20,11 @@ def insert_xml(path):
     f = open(path)
     count = 0
 
+    transaction.enter_transaction_management()
+
     for line in f:
         count += 1
-        print count
+        print count,
         if LIMIT > 0 and count == LIMIT:
             break
 
@@ -31,19 +34,28 @@ def insert_xml(path):
             img    = imgpat.search(line).group(1)
             birth  = int(bpat.search(line).group(1))
             death  = int(dpat.search(line).group(1))
-            cats   = catpat.search(line).group(1).split('|')
-            others = olpat.search(line).group(1).split('|')
+            #cats   = catpat.search(line).group(1).split('|')
+            #others = olpat.search(line).group(1).split('|')
         
             art = Article(name=title, wid=wid, image=img, birth=birth, death=death)
             art.save()
+            print title
         except:
-            continue
+            print "bad"
+            #traceback.print_exc(file=sys.stdout)
+            
+            transaction.rollback()
+        else:
+            transaction.commit()
+
+    transaction.leave_transaction_management()
     f.close()
 
 def build_people_graph(path):
     f = open(path)
     count = 0
 
+    transaction.enter_transaction_management()
     for line in f:
         count += 1
         print count
@@ -62,6 +74,7 @@ def build_people_graph(path):
                 try:
                     them = Article.objects.get(name=link)
                 except:
+                    transaction.rollback()
                     continue
             
                 if us.death < them.birth and us.death != -1:
@@ -76,8 +89,11 @@ def build_people_graph(path):
                 them.save()
             us.save()
         except:
-            continue
-            
+            transaction.rollback()
+        else:
+            transaction.commit()
+    
+    transaction.leave_transaction_management()
     f.close()
     
 if __name__ == '__main__':
