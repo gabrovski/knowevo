@@ -13,7 +13,7 @@ plpat   = re.compile('people_links="(.+?)"')
 olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
-LIMIT = 500
+LIMIT = -1
 
 def insert_xml(path):
     f = open(path)
@@ -22,8 +22,8 @@ def insert_xml(path):
     for line in f:
         count += 1
         print count
-        if count < LIMIT:
-            continue
+        if LIMIT > 0 and count == LIMIT:
+            break
 
         title  = tpat.search(line).group(1)
         wid    = int(idpat.search(line).group(1))
@@ -33,8 +33,11 @@ def insert_xml(path):
         cats   = catpat.search(line).group(1).split('|')
         others = olpat.search(line).group(1).split('|')
         
-        art = Article(name=title, wid=wid, image=img, birth=birth, death=death)
-        art.save()
+        try:
+            art = Article(name=title, wid=wid, image=img, birth=birth, death=death)
+            art.save()
+        except:
+            continue
     f.close()
 
 def build_people_graph(path):
@@ -44,33 +47,36 @@ def build_people_graph(path):
     for line in f:
         count += 1
         print count
-        if count < LIMIT:
-            continue
+        if LIMIT > 0 and count == LIMIT:
+            break
 
         title  = tpat.search(line).group(1)
         people = plpat.search(line).group(1)
         
-        us = Article.objects.get(name=title)
+        try:
+            us = Article.objects.get(name=title)
 
-        for link in people.split('|'):
-            if link == '':
-                continue
-            try:
-                them = Article.objects.get(name=link)
-            except:
-                continue
+            for link in people.split('|'):
+                if link == '':
+                    continue
+                try:
+                    them = Article.objects.get(name=link)
+                except:
+                    continue
             
-            if us.death < them.birth and us.death != -1:
-                us.influenced.add(them)
-                them.influences.add(us)
-            elif us.birth > them.death and them.death != -1:
-                us.influences.add(them)
-                them.influenced.add(us)
-            else:
-                us.peers.add(them)
-                them.peers.add(us)
-            them.save()
-        us.save()
+                if us.death < them.birth and us.death != -1:
+                    us.influenced.add(them)
+                    them.influences.add(us)
+                elif us.birth > them.death and them.death != -1:
+                    us.influences.add(them)
+                    them.influenced.add(us)
+                else:
+                    us.peers.add(them)
+                    them.peers.add(us)
+                them.save()
+            us.save()
+        except:
+            continue
             
     f.close()
     
