@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Gravebook - Obituaries for the famous dead and the famous living</title>
+  </head>
+  <body>
+    <form name="search_form" action="" method="post">
+      {% csrf_token %}
+      <label for="title_inp">Article Title</label>
+      <input type="text" id="title_inp" name="title_inp" />
+      <input type="submit" value="Go" />
+    </form>
+
+    {% if not artcles %}
+    <p>Sorry, no results found for the provided parameters</p>
+    {% endif %}
+
+    {% if articles %} 
+    <table id="res_table" name="res_table" border="1">
+      <tr><th>Name</th><th>Birth</th><th>Death</th></tr>
+    {% endif %}
+      {% for article in articles %}
+      <tr><td><a href="/gravebook/{{ article.name }}/">{{ article.name }}</a></td>
+	{% if article.birth == -1 %} <td>#NA</td>
+	{% else %} <td>{{ article.birth }}</td>
+	{% endif %}
+
+	{% if article.death == -1 %} <td>#NA</td>
+	{% else %} <td>{{ article.death }}</td>
+	{% endif %}
+      </tr>
+      {% endfor %}
+
+    {% if articles %}
+    </table>
+    {% endif %}
+    
+  </body>
+</html>

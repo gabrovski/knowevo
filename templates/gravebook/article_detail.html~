@@ -1,0 +1,11 @@
+<html>
+  <head>
+    <title>{{ article.name }}</title>
+  </head>
+  <body>
+    {% if image != "null" %}
+    <img src="http://en.wikipedia.org/wiki/File:{{ image }}"
+    {% endif %}
+
+  </body>
+</html>
