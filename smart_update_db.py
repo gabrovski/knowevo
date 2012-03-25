@@ -35,32 +35,10 @@ def insert_xml(path):
         
         art = Article(name=title, wid=wid, image=img, birth=birth, death=death)
         art.save()
-        '''
-        for c in cats:
-            if c == '':
-                continue
-            try:
-                cat = Category.objects.get(name=c)
-            except:
-                cat = Category(name=c)
-                cat.save()
-            art.categories.add(cat)
-
-        for o in others:
-            if o == '':
-                continue
-            try:
-                oth = Other.objects.get(name=o)
-            except:
-                oth = Other(name=o)
-                oth.save()
-            art.other_links.add(oth)
-        art.save()
-        '''
     f.close()
 
 def build_people_graph(path):
-f = open(path)
+    f = open(path)
     count = 0
 
     for line in f:
@@ -70,38 +48,31 @@ f = open(path)
             pass
 
         title  = tpat.search(line).group(1)
-        wid    = int(idpat.search(line).group(1))
-        img    = imgpat.search(line).group(1)
-        birth  = int(bpat.search(line).group(1))
-        death  = int(dpat.search(line).group(1))
-        cats   = catpat.search(line).group(1).split('|')
-        others = olpat.search(line).group(1).split('|')
+        people = plpat.search(line).group(1)
         
-        art = Article(name=title, wid=wid, image=img, birth=birth, death=death)
-        art.save()
-        '''
-        for c in cats:
-            if c == '':
-                continue
-            try:
-                cat = Category.objects.get(name=c)
-            except:
-                cat = Category(name=c)
-                cat.save()
-            art.categories.add(cat)
+        us = Article.objects.get(name=title)
 
-        for o in others:
-            if o == '':
+        for link in people.split('|'):
+            if link == '':
                 continue
             try:
-                oth = Other.objects.get(name=o)
+                them = Article.objects.get(name=link)
             except:
-                oth = Other(name=o)
-                oth.save()
-            art.other_links.add(oth)
-        art.save()
-        '''
+                continue
+            
+            if us.death < them.birth:
+                us.influenced.add(them)
+                them.influences.add(us)
+            elif us.birth > them.death:
+                us.influences.add(them)
+                them.influenced.add(us)
+            else:
+                us.peers.add(them)
+                them.peers.add(us)
+            them.save()
+        us.save()
+            
     f.close()
     
-
-insert_xml('_data/test-people_articles_filtered.txt')
+if __name__ == '__main__':
+    build_people_graph('_data/test-people_articles_filtered.txt')
