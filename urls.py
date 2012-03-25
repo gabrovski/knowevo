@@ -11,6 +11,11 @@ if USER_LOCALHOST:
 			       url(r'^incunabula/$', 'incunabula.views.index'),
 			       url(r'^incunabula/(?P<article_id>\d+)/$', 'incunabula.views.article_detail'),
 			       url(r'^incunabula/(?P<master_name>.+?)/$', 'incunabula.views.master_detail'),
+			       
+			       #gravebook links
+			       url(r'^gravebook/$', 'gravebook.views.index'),
+			       url(r'^gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
+			       
 			   
 			       # Uncomment the admin/doc line below to enable admin documentation
 			       url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
