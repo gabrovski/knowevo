@@ -3,7 +3,7 @@ from gravebook.models import Article
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
-import re
+import re, md5
 
 
 def index(request):
@@ -23,6 +23,8 @@ def index(request):
 def article_detail(request, article_name):
     art = Article.objects.get(name=article_name)
     img = art.image.replace(' ', '_')
+    digest = md5.new(img).hexdigest()
+    img = digest[0]+'/'+digest[:2]+'/'+img
     return render_to_response('gravebook/article_detail.html',
                               { 'article':art, 'image':img,
                                 'peers':art.peers.all(),
