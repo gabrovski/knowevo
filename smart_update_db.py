@@ -1,6 +1,4 @@
 import re, os, sys
-sys.path.append('/home/sasho/cs/knowevo')
-sys.path.append('/home/sasho/cs')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from gravebook.models import Article, Category, Other
@@ -15,6 +13,8 @@ plpat   = re.compile('people_links="(.+?)"')
 olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
+LIMIT = 500
+
 def insert_xml(path):
     f = open(path)
     count = 0
@@ -22,8 +22,8 @@ def insert_xml(path):
     for line in f:
         count += 1
         print count
-        if count == 10:
-            pass
+        if count < LIMIT:
+            continue
 
         title  = tpat.search(line).group(1)
         wid    = int(idpat.search(line).group(1))
@@ -44,8 +44,8 @@ def build_people_graph(path):
     for line in f:
         count += 1
         print count
-        if count == 10:
-            pass
+        if count < LIMIT:
+            continue
 
         title  = tpat.search(line).group(1)
         people = plpat.search(line).group(1)
@@ -75,4 +75,5 @@ def build_people_graph(path):
     f.close()
     
 if __name__ == '__main__':
-    build_people_graph('_data/test-people_articles_filtered.txt')
+    insert_xml('_data/people_articles_filtered.txt')
+    build_people_graph('_data/people_articles_filtered.txt')
