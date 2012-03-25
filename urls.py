@@ -3,7 +3,7 @@ from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-USER_LOCALHOST = True
+USER_LOCALHOST = False
 
 if USER_LOCALHOST:
         urlpatterns = patterns('',
