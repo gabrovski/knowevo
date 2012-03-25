@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>{{ article.name }}</title>
+  </head>
+  <body>
+    <h2>{{ article.name }} ({{ article.birth }} - {{ article.death }})</h2>
+
+    {% if image != "null" %}
+    <a href="http://en.wikipedia.org/wiki/{{ article.name }}">
+      <img src="http://upload.wikimedia.org/wikipedia/commons/1/1b/{{ image }}"
+	   width="400"/>
+    </a>
+    {% endif %}
+    
+    <h4>Peers</h4>
+    <ul>
+      {% for peer in peers %}
+      <li><a href="/gravebook/{{ peer.name }}">{{ peer.name }}</a></li>
+      {% endfor %}
+    </ul>
+
+    <h4>Influenced by</h4>
+    <ul>
+      {% for art in influences %}
+      <li><a href="/gravebook/{{ art.name }}">{{ art.name }}</a></li>
+      {% endfor %}
+    </ul>
+
+    <h4>Influenced</h4>
+    <ul>
+      {% for art in influenced %}
+      <li><a href="/gravebook/{{ art.name }}">{{ art.name }}</a></li>
+      {% endfor %}
+    </ul>
+    
+  </body>
+</html>
