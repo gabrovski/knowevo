@@ -29,6 +29,15 @@ public class XMLParser {
     private static final Pattern BIRTH_PAT = Pattern.compile("^\\| *birth_date.+?= \\{\\{.*?\\|(\\d+).*?\\}\\}");
     private static final Pattern DEATH_PAT = Pattern.compile("^\\| *death_date.+?= \\{\\{.*?\\|(\\d+).*?\\}\\}");
     private static final Pattern CATEG_PAT = Pattern.compile("^\\[\\[Category:(.+?)\\]");
+
+    private static final Pattern PTITLE_PAT  = Pattern.compile("title=\"(.+?)\"");
+    private static final Pattern PIMAGE_PAT  = Pattern.compile("image=\"(.+?)\"");
+    private static final Pattern PID_PAT     = Pattern.compile("id=\"(.+?)\"");
+    private static final Pattern PLINK_PAT   = Pattern.compile("links=\"(.+?)\"");
+    private static final Pattern PBIRTH_PAT  = Pattern.compile("birth=\"(.+?)\"");
+    private static final Pattern PDEATH_PAT  = Pattern.compile("death=\"(.+?)\"");
+    private static final Pattern PCATEG_PAT  = Pattern.compile("categories=\"(.+?)\"");
+
    
     public static void parse(String path) {
         WArticle wa;
@@ -145,4 +154,61 @@ public class XMLParser {
         }
     }
 
+    public static WArticle parsePerson(String line) {
+        WArticle wa = new WArticle();
+        Matcher m;
+        String curr;
+
+        wa.setPerson(true);
+
+        m = PTITLE_PAT.matcher(line);
+        if (m.find()) {
+            curr = m.group(1);
+            wa.setTitle(curr);
+        }
+
+        m = PIMAGE_PAT.matcher(line);
+        if (m.find()) {
+            curr = m.group(1);
+            wa.setImage(curr);
+        }
+
+        m = PID_PAT.matcher(line);
+        if (m.find()) {
+            curr = m.group(1);
+            wa.setId(Long.parseLong(curr));
+        }
+
+        m = PBIRTH_PAT.matcher(line);
+        if (m.find()) {
+            curr = m.group(1);
+            wa.setBirth(Integer.parseInt(curr));
+        }
+
+        m = PDEATH_PAT.matcher(line);
+        if (m.find()) {
+            curr = m.group(1);
+            wa.setDeath(Integer.parseInt(curr));
+        }
+
+        m = PLINK_PAT.matcher(line);
+        if (m.find()) {
+            curr = m.group(1);
+            for (String s: curr.split("\\|")) 
+                if (!s.equals(""))
+                    if (WArticle.isPerson(s))
+                        wa.getPeopleLinks().add(s);
+                    else
+                        wa.getOtherLinks().add(s);
+        }
+        
+        m = PCATEG_PAT.matcher(line);
+        if (m.find()) {
+            curr = m.group(1);
+            for (String s: curr.split("\\|"))
+                wa.getCategories().add(s);
+        }
+
+        return wa;
+    }
 }

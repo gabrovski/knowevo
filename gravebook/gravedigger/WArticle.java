@@ -17,14 +17,17 @@ import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.FileInputStream;
+
 
 
 public class WArticle {
 
     public  static final long NO_ID = -1;
     public  static final int NO_YEAR = -1;
-    private static final Set<String> people_titles = new HashSet<String>();
 
+    private static Set<String> people_titles = new HashSet<String>();
     private static BufferedWriter out;
 
     private String title;
@@ -100,6 +103,26 @@ public class WArticle {
             ObjectOutput out = new ObjectOutputStream(new FileOutputStream(path));
             out.writeObject(people_titles);
             out.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean isPerson(String title) {
+        return people_titles.contains(title);
+    }
+
+    public static void setPeopleTitles(Set<String> s) {
+        people_titles = s;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void loadPeopleTitles(String path) {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
+            WArticle.setPeopleTitles((Set<String>) ois.readObject());
+            ois.close();
         }
         catch (Exception e) {
             e.printStackTrace();
