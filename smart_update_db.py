@@ -14,6 +14,7 @@ plpat   = re.compile('people_links="(.+?)"')
 olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
+START = -1
 LIMIT = -1
 
 def insert_xml(path):
@@ -24,7 +25,11 @@ def insert_xml(path):
 
     for line in f:
         count += 1
+        if count < START:
+            continue
+
         print count,
+        
         if LIMIT > 0 and count == LIMIT:
             break
 
@@ -47,6 +52,7 @@ def insert_xml(path):
             transaction.rollback()
         else:
             transaction.commit()
+            
 
     transaction.leave_transaction_management()
     f.close()
@@ -58,7 +64,10 @@ def build_people_graph(path):
     transaction.enter_transaction_management()
     for line in f:
         count += 1
-        print count
+        if count < START:
+            continue
+
+        print count,
         if LIMIT > 0 and count == LIMIT:
             break
 
@@ -87,15 +96,18 @@ def build_people_graph(path):
                     us.peers.add(them)
                     them.peers.add(us)
                 them.save()
-            us.save()
+                us.save()
+                transaction.commit()
+            print us.name
         except:
+            print 'bad'
             transaction.rollback()
         else:
             transaction.commit()
-    
+            
     transaction.leave_transaction_management()
     f.close()
     
 if __name__ == '__main__':
-    insert_xml('_data/people_articles_filtered.txt')
+    #insert_xml('_data/people_articles_filtered.txt')
     build_people_graph('_data/people_articles_filtered.txt')
