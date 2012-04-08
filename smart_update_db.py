@@ -1,7 +1,8 @@
-import re, os, sys
+import re, os, sys, traceback
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from gravebook.models import Article, Category, Other
+from django.db import transaction
 
 
 tpat    = re.compile('title="(.+?)"')
@@ -14,14 +15,21 @@ olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
 LIMIT = 1000
+START = -1
+
 
 def insert_xml(path):
     f = open(path)
     count = 0
 
+
     for line in f:
         count += 1
-        print count
+        if count < START:
+            continue
+
+        print count,
+        
         if LIMIT > 0 and count == LIMIT:
             break
 
@@ -31,11 +39,12 @@ def insert_xml(path):
             img    = imgpat.search(line).group(1)
             birth  = int(bpat.search(line).group(1))
             death  = int(dpat.search(line).group(1))
-            cats   = catpat.search(line).group(1).split('|')
-            others = olpat.search(line).group(1).split('|')
+            #cats   = catpat.search(line).group(1).split('|')
+            #others = olpat.search(line).group(1).split('|')
         
             art = Article(name=title, wid=wid, image=img, birth=birth, death=death)
             art.save()
+            print title
         except:
             raise
             continue
@@ -47,7 +56,10 @@ def build_people_graph(path):
 
     for line in f:
         count += 1
-        print count
+        if count < START:
+            continue
+
+        print count,
         if LIMIT > 0 and count == LIMIT:
             break
 
@@ -84,12 +96,12 @@ def build_people_graph(path):
                 else:
                     us.peers.add(them)
                 them.save()
+
                 #print repr(us.influenced.all()) + '\t' +repr(them.influences.all())
             us.save()
         except:
             raise
             continue
-            
     f.close()
     
 if __name__ == '__main__':

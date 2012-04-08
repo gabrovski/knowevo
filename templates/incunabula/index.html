@@ -24,7 +24,7 @@
       <tr><th>Name</th><th>Edition 3</th><th>Edition 9</th><th>Edition 11</th><th>Edition 15</th></tr>
     {% endif %}
       {% for master_name, alist in master_arts %}
-      <tr><td><a href="/incunabula/{{ master_name }}/">{{ master_name }}</a></td>
+      <tr><td><a href="/knowevo/incunabula/{{ master_name }}/">{{ master_name }}</a></td>
 	{% for art in alist %}
           <td>{{ art.name }}</td>
 	{% endfor %}

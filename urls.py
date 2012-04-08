@@ -7,14 +7,16 @@ USER_LOCALHOST = True
 
 if USER_LOCALHOST:
 	urlpatterns = patterns('',
-			       url(r'^$', 'incunabula.views.index'),
-			       url(r'^incunabula/$', 'incunabula.views.index'),
-			       url(r'^incunabula/(?P<article_id>\d+)/$', 'incunabula.views.article_detail'),
-			       url(r'^incunabula/(?P<master_name>.+?)/$', 'incunabula.views.master_detail'),
+			       url(r'^$', 'incunabula.views.index'), #todo portal
+			       url(r'^knowevo/$', 'incunabula.views.index'), #todo portal
+
+			       url(r'^knowevo/incunabula/$', 'incunabula.views.index'),
+			       url(r'^knowevo/incunabula/(?P<article_id>\d+)/$', 'incunabula.views.article_detail'),
+			       url(r'^knowevo/incunabula/(?P<master_name>.+?)/$', 'incunabula.views.master_detail'),
 			       
 			       #gravebook links
-			       url(r'^gravebook/$', 'gravebook.views.index'),
-			       url(r'^gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
+			       url(r'^knowevo/gravebook/$', 'gravebook.views.index'),
+			       url(r'^knowevo/gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
 			       
 			   
 			       # Uncomment the admin/doc line below to enable admin documentation
@@ -25,14 +27,15 @@ if USER_LOCALHOST:
 #for Apache deployment
 else:
     urlpatterns = patterns('',
-                           url(r'^$', 'incunabula.views.index'),
+                           url(r'^$', 'incunabula.views.index'), #todo make general portal page
 
 			   #gravebook links
 			   url(r'^gravebook/$', 'gravebook.views.index'),
 			   url(r'^gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
 
-                           url(r'^(?P<article_id>\d+)/$', 'incunabula.views.article_detail'),
-                           url(r'^(?P<master_name>.+?)/$', 'incunabula.views.master_detail'),
+                           url(r'^incunabula/$', 'incunabula.views.index'),
+                           url(r'^incunabula/(?P<article_id>\d+)/$', 'incunabula.views.article_detail'),
+                           url(r'^incunabula/(?P<master_name>.+?)/$', 'incunabula.views.master_detail'),
 			       
                            url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                            url(r'^admin/', include(admin.site.urls)),

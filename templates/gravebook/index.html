@@ -19,7 +19,7 @@
       <tr><th>Name</th><th>Birth</th><th>Death</th></tr>
     {% endif %}
       {% for article in articles %}
-      <tr><td><a href="/incunabula/gravebook/{{ article.name }}/">{{ article.name }}</a></td>
+      <tr><td><a href="/knowevo/gravebook/{{ article.name }}/">{{ article.name }}</a></td>
 	{% if article.birth == -1 %} <td>#NA</td>
 	{% else %} <td>{{ article.birth }}</td>
 	{% endif %}
