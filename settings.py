@@ -17,6 +17,9 @@ DATABASES = {
         'PASSWORD': '12345c7890',                  # Not used with sqlite3.
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'OPTIONS': {
+            'autocommit':True,
+            },
     }
 }
 
@@ -103,7 +106,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'knowevo.urls'
 
 TEMPLATE_DIRS = (
-    '/home/sasho/cs/knowevo/templates/',
+    '/home/gabrovski/cs/knowevo/templates/',
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
