@@ -21,15 +21,15 @@
 
     <h4>Influenced by</h4>
     <ul>
-      {% for art in influences %}
-      <li><a href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></li>
+      {% for link in influences %}
+      <li><a href="/knowevo/gravebook/{{ link.frm }}">{{ link.frm }}</a></li>
       {% endfor %}
     </ul>
 
     <h4>Influenced</h4>
     <ul>
-      {% for art in influenced %}
-      <li><a href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></li>
+      {% for link in influenced %}
+      <li><a href="/knowevo/gravebook/{{ link.to }}">{{ link.to }}</a></li>
       {% endfor %}
     </ul>
     

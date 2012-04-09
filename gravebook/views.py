@@ -25,11 +25,14 @@ def article_detail(request, article_name):
     img = art.image.replace(' ', '_')
     digest = md5.new(img).hexdigest()
     img = digest[0]+'/'+digest[:2]+'/'+img
+
+    #print art.link_from_set.all()[0].to
+
     return render_to_response('gravebook/article_detail.html',
                               { 'article':art, 'image':img,
                                 'peers':art.peers.all(),
-                                'influences':art.influences.all(),
-                                'influenced':art.influenced.all() },
+                                'influences':art.link_to_set.all(),
+                                'influenced':art.link_from_set.all() },
                               RequestContext(request))
             
         
