@@ -11,6 +11,13 @@
 	   width="400"/>
     </a>
     {% endif %}
+
+    <h4>Categories</h4>
+    <ul>
+      {% for cat in categories %}
+      <li><a href="/knowevo/gravebook/Category:{{ cat.name }}">{{ cat.name }}</a></li>
+      {% endfor %}
+    </ul>
     
     <h4>Peers</h4>
     <ul>

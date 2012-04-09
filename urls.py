@@ -16,8 +16,9 @@ if USER_LOCALHOST:
 			       
 			       #gravebook links
 			       url(r'^knowevo/gravebook/$', 'gravebook.views.index'),
+			       url(r'^knowevo/gravebook/Category:(?P<category_name>.+?)/$', 'gravebook.views.category_detail'), 
 			       url(r'^knowevo/gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
-			       
+
 			   
 			       # Uncomment the admin/doc line below to enable admin documentation
 			       url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

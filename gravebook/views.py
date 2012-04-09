@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from gravebook.models import Article
+from gravebook.models import Article, Category
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
@@ -27,13 +27,22 @@ def article_detail(request, article_name):
     img = digest[0]+'/'+digest[:2]+'/'+img
 
     #print art.link_from_set.all()[0].to
-
+    
     return render_to_response('gravebook/article_detail.html',
                               { 'article':art, 'image':img,
+                                'categories':art.categories.all(),
                                 'peers':art.peers.all(),
                                 'influences':art.link_to_set.all(),
                                 'influenced':art.link_from_set.all() },
                               RequestContext(request))
-            
+
+def category_detail(request, category_name):
+    cat = Category.objects.get(name=category_name)
+    articles = cat.article_set.all()
+    
+    return render_to_response('gravebook/category_detail.html',
+                              {'articles':articles,
+                               'category_name': category_name},
+                              RequestContext(request))
         
         

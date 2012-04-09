@@ -14,7 +14,7 @@ plpat   = re.compile('people_links="(.+?)"')
 olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
-LIMIT = 1000
+LIMIT = 200
 START = -1
 
 
@@ -38,11 +38,24 @@ def insert_xml(path):
             img    = imgpat.search(line).group(1)
             birth  = int(bpat.search(line).group(1))
             death  = int(dpat.search(line).group(1))
-            #cats   = catpat.search(line).group(1).split('|')
+            cats   = catpat.search(line).group(1).split('|')
             #others = olpat.search(line).group(1).split('|')
         
             art = Article(name=title, wid=wid, image=img, birth=birth, death=death)
             art.save()
+
+            for cat in cats:
+                if cat == '':
+                    continue
+                try:
+                    c = Category.objects.get(name=cat)
+                except:
+                    c = Category(name=cat)
+                    c.save()
+
+                art.categories.add(c)
+            art.save()
+
             print title
         except:
             raise

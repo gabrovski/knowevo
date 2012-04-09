@@ -3,6 +3,9 @@ from django.db import models
 class Category(models.Model):
     name  = models.CharField(max_length=512, primary_key=True)
 
+    def __unicode__(self):
+        return self.name
+
 class Other(models.Model):
     name  = models.CharField(max_length=512, primary_key=True)
 
