@@ -1,7 +1,7 @@
 import re, os, sys, traceback
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
-from gravebook.models import Article, Category, Other, Link
+from gravebook.models import Article, Category, Other
 from django.db import transaction
 
 
@@ -14,7 +14,7 @@ plpat   = re.compile('people_links="(.+?)"')
 olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
-LIMIT = 200
+LIMIT = 70
 START = -1
 
 
@@ -75,8 +75,8 @@ def build_people_graph(path):
         if LIMIT > 0 and count == LIMIT:
             break
 
-        if count == 2:
-           break
+        #if count == 2:
+        #   break
 
         try:
             title  = tpat.search(line).group(1)
@@ -92,34 +92,12 @@ def build_people_graph(path):
                 try:
                     them = Article.objects.get(name=link)
                 except:
-                    #print link
                     #raise
                     continue
              
-                if them.birth == -1 or them.death == -1:
-                    #print them.name
-                    continue
-                
-                print 'adding', them.name
-                if us.death < them.birth:
-                    #print 'inf',
-                    #us.influenced.add(them)
-                    #them.influences.add(us)
-                    l = Link(frm=us, to=them)
-                    l.save()
-                elif us.birth > them.death:
-                    #print 'by',
-                    l = Link(frm=them, to=us)
-                    l.save()
-                    #us.influences.add(them)
-                    #them.influenced.add(us)
-                else:
-                    us.peers.add(them)
+                us.people.add(them)
                 them.save()
                 us.save()
-
-                #print repr(us.influenced.all()) + '\t' +repr(them.influences.all())
-                #print them.name, repr(them.influences.all())
             us.save()
         except:
             raise
@@ -127,5 +105,5 @@ def build_people_graph(path):
     f.close()
     
 if __name__ == '__main__':
-    insert_xml('_data/test-people_articles_filtered.txt')
+    #insert_xml('_data/test-people_articles_filtered.txt')
     build_people_graph('_data/test-people_articles_filtered.txt')
