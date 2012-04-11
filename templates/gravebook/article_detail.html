@@ -11,6 +11,13 @@
 	   width="400"/>
     </a>
     {% endif %}
+
+    <h4>Categories</h4>
+    <ul>
+      {% for cat in categories %}
+      <li><a href="/knowevo/gravebook/Category:{{ cat.name }}">{{ cat.name }}</a></li>
+      {% endfor %}
+    </ul>
     
     <h4>Peers</h4>
     <ul>
@@ -21,15 +28,15 @@
 
     <h4>Influenced by</h4>
     <ul>
-      {% for link in influences %}
-      <li><a href="/knowevo/gravebook/{{ link.frm }}">{{ link.frm }}</a></li>
+      {% for art in influences %}
+      <li><a href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></li>
       {% endfor %}
     </ul>
 
     <h4>Influenced</h4>
     <ul>
-      {% for link in influenced %}
-      <li><a href="/knowevo/gravebook/{{ link.to }}">{{ link.to }}</a></li>
+      {% for art in influenced %}
+      <li><a href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></li>
       {% endfor %}
     </ul>
     

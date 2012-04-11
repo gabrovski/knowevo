@@ -1,9 +1,9 @@
 from django.http import HttpResponse
-from gravebook.models import Article
+from gravebook.models import Article, Category
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
-import re, md5
+import re, md5, math
 
 
 def index(request):
@@ -26,14 +26,40 @@ def article_detail(request, article_name):
     digest = md5.new(img).hexdigest()
     img = digest[0]+'/'+digest[:2]+'/'+img
 
-    #print art.link_from_set.all()[0].to
+    OVERLAP = 15
 
+    influences = []
+    influenced = []
+    peers = []
+    people = art.people.all()
+    for person in people:
+        if person.birth == -1 or person.death == -1:
+            continue
+        
+        if art.birth > person.death:
+            influences.append(person)
+        elif art.death < person.birth:
+            influenced.append(person)
+        elif (math.fabs(person.birth-art.birth) > OVERLAP or 
+              math.fabs(person.death-art.death) > OVERLAP):
+            peers.append(person)
+                  
+    
     return render_to_response('gravebook/article_detail.html',
                               { 'article':art, 'image':img,
-                                'peers':art.peers.all(),
-                                'influences':art.link_to_set.all(),
-                                'influenced':art.link_from_set.all() },
+                                'categories':art.categories.all(),
+                                'peers':peers,
+                                'influences':influences,
+                                'influenced':influenced},
+                                RequestContext(request))
+
+def category_detail(request, category_name):
+    cat = Category.objects.get(name=category_name)
+    articles = cat.article_set.all()
+    
+    return render_to_response('gravebook/category_detail.html',
+                              {'articles':articles,
+                               'category_name': category_name},
                               RequestContext(request))
-            
         
         

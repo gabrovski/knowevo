@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <title>{{ category_name }}</title>
+  </head>
+  <body>
+    <h4>Category Members</h4>
+    <ul>
+      {% for art in articles %}
+      <li><a href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>
