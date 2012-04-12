@@ -2,6 +2,7 @@ from django.db import models
 
 class Category(models.Model):
     name  = models.CharField(max_length=512, primary_key=True)
+    size = models.IntegerField(blank=True, null=True)
 
     def __unicode__(self):
         return self.name

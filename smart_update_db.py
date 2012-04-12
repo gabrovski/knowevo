@@ -14,7 +14,7 @@ plpat   = re.compile('people_links="(.+?)"')
 olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
-LIMIT = 70
+LIMIT = 1000
 START = -1
 
 
@@ -38,12 +38,37 @@ def insert_xml(path):
             img    = imgpat.search(line).group(1)
             birth  = int(bpat.search(line).group(1))
             death  = int(dpat.search(line).group(1))
-            cats   = catpat.search(line).group(1).split('|')
+            #cats   = catpat.search(line).group(1).split('|')
             #others = olpat.search(line).group(1).split('|')
         
             art = Article(name=title, wid=wid, image=img, birth=birth, death=death)
             art.save()
 
+            print title
+        except:
+            raise
+            continue
+    f.close()
+
+def add_cats(path):
+    f = open(path)
+    count = 0
+
+    for line in f:
+        count += 1
+        if count < START:
+            continue
+
+        print count,
+        
+        if LIMIT > 0 and count == LIMIT:
+            break
+
+        try:
+            title  = tpat.search(line).group(1)
+            cats   = catpat.search(line).group(1).split('|')
+            
+            art = Article.objects.get(name=title)
             for cat in cats:
                 if cat == '':
                     continue
@@ -55,12 +80,19 @@ def insert_xml(path):
 
                 art.categories.add(c)
             art.save()
-
-            print title
         except:
-            raise
             continue
     f.close()
+
+
+def update_category_size():
+    c = 0
+    for cat in Category.objects.all():
+        cat.size = len(cat.article_set.all())
+        cat.save()
+
+        print c
+        c+=1
 
 def build_people_graph(path):
     f = open(path)
@@ -71,7 +103,7 @@ def build_people_graph(path):
         if count < START:
             continue
 
-        print count,
+        print count
         if LIMIT > 0 and count == LIMIT:
             break
 
@@ -105,5 +137,7 @@ def build_people_graph(path):
     f.close()
     
 if __name__ == '__main__':
-    #insert_xml('_data/test-people_articles_filtered.txt')
+    insert_xml('_data/test-people_articles_filtered.txt')
     build_people_graph('_data/test-people_articles_filtered.txt')
+    add_cats('_data/test-people_articles_filtered.txt')
+    update_category_size('_data/test-people_articles_filtered.txt')
