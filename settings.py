@@ -125,6 +125,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'incunabula',
     'gravebook',
+    'spring',
 )
 
 # A sample logging configuration. The only tangible logging
