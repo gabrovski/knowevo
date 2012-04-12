@@ -59,7 +59,7 @@ def add_cats(path):
         if count < START:
             continue
 
-        print count,
+        print count
         
         if LIMIT > 0 and count == LIMIT:
             break
@@ -137,7 +137,8 @@ def build_people_graph(path):
     f.close()
     
 if __name__ == '__main__':
+
     insert_xml('_data/test-people_articles_filtered.txt')
     build_people_graph('_data/test-people_articles_filtered.txt')
     add_cats('_data/test-people_articles_filtered.txt')
-    update_category_size('_data/test-people_articles_filtered.txt')
+    update_category_size()
