@@ -5,6 +5,7 @@ Implements a force based algorithm outlined here:
 http://www.cs.brown.edu/~rt/gdhandbook/chapters/force-directed.pdf
 '''
 import math
+from chartit import DataPool, Chart
 
 Kc = 8.9875*10**9
 
@@ -147,6 +148,8 @@ class SpringBox:
         for o in self.objects:
             o.pos[0] = (o.pos[0]-minx) * scalex
             o.pos[1] = (o.pos[1]-miny) * scaley
+
+            o.xpos, o.ypos = o.pos
             
 
     def move_to_equillibrium(self, R):
@@ -160,10 +163,66 @@ class SpringBox:
             self.compute_attractive_force()
             self.move()
 
-        '''
+        self.scale_to_map()
+
+        
+    def print_objects(self):
         for o in self.objects:
             x, y = int(o.pos[0]), int(o.pos[1])
             print x,y,o.name
-        '''
+            
+    @staticmethod
+    def get_chart(models):
+        objdata = DataPool(
+            series = [
+                {'options': { 'source': models },
+                 'terms': ['xpos', 'ypos', 'name'] }])
+        
+        chart = Chart(
+            datasource = objdata,
+            series_options = [
+                {'options': {
+                        'type': 'scatter',
 
-        self.scale_to_map()
+                        },
+                 
+                 'terms': {
+                        'xpos': [
+                            'ypos'],
+                        },
+
+                 }],
+
+            chart_options = {
+                'title': {
+                    'text': 'Spring Box on links of depth 1 or less'
+                    },
+                'tooltip': {
+                    'enabled':'true',
+                    'useHTML':'true',
+                    'pointFormat':'<b>dadwadawda</b>'
+                    }
+                })
+
+        return chart
+            
+
+    @staticmethod
+    def kfn(ndict, u, v):
+        if u.name not in ndict or v.name not in ndict[u.name]:
+            return None
+        return ndict[u.name][v.name]
+
+    @staticmethod
+    def update_ndict(ndict, u, v, w):
+        vn = v.name
+        un = u.name
+        if vn not in ndict:
+            ndict[vn] = dict()
+        ndict[vn][un] = w
+            
+        if un not in ndict:
+            ndict[un] = dict()
+        ndict[un][vn] = w
+
+                
