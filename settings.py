@@ -20,6 +20,7 @@ DATABASES = {
         'OPTIONS': {
             'autocommit':True,
             },
+        'TEST_NAME': 'test_knowevo',
     }
 }
 

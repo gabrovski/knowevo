@@ -6,13 +6,15 @@ http://www.cs.brown.edu/~rt/gdhandbook/chapters/force-directed.pdf
 '''
 import math
 
+Kc = 8.9875*10**9
+
 class SpringBox:
     def __init__(self, objects, width, height, charge, mass, time_step, kfn):
         self.objects   = objects 
         self.width     = width
         self.height    = height
         self.charge    = charge
-        self.mas       = mass
+        self.mass      = mass
         self.time_step = time_step
         self.kfn       = kfn
         
@@ -70,15 +72,17 @@ class SpringBox:
                 v = self.objects[i]
                 u = self.objects[j]
                 
-                dx          = v.pos[0] - u.pos[0]
-                sign        = dx / math.fabs(dx)
-                v.force[0] += sign * v.charge * u.charge / dx**2
-                u.force[0] += (-1) * sign * v.charge * u.charge / dx**2
-                
-                dy          = v.pos[1] - u.pos[1]
-                sign        = dy / math.fabs(dy)
-                v.force[1] += sign * v.charge * u.charge / dy**2
-                u.force[1] += (-1) * sign * v.charge * u.charge / dy**2
+                dx = v.pos[0] - u.pos[0]
+                if dx != 0:
+                    sign        = dx / math.fabs(dx)
+                    v.force[0] += sign * Kc * v.charge * u.charge / dx**2
+                    u.force[0] += (-1) * sign * Kc * v.charge * u.charge / dx**2
+
+                dy = v.pos[1] - u.pos[1]                
+                if dy != 0:
+                    sign        = dy / math.fabs(dy)
+                    v.force[1] += sign * Kc * v.charge * u.charge / dy**2
+                    u.force[1] += (-1) * sign * Kc * v.charge * u.charge / dy**2
                 
 
     def compute_attractive_force(self):
@@ -98,13 +102,15 @@ class SpringBox:
                 if k == None:
                     continue
                 
-                dx          = v.pos[0] - u.pos[0]
-                v.force[0] += (-1) * dx * k
-                u.force[0] += dx * k
+                dx = v.pos[0] - u.pos[0]
+                if dx != 0:
+                    v.force[0] += (-1) * dx * k
+                    u.force[0] += dx * k
                 
-                dy          = v.pos[1] - u.pos[1]
-                v.force[1] += (-1) * dy * k
-                u.force[1] += dy * k
+                dy = v.pos[1] - u.pos[1]
+                if dy != 0:
+                    v.force[1] += (-1) * dy * k
+                    u.force[1] += dy * k
                 
     def move(self):
         '''
@@ -120,8 +126,29 @@ class SpringBox:
                         x * self.time_step + y / 2 * self.time_step ** 2,
                         o.vel, o.acc)
             
-            o.vel = map(lambda x, y: x + y * self.time_step, o.acc)
+            o.vel = map(lambda x, y: x + y * self.time_step, o.vel, o.acc)
+
+    def scale_to_map(self):
+        minx, miny = self.objects[0].pos
+        maxx, maxy = self.objects[0].pos
+
+        for o in self.objects:
+            if o.pos[0] < minx:  minx = o.pos[0]
+            if o.pos[0] > maxx:  maxx = o.pos[0]
+            if o.pos[1] < miny:  miny = o.pos[1]
+            if o.pos[1] > maxy:  maxy = o.pos[1]
             
+        lenx = maxx-minx+1
+        leny = maxy-miny+1
+        
+        scalex = self.width / lenx
+        scaley = self.height / leny
+
+        for o in self.objects:
+            o.pos[0] = (o.pos[0]-minx) * scalex
+            o.pos[1] = (o.pos[1]-miny) * scaley
+            
+
     def move_to_equillibrium(self, R):
         '''
         sets forces and moves for a time_stamp R times. then assumes equillibirum
@@ -132,3 +159,5 @@ class SpringBox:
             self.compute_repulsive_force()
             self.compute_attractive_force()
             self.move()
+
+        self.scale_to_map()
