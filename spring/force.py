@@ -160,4 +160,10 @@ class SpringBox:
             self.compute_attractive_force()
             self.move()
 
+        '''
+        for o in self.objects:
+            x, y = int(o.pos[0]), int(o.pos[1])
+            print x,y,o.name
+        '''
+
         self.scale_to_map()

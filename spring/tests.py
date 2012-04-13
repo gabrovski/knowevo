@@ -43,7 +43,7 @@ class SpringTestNoGraphics(TestCase):
 
         for o in sb.objects:
             x, y = int(o.pos[0]), int(o.pos[1])
-            print x,y,o.name
+            #print x,y,o.name
 
             if x > -1 and x < sb.width:
                 if y > -1 and y < sb.height:
@@ -72,7 +72,7 @@ class SpringTestNoGraphics(TestCase):
                        charge=2, mass=1, time_step=0.05, 
                        kfn=lambda x, y: SpringTestNoGraphics.kfn(ndict, x, y))
 
-        sb.move_to_equillibrium(100)
+        sb.move_to_equillibrium(len(sb.objects))
         SpringTestNoGraphics.test_draw_sb(sb)
         
         
