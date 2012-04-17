@@ -71,7 +71,7 @@ class SpringTestNoGraphics(TestCase):
         sb = SpringBox(objects=objects, width=150, height=60, 
                        charge=2, mass=1, time_step=0.05, 
                        kfn=lambda x, y: SpringTestNoGraphics.kfn(ndict, x, y))
-
+        
         sb.move_to_equillibrium(len(sb.objects))
         SpringTestNoGraphics.test_draw_sb(sb)
         
