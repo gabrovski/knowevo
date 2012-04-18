@@ -29,7 +29,7 @@ def get_master_alist(master, keywords=[]):
         if art.art_ed == 15: res_m[3] = art
         
     if kword_match:
-        return res_m
+        return res_m, len(matches)
     else:
         return None
 
@@ -53,10 +53,11 @@ def index(request):
 
         res = []
         for master in masters:
-            res_m = get_master_alist(master, keywords)
-            if res_m != None: res.append((master.name, res_m))
+            res_m, num = get_master_alist(master, keywords)
+            if res_m != None: res.append((master.name, res_m, num))
         
-        print res
+        #print res
+        res.sort(key=lambda x: x[2], reverse=True)
         return render_to_response('incunabula/index.html', 
                                   {'master_arts':res}, 
                                   context_instance=RequestContext(request))
@@ -68,7 +69,7 @@ def index(request):
 
 def master_detail(request, master_name):
     master = MasterArticle.objects.get(name=master_name)
-    res = get_master_alist(master)
+    res, num = get_master_alist(master)
     return render_to_response('incunabula/master_detail.html',
                        {'master_name':master_name, 'arts':res},
                        RequestContext(request))
