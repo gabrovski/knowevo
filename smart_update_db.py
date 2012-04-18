@@ -14,7 +14,7 @@ plpat   = re.compile('people_links="(.+?)"')
 olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
-LIMIT = 70
+LIMIT = 5000
 START = -1
 
 
@@ -100,10 +100,10 @@ def build_people_graph(path):
                 us.save()
             us.save()
         except:
-            raise
+            #raise
             continue
     f.close()
     
 if __name__ == '__main__':
-    #insert_xml('_data/test-people_articles_filtered.txt')
-    build_people_graph('_data/test-people_articles_filtered.txt')
+    insert_xml('_data/people_articles_filtered.txt')
+    build_people_graph('_data/people_articles_filtered.txt')
