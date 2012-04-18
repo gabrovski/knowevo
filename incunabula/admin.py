@@ -1,6 +1,6 @@
-from incunabula.models import Article, Match, Reference
+from incunabula.models import Article, Reference, MasterArticle
 from django.contrib import admin
 
 admin.site.register(Article)
-admin.site.register(Match)
+admin.site.register(MasterArticle)
 admin.site.register(Reference)

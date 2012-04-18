@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from incunabula.models import MasterArticle, Match, Article
+from incunabula.models import MasterArticle, Article
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
@@ -9,13 +9,12 @@ EMPTY_ART = {'name':'#NA'}
 
 def get_master_alist(master, keywords=[]):
     res_m = [EMPTY_ART for x in xrange(4)]
-    matches = Match.objects.filter(article = master.id)
+    matches = Article.objects.filter(match_master=master)
     
     kword_match = (len(keywords) == 0)
     pats = [re.compile(keyword+'(?i)') for keyword in keywords]        
 
-    for match in matches:
-        art = Article.objects.get(id=match.match_id)
+    for art in matches:
         
         #filter by anding keywords
         if not kword_match:

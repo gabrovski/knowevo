@@ -4,7 +4,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 from gravebook.models import Article, Category, Other
 
 from incunabula.models import Article as IArticle
-from incunabula.models import Match  as IMatch
+from incunabula.models import MasterArticle  as IMasterArticle
 from incunabula.models import Reference as IReference
 
 from django.db import transaction
@@ -156,32 +156,39 @@ def insert_incunabula_masters(revw):
 
         print c
         c+=1
-        if c > 0 and c >= LIMIT:
+        if c > 0 and c > LIMIT:
             break
         
 def insert_incunabula_articles(revw):
     c = 0
+    sizes = revw['sizes']
     for k in revw.keys():
         ma = IMasterArticle.objects.get(name=k)
 
         for ed in revw[k]['editions']:
             a = revw[k]['editions'][ed][0]
 
-            ia = IArticle(name=a['name'], art_id=a['id'], art_ed=ed, text=a['text'],
-                          prank=0.0, volume_score=0.0, match_master=ma, 
+            ia = IArticle(name=a['name'], art_id=a['id'], art_ed=ed, text=a['txt'],
+                          prank=0.0, volume_score= (0.0 + len(a['txt'])) / sizes[ed],
+                          match_master=ma, 
                           match_score=-1.0)
             ia.save()
-
+            
         print c
         c+=1
-        if LIMIT > 0 and c >= LIMIT:
+        if LIMIT > 0 and c > LIMIT:
             break
             
     
     
 if __name__ == '__main__':
+    revw = load('_data/sample_revw.pkl')
+    insert_incunabula_masters(revw)
+    insert_incunabula_articles(revw)
 
+    '''
     insert_xml('_data/test-people_articles_filtered.txt')
     build_people_graph('_data/test-people_articles_filtered.txt')
     add_cats('_data/test-people_articles_filtered.txt')
     update_category_size()
+    '''
