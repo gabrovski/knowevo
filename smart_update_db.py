@@ -1,7 +1,12 @@
-import re, os, sys, traceback
+import re, os, sys, traceback, cPickle
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from gravebook.models import Article, Category, Other
+
+from incunabula.models import Article as IArticle
+from incunabula.models import Match  as IMatch
+from incunabula.models import Reference as IReference
+
 from django.db import transaction
 
 
@@ -135,6 +140,44 @@ def build_people_graph(path):
             raise
             continue
     f.close()
+
+def load(path):
+    f = open(path)
+    revw = cPickle.load(f)
+    f.close()
+    return revw
+
+
+def insert_incunabula_masters(revw):
+    c = 0
+    for k in revw.keys():
+        ma = IMasterArticle(name=k)
+        ma.save()
+
+        print c
+        c+=1
+        if c > 0 and c >= LIMIT:
+            break
+        
+def insert_incunabula_articles(revw):
+    c = 0
+    for k in revw.keys():
+        ma = IMasterArticle.objects.get(name=k)
+
+        for ed in revw[k]['editions']:
+            a = revw[k]['editions'][ed][0]
+
+            ia = IArticle(name=a['name'], art_id=a['id'], art_ed=ed, text=a['text'],
+                          prank=0.0, volume_score=0.0, match_master=ma, 
+                          match_score=-1.0)
+            ia.save()
+
+        print c
+        c+=1
+        if LIMIT > 0 and c >= LIMIT:
+            break
+            
+    
     
 if __name__ == '__main__':
 
