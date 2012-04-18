@@ -1,7 +1,12 @@
-import re, os, sys, traceback
+import re, os, sys, traceback, cPickle
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from gravebook.models import Article, Category, Other
+
+from incunabula.models import Article as IArticle
+from incunabula.models import MasterArticle  as IMasterArticle
+from incunabula.models import Reference as IReference
+
 from django.db import transaction
 
 
@@ -14,7 +19,7 @@ plpat   = re.compile('people_links="(.+?)"')
 olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
-LIMIT = 5000
+LIMIT = -1
 START = -1
 
 
@@ -38,12 +43,37 @@ def insert_xml(path):
             img    = imgpat.search(line).group(1)
             birth  = int(bpat.search(line).group(1))
             death  = int(dpat.search(line).group(1))
-            cats   = catpat.search(line).group(1).split('|')
+            #cats   = catpat.search(line).group(1).split('|')
             #others = olpat.search(line).group(1).split('|')
         
             art = Article(name=title, wid=wid, image=img, birth=birth, death=death)
             art.save()
 
+            print title
+        except:
+            raise
+            continue
+    f.close()
+
+def add_cats(path):
+    f = open(path)
+    count = 0
+
+    for line in f:
+        count += 1
+        if count < START:
+            continue
+
+        print count
+        
+        if LIMIT > 0 and count == LIMIT:
+            break
+
+        try:
+            title  = tpat.search(line).group(1)
+            cats   = catpat.search(line).group(1).split('|')
+            
+            art = Article.objects.get(name=title)
             for cat in cats:
                 if cat == '':
                     continue
@@ -55,12 +85,19 @@ def insert_xml(path):
 
                 art.categories.add(c)
             art.save()
-
-            print title
         except:
-            raise
             continue
     f.close()
+
+
+def update_category_size():
+    c = 0
+    for cat in Category.objects.all():
+        cat.size = len(cat.article_set.all())
+        cat.save()
+
+        print c
+        c+=1
 
 def build_people_graph(path):
     f = open(path)
@@ -71,7 +108,7 @@ def build_people_graph(path):
         if count < START:
             continue
 
-        print count,
+        print count
         if LIMIT > 0 and count == LIMIT:
             break
 
@@ -103,7 +140,68 @@ def build_people_graph(path):
             #raise
             continue
     f.close()
+
+def load(path):
+    f = open(path)
+    revw = cPickle.load(f)
+    f.close()
+    return revw
+
+
+def insert_incunabula_masters(revw):
+    c = 0
+    for k in revw.keys():
+        ma = IMasterArticle(name=k)
+        #print k
+        ma.save()
+
+        print c
+        c+=1
+        if LIMIT > 0 and c > LIMIT:
+            break
+        
+def insert_incunabula_articles(revw):
+    c = 0
+    sizes = revw['sizes']
+    for k in revw.keys():
+        try:
+            ma = IMasterArticle.objects.get(name=k)
+
+            for ed in revw[k]['editions']:
+                a = revw[k]['editions'][ed][0]
+
+                ia = IArticle(name=a['name'], art_id=a['id'], art_ed=ed, text=a['txt'],
+                              prank=0.0, volume_score= (0.0 + len(a['txt'])) / sizes[ed],
+                              match_master=ma, 
+                              match_score=-1.0)
+                #print a['name']
+                ia.save()
+        except:
+            continue
+            
+        print c
+        c+=1
+        if LIMIT > 0 and c > LIMIT:
+            print 'wtf>'
+            break
+            
+def process_split():
+    for name in os.listdir('_data/split'):
+        revw = load('_data/split/'+name)
+        insert_incunabula_masters(revw)
+
+    for name in os.listdir('_data/split'):
+        revw = load('_data/split/'+name)
+        insert_incunabula_articles(revw)
+    
     
 if __name__ == '__main__':
-    insert_xml('_data/people_articles_filtered.txt')
-    build_people_graph('_data/people_articles_filtered.txt')
+    #revw = load('_data/_revw.pkl')
+    process_split()
+    '''
+    insert_xml('_data/test-people_articles_filtered.txt')
+    build_people_graph('_data/test-people_articles_filtered.txt')
+    add_cats('_data/test-people_articles_filtered.txt')
+    update_category_size()
+    '''
+
