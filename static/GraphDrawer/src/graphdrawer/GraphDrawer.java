@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import org.gephi.graph.api.*;
 import org.gephi.io.exporter.api.ExportController;
+import org.gephi.io.exporter.preview.PNGExporter;
 import org.gephi.io.exporter.spi.GraphExporter;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
@@ -23,7 +24,8 @@ public class GraphDrawer {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        DBBuilder.buildData();
+        //DBBuilder.getNodes("Lincoln", 2);
+        testUndirectedGraph();
     }
     
     
@@ -59,11 +61,11 @@ public class GraphDrawer {
         directedGraph.addEdge(e3);
 
         ExportController ec = Lookup.getDefault().lookup(ExportController.class);
-        GraphExporter exporter = (GraphExporter) ec.getExporter("graphml");     //Get GEXF exporter
+        PNGExporter exporter = (PNGExporter) ec.getExporter("png");     //Get GEXF exporter
         exporter.setWorkspace(workspace);
         
         try {
-            ec.exportFile(new File("undir_gml.gml"), exporter);
+            ec.exportFile(new File("undir_gml.png"), exporter);
         } catch (IOException ex) {
             ex.printStackTrace();
             return;
