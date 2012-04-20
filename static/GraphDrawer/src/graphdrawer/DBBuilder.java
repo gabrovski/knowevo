@@ -65,26 +65,27 @@ public class DBBuilder {
     private PNGExporter exporter;
     private ExportController ec;
     
-    public static void getGraphFor(String name, int max_depth, String out) {
+    public static void getGraphFor(String name, int max_depth, String out) 
+	throws SQLException
+    {
         DBBuilder dbb = new DBBuilder();
         dbb.buildGraph(name, max_depth);
-        dbb.export(name);
+        dbb.export(out);
     }
     
     private DBBuilder() {
         try {
             conn = SD.getConnection(URL, DBUSER, PW);
             
-            ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+            pc = Lookup.getDefault().lookup(ProjectController.class);
             pc.newProject();
-            Workspace workspace = pc.getCurrentWorkspace();
+            workspace = pc.getCurrentWorkspace();
 
             //Get controllers and models
-            GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getModel();
-            AttributeModel attributeModel = Lookup.getDefault().lookup(AttributeController.class).getModel();
+	    graphModel = Lookup.getDefault().lookup(GraphController.class).getModel();
+            attributeModel = Lookup.getDefault().lookup(AttributeController.class).getModel();
             
             graph = graphModel.getUndirectedGraph();
-	    //System.out.println(graph.getNode("wdaa"));
            
             ec = Lookup.getDefault().lookup(ExportController.class);
             exporter = (PNGExporter) ec.getExporter("png"); 
@@ -104,15 +105,11 @@ public class DBBuilder {
         }
     }
     
-    private ResultSet getQuery(String query) {
-        try {
-            Statement s = conn.createStatement();
-            return s.executeQuery(query); 
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    private ResultSet getQuery(String query) 
+	throws SQLException
+    {
+	Statement s = conn.createStatement();
+	return s.executeQuery(query); 
     }
       
     private void buildGraph(String name, int max_depth) 
@@ -142,7 +139,7 @@ public class DBBuilder {
 	
         while(!queue.isEmpty()) {
             curr = queue.remove();
-            if (curr.depth < max_depth)
+            if (curr.depth > max_depth)
                 break;
             
 	    seen.add(curr.name);
@@ -151,12 +148,13 @@ public class DBBuilder {
             ResultSet rs = getQuery("select to_article_id " +
 				    "from gravebook_article_people " +
 				    "where from_article_id = " +
-				    curr.name);
-	    
+				    "'"+curr.name+"'");
+
 	    while (rs.next()) {
 		str = rs.getString("to_article_id");
-		System.out.println(str);
-		child = graph.getOrCreateNode(str);
+		//System.out.println(str);
+
+		child = getOrCreateNode(str);
 		if (!seen.contains(str)) {
 		    seen.add(str);
 		    queue.offer(new Neighbor(str, curr.depth+1));

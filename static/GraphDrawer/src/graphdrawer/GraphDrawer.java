@@ -24,8 +24,13 @@ public class GraphDrawer {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        DBBuilder.getGraphFor("Alan Turing", 1, "test.png");
-        //testUndirectedGraph();
+	try {
+	    DBBuilder.getGraphFor("Alan Turing", 1, "test.png");
+	    //testUndirectedGraph();
+	}
+	catch (Exception e) {
+	    e.printStackTrace();
+	}
     }
     
     
