@@ -84,6 +84,7 @@ public class DBBuilder {
             AttributeModel attributeModel = Lookup.getDefault().lookup(AttributeController.class).getModel();
             
             graph = graphModel.getUndirectedGraph();
+	    //System.out.println(graph.getNode("wdaa"));
            
             ec = Lookup.getDefault().lookup(ExportController.class);
             exporter = (PNGExporter) ec.getExporter("png"); 
@@ -114,47 +115,65 @@ public class DBBuilder {
         }
     }
       
-    private void buildGraph(String name, int max_depth) {
+    private void buildGraph(String name, int max_depth) 
+	throws SQLException
+    {
         Queue<Neighbor> queue = new LinkedList<Neighbor>();
-        
-        try {
-              ResultSet rs = this.getQuery("select name from gravebook_article "+
-                    "where name = "+name);
-            
-            if (rs.next()) 
-                queue.add(new Neighbor(rs.getString("name"), 0));
-            buildGraph(queue, max_depth);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+       
+	ResultSet rs = this.getQuery("select g.name from "+
+				     " gravebook_article g "+
+				     "where g.name = '"+name+"'");
+	
+	if (rs.next()) 
+	    queue.add(new Neighbor(rs.getString("name"), 0));
+	
+	buildGraph(queue, max_depth);    
     }
     
-    private void buildGraph(Queue<Neighbor> queue, int max_depth) {
+    private void buildGraph(Queue<Neighbor> queue, int max_depth) 
+	throws SQLException
+    {
         Set<String> seen = new HashSet<String>();
         Neighbor curr;
         Node parent;
-        
+	Node child;
+	Edge edge;
+	String str;
+	
         while(!queue.isEmpty()) {
             curr = queue.remove();
             if (curr.depth < max_depth)
                 break;
             
-            if (!seen.contains(curr.name)) {
-                seen.add(curr.name);
-                parent = graphModel.factory().newNode(curr.name);
-                parent.getNodeData().setLabel(curr.name);
-                graph.addNode(parent);
-            }
-            else 
-                parent = graph.getNode(curr.name);
-            
-            
+	    seen.add(curr.name);
+	    parent = getOrCreateNode(curr.name);
+	    
+            ResultSet rs = getQuery("select to_article_id " +
+				    "from gravebook_article_people " +
+				    "where from_article_id = " +
+				    curr.name);
+	    
+	    while (rs.next()) {
+		str = rs.getString("to_article_id");
+		System.out.println(str);
+		child = graph.getOrCreateNode(str);
+		if (!seen.contains(str)) {
+		    seen.add(str);
+		    queue.offer(new Neighbor(str, curr.depth+1));
+		}
+	    }
+	    
         }
     }
     
-    private Node getOrAddNode(String name) {
-        return null;
+    private Node getOrCreateNode(String name) {
+	Node n = graph.getNode(name);
+	if (n == null) {
+	    n = graphModel.factory().newNode(name);
+	    n.getNodeData().setLabel(name);
+	    graph.addNode(n);
+	}
+        return n;
     }
     
     private class Neighbor {
