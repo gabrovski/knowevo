@@ -22,8 +22,8 @@ class Article(models.Model):
     categories  = models.ManyToManyField(Category)
     other_links = models.ManyToManyField(Other)
     
-    xpos = models.IntegerField(blank=True, null=True)
-    ypos = models.IntegerField(blank=True, null=True)
+    #xpos = models.IntegerField(blank=True, null=True)
+    #ypos = models.IntegerField(blank=True, null=True)
 
     
     def __unicode__(self):

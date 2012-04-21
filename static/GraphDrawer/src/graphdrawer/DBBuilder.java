@@ -36,6 +36,7 @@ import org.gephi.preview.api.PreviewController;
 import org.gephi.preview.api.PreviewModel;
 import org.gephi.preview.api.PreviewProperty;
 import org.gephi.preview.types.EdgeColor;
+import org.gephi.preview.types.DependantOriginalColor;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.openide.util.Lookup;
@@ -64,12 +65,17 @@ public class DBBuilder {
     
     private PNGExporter exporter;
     private ExportController ec;
+
+    private ScoreMachine smach;
+    
+    private PreviewModel previewModel;
     
     public static void getGraphFor(String name, int max_depth, String out) 
 	throws SQLException
     {
         DBBuilder dbb = new DBBuilder();
         dbb.buildGraph(name, max_depth);
+	dbb.converge(100);
         dbb.export(out);
     }
     
@@ -85,11 +91,15 @@ public class DBBuilder {
 	    graphModel = Lookup.getDefault().lookup(GraphController.class).getModel();
             attributeModel = Lookup.getDefault().lookup(AttributeController.class).getModel();
             
-            graph = graphModel.getUndirectedGraph();
+            graph = graphModel.getDirectedGraph();
            
             ec = Lookup.getDefault().lookup(ExportController.class);
             exporter = (PNGExporter) ec.getExporter("png"); 
             exporter.setWorkspace(workspace);
+
+	    previewModel = Lookup.getDefault().lookup(PreviewController.class).getModel();
+
+	    smach = new CategoryScoreMachine(conn);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -105,11 +115,37 @@ public class DBBuilder {
         }
     }
     
-    private ResultSet getQuery(String query) 
+    public static ResultSet getQuery(String query, Connection conn) 
 	throws SQLException
     {
 	Statement s = conn.createStatement();
 	return s.executeQuery(query); 
+    }
+
+    public ResultSet getQuery(String query) 
+	throws SQLException
+    {
+	return DBBuilder.getQuery(query, this.conn);
+    }
+
+    public void converge(int times) {
+
+	YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
+        layout.setGraphModel(graphModel);
+        layout.resetPropertiesValues();
+        layout.setOptimalDistance(30f);
+
+        layout.initAlgo();
+        for (int i = 0; i < times && layout.canAlgo(); i++) {
+            layout.goAlgo();
+        }
+        
+        //Preview
+        previewModel.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS, Boolean.TRUE);
+        previewModel.getProperties().putValue(PreviewProperty.EDGE_COLOR, new EdgeColor(Color.BLUE));
+        previewModel.getProperties().putValue(PreviewProperty.EDGE_THICKNESS, new Float(0.1f));
+	previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_COLOR, new DependantOriginalColor(Color.RED));
+        previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_FONT, previewModel.getProperties().getFontValue(PreviewProperty.NODE_LABEL_FONT).deriveFont(10));
     }
       
     private void buildGraph(String name, int max_depth) 
@@ -159,6 +195,10 @@ public class DBBuilder {
 		    seen.add(str);
 		    queue.offer(new Neighbor(str, curr.depth+1));
 		}
+		
+		float score = smach.getScore(parent, child);
+		edge = graphModel.factory().newEdge(parent, child, score, true);
+		graph.addEdge(edge);
 	    }
 	    
         }
@@ -275,5 +315,52 @@ public class DBBuilder {
 //                //System.err.println("Database connection terminated");
 //            } catch (Exception e) { /* ignore close errors */ }
 //        }
+    }
+
+    public abstract class ScoreMachine {
+
+	private Connection smconn;
+
+	public ScoreMachine(Connection c) {
+	    smconn = c;
+	}
+
+	public Connection getConn() {
+	    return smconn;
+	}
+	
+	public abstract float getScore(Node u, Node v) throws SQLException;
+    }
+    
+    public class CategoryScoreMachine extends ScoreMachine {
+	
+	public CategoryScoreMachine(Connection c) {
+	    super(c);
+	}
+	
+	@Override
+	public float getScore(Node u, Node v)
+	    throws SQLException 
+	{
+	    float res = 0;
+	    String un = u.getNodeData().getId();
+	    String vn = v.getNodeData().getId();
+	    
+	    ResultSet rs = 
+		DBBuilder.getQuery("select c.size "+ 
+				   "from gravebook_category c "+
+				   "where c.name in "+
+				   "(select ga.category_id from gravebook_article_categories ga "+
+				   "where ga.article_id = '"+un+"') "+
+				   "and c.name in "+
+				   "(select gb.category_id from gravebook_article_categories gb "+
+				   "where gb.article_id = '"+vn+"') ",
+				   getConn());
+	    
+	    while (rs.next()) 
+		res += 10.0 / rs.getInt("size");
+		
+	    return res;
+	}
     }
 }
