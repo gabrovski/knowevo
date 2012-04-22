@@ -1,0 +1,10 @@
+/static/
+_data/
+build/
+*.pyc
+*.txt
+*.pkl
+*~
+*log*
+*.out
+*.zip
