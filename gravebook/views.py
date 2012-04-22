@@ -3,7 +3,7 @@ from gravebook.models import Article, Category
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
-import gravebook.graphConn as gcon
+import gravebook.graphConnect as gcon
 import re, md5, math
 
 
