@@ -1,9 +1,11 @@
 from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls.static import static
+from django.conf import settings
 
 from django.contrib import admin
 admin.autodiscover()
 
-USER_LOCALHOST = True
+USER_LOCALHOST = False
 
 if USER_LOCALHOST:
 	urlpatterns = patterns('',
@@ -23,7 +25,7 @@ if USER_LOCALHOST:
 			       # Uncomment the admin/doc line below to enable admin documentation
 			       url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 			       url(r'^admin/', include(admin.site.urls)),
-)
+)+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #for Apache deployment
 else:
@@ -32,6 +34,7 @@ else:
 
 			   #gravebook links
 			   url(r'^gravebook/$', 'gravebook.views.index'),
+			   url(r'^gravebook/Category:(?P<category_name>.+?)/$', 'gravebook.views.category_detail'), 
 			   url(r'^gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
 
                            url(r'^incunabula/$', 'incunabula.views.index'),
@@ -40,4 +43,4 @@ else:
 			       
                            url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                            url(r'^admin/', include(admin.site.urls)),
-)
+)+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
