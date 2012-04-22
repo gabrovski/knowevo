@@ -1,11 +1,6 @@
 <html>
   <head>
     <title>{{ article.name }}</title>
-
-    <script src="/static/jquery-1.7.2.js" ></script>
-    <script src="/static/highcharts.js" ></script>
-    {% load chartit %}
-    {{ springchart|load_charts:"spring_container" }}
   </head>
   <body>
     <h2>{{ article.name }} ({{ article.birth }} - {{ article.death }})</h2>

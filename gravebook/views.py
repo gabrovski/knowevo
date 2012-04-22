@@ -3,8 +3,7 @@ from gravebook.models import Article, Category
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
-from spring.force import SpringBox
-
+import gravebook.graphConn as gcon
 import re, md5, math
 
 
@@ -47,13 +46,7 @@ def article_detail(request, article_name):
               math.fabs(person.death-art.death) > OVERLAP):
             peers.append(person)
         
-    print 'beginning spring box'
-    sb = springbox(art)
-    names = set(map(lambda x: x.name, sb.objects))
-    for o in sb.objects:
-        o.save()
-               
-    chart = SpringBox.get_chart(Article.objects.filter(name__in=names))
+    gcon.sendName(article_name)
 
     return render_to_response('gravebook/article_detail.html',
                               { 'article':     art, 
@@ -61,8 +54,7 @@ def article_detail(request, article_name):
                                 'categories':  art.categories.all(),
                                 'peers':       peers,
                                 'influences':  influences,
-                                'influenced':  influenced,
-                                'springchart': chart,
+                                'influenced':  influenced,                
                                 },
                               RequestContext(request))
 
@@ -75,51 +67,4 @@ def category_detail(request, category_name):
                                'category_name': category_name},
                               RequestContext(request))
 
-def _get_cat_score(u,v):
-    common_cats = u.categories.filter(name__in=(
-            list(v.categories.values_list('name'))))
-
-    score = 0
-    for cat in common_cats:
-        score += 1.0 / cat.size
-    return score
-
-def _get_neighbors(art, max_depth):
-    res = []
-    queue = [(art,0)]
-    seen = set([art.name])
-    ndict = dict()
-    
-    while len(queue) > 0:
-        curr, d = queue.pop(0)
-        if d > max_depth:
-            break
-        
-        res.append(curr)
-    
-        for p in curr.people.all():
-            if curr.name not in ndict or p.name not in ndict[curr.name]:
-                SpringBox.update_ndict(ndict, curr, p, 1)
-                #_get_cat_score(curr, p))
-
-            if p.name not in seen:
-                seen.add(p.name)
-                queue.append((p, d+1))
-
-    return res, ndict
-        
-
-def springbox(art, max_depth=1):
-    objects, ndict = _get_neighbors(art, max_depth)
-    print 'retrieved neighbors', len(objects)
-    
-    sb = SpringBox(objects=objects, width=300, height=300, 
-                   charge=2, mass=1, time_step=0.05, 
-                   kfn=lambda x, y: SpringBox.kfn(ndict, x, y))
-
-    sb.move_to_equillibrium( len(objects) )
-    print 'acheived equillibrium'
-
-    #sb.print_objects()
-    return sb
     
