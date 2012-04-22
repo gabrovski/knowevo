@@ -26,9 +26,9 @@ public class GraphDrawer {
     
     public static void main(String[] args) {
 	try {
-	    GraphServer.runServer(PORT, MAX_DEPTH, PNGPATH);
+	    //GraphServer.runServer(PORT, MAX_DEPTH, PNGPATH);
 	    //DBBuilder.getGraphFor("Alan Turing", 1, "test.png");
-	    //testUndirectedGraph();
+	    testUndirectedGraph();
 	}
 	catch (Exception e) {
 	    e.printStackTrace();
@@ -68,11 +68,11 @@ public class GraphDrawer {
         directedGraph.addEdge(e3);
 
         ExportController ec = Lookup.getDefault().lookup(ExportController.class);
-        PNGExporter exporter = (PNGExporter) ec.getExporter("png");     //Get GEXF exporter
-        exporter.setWorkspace(workspace);
+        //PNGExporter exporter = (PNGExporter) ec.getExporter("png");     //Get GEXF exporter
+        //exporter.setWorkspace(workspace);
         
         try {
-            ec.exportFile(new File("undir_gml.png"), exporter);
+            ec.exportFile(new File("undir_gml.svg");
         } catch (IOException ex) {
             ex.printStackTrace();
             return;
