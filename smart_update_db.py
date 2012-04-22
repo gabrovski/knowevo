@@ -20,7 +20,7 @@ olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
 
-LIMIT = 500
+LIMIT = -1
 START = -1
 
 
@@ -197,14 +197,13 @@ def process_split():
     
     
 if __name__ == '__main__':
-<<<<<<< HEAD
     #revw = load('_data/_revw.pkl')
-    process_split()
-    '''
+    #process_split()
+
     insert_xml('_data/people_articles_filtered.txt')
     build_people_graph('_data/people_articles_filtered.txt')
     add_cats('_data/people_articles_filtered.txt')
 
     update_category_size()
-    '''
+
 
