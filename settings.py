@@ -129,7 +129,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'incunabula',
     'gravebook',
-    #'spring',
+    'spring',
     'chartit',
 )
 

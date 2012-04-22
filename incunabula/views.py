@@ -3,6 +3,8 @@ from incunabula.models import MasterArticle, Article
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
+from spring.timeser import prep_time_series_chart
+
 import re
 
 EMPTY_ART = {'name':'#NA'}
@@ -70,8 +72,13 @@ def index(request):
 def master_detail(request, master_name):
     master = MasterArticle.objects.get(name=master_name)
     res, num = get_master_alist(master)
+    chart = prep_time_series_chart(
+        filter(lambda x: x['name'] != '#NA', res))
+
     return render_to_response('incunabula/master_detail.html',
-                       {'master_name':master_name, 'arts':res},
+                       {'master_name':master_name, 
+                        'evo_chart':chart,
+                        'arts':res},
                        RequestContext(request))
 
 def article_detail(request, article_id):
