@@ -145,7 +145,7 @@ public class DBBuilder {
         previewModel.getProperties().putValue(PreviewProperty.EDGE_COLOR, new EdgeColor(Color.BLUE));
         previewModel.getProperties().putValue(PreviewProperty.EDGE_THICKNESS, new Float(0.1f));
 	previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_COLOR, new DependantOriginalColor(Color.RED));
-        previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_FONT, previewModel.getProperties().getFontValue(PreviewProperty.NODE_LABEL_FONT).deriveFont(10));
+        previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_FONT, previewModel.getProperties().getFontValue(PreviewProperty.NODE_LABEL_FONT).deriveFont(14));
     }
       
     private void buildGraph(String name, int max_depth) 
@@ -277,7 +277,7 @@ public class DBBuilder {
         model.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS, Boolean.TRUE);
         model.getProperties().putValue(PreviewProperty.EDGE_COLOR, new EdgeColor(Color.GRAY));
         model.getProperties().putValue(PreviewProperty.EDGE_THICKNESS, new Float(0.1f));
-        model.getProperties().putValue(PreviewProperty.NODE_LABEL_FONT, model.getProperties().getFontValue(PreviewProperty.NODE_LABEL_FONT).deriveFont(8));
+        model.getProperties().putValue(PreviewProperty.NODE_LABEL_FONT, model.getProperties().getFontValue(PreviewProperty.NODE_LABEL_FONT).deriveFont(11));
 
         //Export
         ExportController ec = Lookup.getDefault().lookup(ExportController.class);

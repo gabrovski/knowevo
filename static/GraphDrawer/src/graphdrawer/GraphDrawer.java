@@ -21,7 +21,7 @@ import org.openide.util.Lookup;
 public class GraphDrawer {
     
     private static final int PORT = 62541;
-    private static final int MAX_DEPTH = 2;
+    private static final int MAX_DEPTH = 3;
     private static final String PNGPATH = "/home/sasho/cs/knowevo/static/pngs/";
     
     public static void main(String[] args) {
