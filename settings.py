@@ -130,7 +130,7 @@ INSTALLED_APPS = (
     'incunabula',
     'gravebook',
     #'spring',
-    #'chartit',
+    'chartit',
 )
 
 # A sample logging configuration. The only tangible logging

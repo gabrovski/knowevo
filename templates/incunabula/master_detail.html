@@ -1,8 +1,15 @@
 <html>
   <head>
     <title>{{ master_name }}</title>
+
+    <script src="/static/js/jquery-1.7.2.js" ></script>
+    <script src="/static/js/highcharts.js" ></script>
+    {% load chartit %}
+    {{ evo_chart|load_charts:"evo_container" }}
   </head>
   <body>
+
+    <div id="evo_container"></div>
 
     {% if arts %} 
     <table id="res_table" name="res_table" border="1">
