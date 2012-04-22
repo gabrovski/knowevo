@@ -20,6 +20,7 @@ DATABASES = {
         'OPTIONS': {
             'autocommit':True,
             },
+        'TEST_NAME': 'test_knowevo',
     }
 }
 
@@ -48,12 +49,12 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = '/home/sasho/cs/knowevo/static/pngs/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -72,6 +73,7 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
+    '/home/sasho/cs/knowevo/static',
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -108,6 +110,7 @@ ROOT_URLCONF = 'knowevo.urls'
 TEMPLATE_DIRS = (
     '/home/sasho/cs/knowevo/templates/',
     #'/home/gabrovski/cs/knowevo/templates/',
+
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -126,6 +129,8 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'incunabula',
     'gravebook',
+    #'spring',
+    #'chartit',
 )
 
 # A sample logging configuration. The only tangible logging

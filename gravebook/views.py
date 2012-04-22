@@ -3,6 +3,7 @@ from gravebook.models import Article, Category
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
+import gravebook.graphConnect as gcon
 import re, md5, math
 
 
@@ -22,6 +23,7 @@ def index(request):
 
 def article_detail(request, article_name):
     art = Article.objects.get(name=article_name)
+
     img = art.image.replace(' ', '_')
     digest = md5.new(img).hexdigest()
     img = digest[0]+'/'+digest[:2]+'/'+img
@@ -43,15 +45,18 @@ def article_detail(request, article_name):
         elif (math.fabs(person.birth-art.birth) > OVERLAP or 
               math.fabs(person.death-art.death) > OVERLAP):
             peers.append(person)
-                  
-    
+        
+    gcon.sendName(article_name)
+
     return render_to_response('gravebook/article_detail.html',
-                              { 'article':art, 'image':img,
-                                'categories':art.categories.all(),
-                                'peers':peers,
-                                'influences':influences,
-                                'influenced':influenced},
-                                RequestContext(request))
+                              { 'article':     art, 
+                                'image':       img,
+                                'categories':  art.categories.all(),
+                                'peers':       peers,
+                                'influences':  influences,
+                                'influenced':  influenced,                
+                                },
+                              RequestContext(request))
 
 def category_detail(request, category_name):
     cat = Category.objects.get(name=category_name)
@@ -61,5 +66,5 @@ def category_detail(request, category_name):
                               {'articles':articles,
                                'category_name': category_name},
                               RequestContext(request))
-        
-        
+
+    

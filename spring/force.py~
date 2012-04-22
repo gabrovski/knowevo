@@ -1,0 +1,16 @@
+'''
+By Sasho
+
+Implements a force based algorithm outlined here:
+http://www.cs.brown.edu/~rt/gdhandbook/chapters/force-directed.pdf
+'''
+
+def init_positions(objects, width, height):
+    '''
+    sets the initial positions for the objects for the given width and height
+    of the canvas
+    sets the force vector and mass fields
+    '''
+    pass
+
+def 
