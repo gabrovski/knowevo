@@ -29,9 +29,12 @@ def index(request):
 def article_detail(request, article_name):
     art = Article.objects.get(name=article_name)
 
-    img = art.image.replace(' ', '_')
-    digest = md5.new(img).hexdigest()
-    img = digest[0]+'/'+digest[:2]+'/'+img
+    img = None
+    if art.image != 'null':
+        img = art.image.replace(' ', '_')
+        img = img.split('|')[0]
+        digest = md5.new(img).hexdigest()
+        img = digest[0]+'/'+digest[:2]+'/'+img
 
     OVERLAP = 15
 
