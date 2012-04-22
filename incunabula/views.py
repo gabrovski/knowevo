@@ -7,7 +7,12 @@ from spring.timeser import prep_time_series_chart
 
 import re
 
-EMPTY_ART = {'name':'#NA'}
+
+class Dummy:
+    def __init__(self, name):
+        self.name = name
+EMPTY_ART = Dummy('#NA')
+
 
 def get_master_alist(master, keywords=[]):
     res_m = [EMPTY_ART for x in xrange(4)]
@@ -16,14 +21,18 @@ def get_master_alist(master, keywords=[]):
     kword_match = (len(keywords) == 0)
     pats = [re.compile(keyword+'(?i)') for keyword in keywords]        
 
+    for kword in keywords:
+        matches = matches.filter(text__icontains=kword)
+
     for art in matches:
         
-        #filter by anding keywords
+        '''#filter by anding keywords
         if not kword_match:
             curr = True
             for pat in pats:
                 curr = curr and (pat.search(art.text)!=None)
             kword_match = kword_match or curr
+        '''
 
         if art.art_ed == 3:  res_m[0] = art
         if art.art_ed == 9:  res_m[1] = art
@@ -31,7 +40,7 @@ def get_master_alist(master, keywords=[]):
         if art.art_ed == 15: res_m[3] = art
         
     if kword_match:
-        return res_m, len(matches)
+        return res_m, matches
     else:
         return None
 
@@ -55,7 +64,8 @@ def index(request):
 
         res = []
         for master in masters:
-            res_m, num = get_master_alist(master, keywords)
+            res_m, res_matches = get_master_alist(master, keywords)
+            num = len(res_matches)
             if res_m != None: res.append((master.name, res_m, num))
         
         #print res
@@ -71,9 +81,8 @@ def index(request):
 
 def master_detail(request, master_name):
     master = MasterArticle.objects.get(name=master_name)
-    res, num = get_master_alist(master)
-    chart = prep_time_series_chart(
-        filter(lambda x: x['name'] != '#NA', res))
+    res, res_matches = get_master_alist(master)
+    chart = prep_time_series_chart(res_matches)
 
     return render_to_response('incunabula/master_detail.html',
                        {'master_name':master_name, 
