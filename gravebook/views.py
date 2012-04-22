@@ -3,7 +3,12 @@ from gravebook.models import Article, Category
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
+from incunabula.models import Article as IArticle
+from incunabula.views import get_master_alist
+
 import gravebook.graphConnect as gcon
+from spring.timeser import prep_time_series_chart
+
 import re, md5, math
 
 
@@ -48,6 +53,13 @@ def article_detail(request, article_name):
         
     gcon.sendName(article_name)
 
+    chart = None
+    res, res_matches = get_master_alist(
+        '_'.join(article_name.split(' ')))
+    num = len(res_matches)
+    if num > 1:
+        chart = prep_time_series_chart(res_matches)
+
     return render_to_response('gravebook/article_detail.html',
                               { 'article':     art, 
                                 'image':       img,
@@ -55,6 +67,7 @@ def article_detail(request, article_name):
                                 'peers':       peers,
                                 'influences':  influences,
                                 'influenced':  influenced,                
+                                'evo_chart':   chart,
                                 },
                               RequestContext(request))
 

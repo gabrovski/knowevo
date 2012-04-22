@@ -1,6 +1,13 @@
 <html>
   <head>
     <title>{{ article.name }}</title>
+
+    <script src="/knowevo/static/jquery-1.7.2.js" ></script>
+    <script src="/knowevo/static/highcharts.src.js" ></script>
+    {% if evo_chart %}
+      {% load chartit %}
+      {{ evo_chart|load_charts:"evo_container" }}
+    {% endif %}
   </head>
   <body>
     <h2>{{ article.name }} ({{ article.birth }} - {{ article.death }})</h2>
@@ -15,6 +22,9 @@
     <br/>
     <img src="/knowevo/media/{{ article.name }}.png"
 	 width=""/>
+    
+    <br />
+    <div id="evo_container"></div>
 
     <h4>Categories</h4>
     <ul>
