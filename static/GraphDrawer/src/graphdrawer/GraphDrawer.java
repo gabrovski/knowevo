@@ -19,13 +19,15 @@ import org.openide.util.Lookup;
  * @author sasho
  */
 public class GraphDrawer {
-
-    /**
-     * @param args the command line arguments
-     */
+    
+    private static final int PORT = 62541;
+    private static final int MAX_DEPTH = 2;
+    private static final String PNGPATH = "/home/sasho/cs/knowevo/static/pngs/";
+    
     public static void main(String[] args) {
 	try {
-	    DBBuilder.getGraphFor("Alan Turing", 1, "test.png");
+	    GraphServer.runServer(PORT, MAX_DEPTH, PNGPATH);
+	    //DBBuilder.getGraphFor("Alan Turing", 1, "test.png");
 	    //testUndirectedGraph();
 	}
 	catch (Exception e) {
