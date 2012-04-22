@@ -21,11 +21,14 @@ if USER_LOCALHOST:
 			       url(r'^knowevo/gravebook/Category:(?P<category_name>.+?)/$', 'gravebook.views.category_detail'), 
 			       url(r'^knowevo/gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
 
-			   
+			       
 			       # Uncomment the admin/doc line below to enable admin documentation
 			       url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 			       url(r'^admin/', include(admin.site.urls)),
-)+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+)+(
+		static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+
+		static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
+
 
 #for Apache deployment
 else:
@@ -43,4 +46,7 @@ else:
 			       
                            url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                            url(r'^admin/', include(admin.site.urls)),
-)+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+) + (
+	    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+
+	    static(settings.STATIC_URL.split('knowevo')[1], 
+		   document_root=settings.STATIC_ROOT))
