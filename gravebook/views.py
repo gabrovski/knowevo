@@ -9,7 +9,7 @@ from incunabula.views import get_master_alist
 import gravebook.graphConnect as gcon
 from spring.timeser import prep_time_series_chart
 
-import re, md5, math
+import re, md5, math, urllib2
 
 
 def index(request):
@@ -26,9 +26,7 @@ def index(request):
                               {'articles':articles},
                               RequestContext(request))
 
-def article_detail(request, article_name):
-    art = Article.objects.get(name=article_name)
-
+def prep_img_url(art):
     img = None
     if art.image != 'null':
         img = art.image.replace(' ', '_')
@@ -36,6 +34,28 @@ def article_detail(request, article_name):
         digest = md5.new(img).hexdigest()
         img = digest[0]+'/'+digest[:2]+'/'+img
 
+        base = 'http://upload.wikimedia.org/wikipedia/'
+        url = base+'commons/'+img
+        try:
+            f = urllib2.urlopen(url)
+            f.close()
+            return url
+        except:
+            pass
+
+        url = base+'en/'+img
+        try:
+            f = urllib2.urlopen(url)
+            f.close()
+            return url
+        except:
+            pass
+
+
+def article_detail(request, article_name):
+    art = Article.objects.get(name=article_name)
+    img = prep_img_url(art)
+    
     OVERLAP = 15
 
     influences = []
