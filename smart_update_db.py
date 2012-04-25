@@ -52,7 +52,7 @@ def insert_xml(path):
 
             print title
         except:
-            raise
+            #raise
             continue
     f.close()
 
