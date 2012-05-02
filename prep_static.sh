@@ -12,6 +12,7 @@ echo "getting js files" ;
 mkdir js ;
 wget -P js http://code.jquery.com/jquery-1.7.2.min.js ;
 wget -P js http://code.jquery.com/jquery-1.7.2.js ;
+wget -P js http://www.highcharts.com/downloads/zips/Highcharts-2.2.1.zip
 
 echo "adding necessary categories" ;
 mkdir stroot ;

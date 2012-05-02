@@ -7,10 +7,7 @@ package graphdrawer;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -24,6 +21,7 @@ import org.gephi.io.database.drivers.SQLDriver;
 import org.gephi.io.database.drivers.SQLUtils;
 import org.gephi.io.exporter.api.ExportController;
 import org.gephi.io.exporter.preview.PNGExporter;
+import org.gephi.io.exporter.preview.SVGExporter;
 import org.gephi.io.importer.api.Container;
 import org.gephi.io.importer.api.EdgeDefault;
 import org.gephi.io.importer.api.ImportController;
@@ -63,7 +61,7 @@ public class DBBuilder {
     private AttributeModel attributeModel;
     private Graph graph;
     
-    private PNGExporter exporter;
+    private SVGExporter exporter;
     private ExportController ec;
 
     private ScoreMachine smach;
@@ -94,7 +92,7 @@ public class DBBuilder {
             graph = graphModel.getDirectedGraph();
            
             ec = Lookup.getDefault().lookup(ExportController.class);
-            exporter = (PNGExporter) ec.getExporter("png"); 
+            exporter = (SVGExporter) ec.getExporter("svg"); 
             exporter.setWorkspace(workspace);
 
 	    previewModel = Lookup.getDefault().lookup(PreviewController.class).getModel();
@@ -115,17 +113,19 @@ public class DBBuilder {
         }
     }
     
-    public static ResultSet getQuery(String query, Connection conn) 
+    public static ResultSet getQuery(String query, String[] args, Connection conn) 
 	throws SQLException
     {
-	Statement s = conn.createStatement();
-	return s.executeQuery(query); 
+	PreparedStatement s = conn.prepareStatement(query);
+        for (int i = 0; i < args.length; i++)
+            s.setString(i+1, args[i]);
+	return s.executeQuery();
     }
 
-    public ResultSet getQuery(String query) 
+    public ResultSet getQuery(String query, String[] args) 
 	throws SQLException
     {
-	return DBBuilder.getQuery(query, this.conn);
+	return DBBuilder.getQuery(query, args, this.conn);
     }
 
     public void converge(int times) {
@@ -155,7 +155,8 @@ public class DBBuilder {
        
 	ResultSet rs = this.getQuery("select g.name from "+
 				     " gravebook_article g "+
-				     "where g.name = '"+name+"'");
+                    		     "where g.name = ?",
+                                      new String[] {name} );
 	
 	if (rs.next()) 
 	    queue.add(new Neighbor(rs.getString("name"), 0));
@@ -183,8 +184,8 @@ public class DBBuilder {
 	    
             ResultSet rs = getQuery("select to_article_id " +
 				    "from gravebook_article_people " +
-				    "where from_article_id = " +
-				    "'"+curr.name+"'");
+				    "where from_article_id = ?",
+                                    new String[] {curr.name});
 
 	    while (rs.next()) {
 		str = rs.getString("to_article_id");
@@ -351,10 +352,11 @@ public class DBBuilder {
 				   "from gravebook_category c "+
 				   "where c.name in "+
 				   "(select ga.category_id from gravebook_article_categories ga "+
-				   "where ga.article_id = '"+un+"') "+
+				   "where ga.article_id = ?) "+
 				   "and c.name in "+
 				   "(select gb.category_id from gravebook_article_categories gb "+
-				   "where gb.article_id = '"+vn+"') ",
+				   "where gb.article_id = ?) ",
+                                   new String[] {un, vn},
 				   getConn());
 	    
 	    while (rs.next()) 

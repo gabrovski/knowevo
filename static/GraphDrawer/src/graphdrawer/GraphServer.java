@@ -25,6 +25,7 @@ public class GraphServer implements Runnable {
 
 	    while (true) {
 		GraphServer gs = new  GraphServer(listener.accept(), maxd, path);
+                System.out.println("accepted connection");
 		Thread t = new Thread(gs);
 		t.start();
 
@@ -44,13 +45,25 @@ public class GraphServer implements Runnable {
     public void run () {
 	try {
 	    DataInputStream in = new DataInputStream (sockd.getInputStream());
+            DataOutputStream out = new DataOutputStream (sockd.getOutputStream());
+            
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));
 	    String name;
-
+            
 	    while((name = br.readLine()) != null) {
-		DBBuilder.getGraphFor(name, max_depth, pngpath+name+".png");
+                System.out.println("graph for "+name);
+		DBBuilder.getGraphFor(name, max_depth, pngpath+name+".svg");
 		System.out.println("graph for "+name+" is ready");
-	    }
+                break;
+	    }            
+            bw.write("done");
+            bw.flush();
+            
+            br.close();
+            in.close();
+            bw.close();
+            out.close();
 
 	    sockd.close();
 	} catch (Exception ex) {

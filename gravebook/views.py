@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from gravebook.models import Article, Category
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
+from django.http import HttpResponse
 
 from incunabula.models import Article as IArticle
 from incunabula.views import get_master_alist
@@ -73,8 +74,6 @@ def article_detail(request, article_name):
         elif (math.fabs(person.birth-art.birth) > OVERLAP or 
               math.fabs(person.death-art.death) > OVERLAP):
             peers.append(person)
-        
-    gcon.sendName(article_name)
 
     chart = None
     res, res_matches = get_master_alist(
@@ -93,6 +92,14 @@ def article_detail(request, article_name):
                                 'evo_chart':   chart,
                                 },
                               RequestContext(request))
+
+def load_spring_box(request, article_name):
+    #blocking
+    print 'loading sbox'
+    gcon.sendName(article_name)
+    print 'laoded sbox'
+    return HttpResponse(
+        '<embed src="/knowevo/media/'+article_name+'.svg" type="image/svg+xml" />')
 
 def category_detail(request, category_name):
     cat = Category.objects.get(name=category_name)

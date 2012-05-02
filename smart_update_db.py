@@ -25,8 +25,6 @@ catpat  = re.compile('categories="(.+?)"')
 LIMIT = -1
 START = 16035
 
-
-
 def insert_xml(path):
     f = open(path)
     count = 0
@@ -197,17 +195,60 @@ def process_split():
     for name in os.listdir('_data/split'):
         revw = load('_data/split/'+name)
         insert_incunabula_articles(revw)
+
+
+def update_inc_volume_score():
+    eds = {3 : [], 9 : [], 11 : [], 15 : []}
+    for art in IArticle.objects.all():
+        eds[art.art_ed].append(len(art.text))
+
+    print 'prepped text dict'
+
+    avg = dict()
+    for k in eds.keys():
+        if eds[k] == []:
+            continue
+        avg[k] = sum(eds[k]) / len(eds[k])
+
+    print 'computed averages'
+
+    sdev = {3 : 0, 9 : 0, 11 : 0, 15 : 0}
+    for k in eds.keys():
+        for v in eds[k]:
+            sdev[k] += (avg[k] - v)**2
+
+    print 'computed variance'
+    
+    for k in sdev:
+        sdev[k] = sdev[k]**0.5
+
+    
+    for art in IArticle.objects.all():
+        art.volume_score = (len(art.text)-avg[art.art_ed]) / sdev[art.art_ed]
+        art.save()
     
     
 if __name__ == '__main__':
-    #revw = load('_data/_revw.pkl')
+    update_inc_volume_score()
+
+    '''
+    revw = load('_data/sample_revw.pkl')
+    insert_incunabula_masters(revw)
+    insert_incunabula_articles(revw)
     #process_split()
+    
+
 
     #insert_xml('_data/people_articles_filtered.txt')
     #build_people_graph('_data/people_articles_filtered.txt')
     #START = -1
     #add_cats('_data/people_articles_filtered.txt')
 
-    update_category_size()
+    insert_xml('_data/test-people_articles_filtered.txt')
+    build_people_graph('_data/test-people_articles_filtered.txt')
+    add_cats('_data/test-people_articles_filtered.txt')
 
+
+    update_category_size()
+    '''
 

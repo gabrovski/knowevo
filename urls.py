@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
-USER_LOCALHOST = False
+USER_LOCALHOST = True
 
 if USER_LOCALHOST:
 	urlpatterns = patterns('',
@@ -19,6 +19,7 @@ if USER_LOCALHOST:
 			       #gravebook links
 			       url(r'^knowevo/gravebook/$', 'gravebook.views.index'),
 			       url(r'^knowevo/gravebook/Category:(?P<category_name>.+?)/$', 'gravebook.views.category_detail'), 
+			       url(r'^knowevo/gravebook/(?P<article_name>.+?)/_spring_box/$', 'gravebook.views.load_spring_box'),
 			       url(r'^knowevo/gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
 
 			       
@@ -26,8 +27,8 @@ if USER_LOCALHOST:
 			       url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 			       url(r'^admin/', include(admin.site.urls)),
 )+(
-		static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+
-		static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
+		static('/knowevo'+settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+
+		static('/knowevo'+settings.STATIC_URL, document_root=settings.STATIC_ROOT))
 
 
 #for Apache deployment
@@ -38,6 +39,7 @@ else:
 			   #gravebook links
 			   url(r'^gravebook/$', 'gravebook.views.index'),
 			   url(r'^gravebook/Category:(?P<category_name>.+?)/$', 'gravebook.views.category_detail'), 
+			   url(r'^gravebook/(?P<article_name>.+?)/_spring_box/$', 'gravebook.views.load_spring_box'),
 			   url(r'^gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
 
                            url(r'^incunabula/$', 'incunabula.views.index'),
@@ -48,5 +50,4 @@ else:
                            url(r'^admin/', include(admin.site.urls)),
 ) + (
 	    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+
-	    static(settings.STATIC_URL.split('knowevo')[1], 
-		   document_root=settings.STATIC_ROOT))
+	    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
