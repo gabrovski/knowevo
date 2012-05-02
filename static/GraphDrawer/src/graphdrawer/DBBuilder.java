@@ -97,7 +97,7 @@ public class DBBuilder {
 
 	    previewModel = Lookup.getDefault().lookup(PreviewController.class).getModel();
 
-	    smach = new CategoryScoreMachine(conn);
+	    smach = new SimpleCategoryScoreMachine(conn);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -347,7 +347,7 @@ public class DBBuilder {
 	    String un = u.getNodeData().getId();
 	    String vn = v.getNodeData().getId();
 	    
-	    ResultSet rs = 
+            ResultSet rs = 
 		DBBuilder.getQuery("select c.size "+ 
 				   "from gravebook_category c "+
 				   "where c.name in "+
@@ -361,6 +361,35 @@ public class DBBuilder {
 	    
 	    while (rs.next()) 
 		res += 10.0 / rs.getInt("size");
+		
+	    return res;
+	}
+    }
+    
+    public class SimpleCategoryScoreMachine extends ScoreMachine {
+	
+	public SimpleCategoryScoreMachine(Connection c) {
+	    super(c);
+	}
+	
+	@Override
+	public float getScore(Node u, Node v)
+	    throws SQLException 
+	{
+	    float res = 0;
+	    String un = u.getNodeData().getId();
+	    String vn = v.getNodeData().getId();
+	    
+            ResultSet rs = 
+		DBBuilder.getQuery("select count(category_id) as count "+ 
+				   "from gravebook_article_categories "+
+				   "where article_id = ? and article_id = ? ",
+                                   new String[] {un, vn},
+				   getConn());
+	    
+	  
+	    if (rs.next()) 
+		res += rs.getInt("count");
 		
 	    return res;
 	}
