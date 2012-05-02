@@ -6,7 +6,11 @@ def sendName(name):
     sd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         sd.connect((HOST, PORT))
-        sd.sendall(name)
+        sd.sendall(name+'\n')
+        
+        res = sd.recv(32)
+        print res
+
     finally:
         sd.close()
 
