@@ -5,9 +5,9 @@ HOST, PORT = 'localhost', 62541;
 
 def sendName(name):
     sd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    name = name+'.svg'
+    name = name
     for fname in os.listdir(MEDIA_ROOT):
-        if name == fname:
+        if name == fname.split('.')[0]:
             return
 
     try:
