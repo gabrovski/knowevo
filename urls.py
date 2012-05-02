@@ -39,6 +39,7 @@ else:
 			   #gravebook links
 			   url(r'^gravebook/$', 'gravebook.views.index'),
 			   url(r'^gravebook/Category:(?P<category_name>.+?)/$', 'gravebook.views.category_detail'), 
+			   url(r'^gravebook/(?P<article_name>.+?)/_spring_box/$', 'gravebook.views.load_spring_box'),
 			   url(r'^gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
 
                            url(r'^incunabula/$', 'incunabula.views.index'),
