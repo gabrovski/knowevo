@@ -20,8 +20,12 @@
     {% endif %}
 
     <br/>
-    <img src="/knowevo/media/{{ article.name }}.png"
-	 width=""/>
+    <div id="spring_container"> </div>
+
+    <script>
+      $("#spring_container").load("_spring_box");
+    </script>
+    <!--embed src="/knowevo/media/{{ article.name }}.svg" type="image/svg+xml" /--> 
     
     <br />
     <div id="evo_container"></div>
