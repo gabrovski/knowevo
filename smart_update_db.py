@@ -9,6 +9,8 @@ from incunabula.models import Reference as IReference
 
 from django.db import transaction
 
+import settings
+settings.DEBUG = False
 
 tpat    = re.compile('title="(.+?)"')
 idpat   = re.compile('id="(.+?)"')
@@ -21,7 +23,8 @@ catpat  = re.compile('categories="(.+?)"')
 
 
 LIMIT = -1
-START = -1
+START = 16035
+
 
 
 def insert_xml(path):
@@ -93,8 +96,8 @@ def add_cats(path):
 
 def update_category_size():
     c = 0
-    for cat in Category.objects.all():
-        cat.size = len(cat.article_set.all())
+    for cat in Category.objects.iterator():
+        cat.size = cat.article_set.count()
         cat.save()
 
         print c
@@ -200,9 +203,10 @@ if __name__ == '__main__':
     #revw = load('_data/_revw.pkl')
     #process_split()
 
-    insert_xml('_data/people_articles_filtered.txt')
-    build_people_graph('_data/people_articles_filtered.txt')
-    add_cats('_data/people_articles_filtered.txt')
+    #insert_xml('_data/people_articles_filtered.txt')
+    #build_people_graph('_data/people_articles_filtered.txt')
+    #START = -1
+    #add_cats('_data/people_articles_filtered.txt')
 
     update_category_size()
 
