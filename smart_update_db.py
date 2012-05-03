@@ -243,10 +243,25 @@ def extract_people_graph(out):
         c+=1
 
     f.close()
+
+def get_top_people(pranked, lim=200):
+    f = open(pranked)
+    arts = []
+    for line in f:
+        arts.append(line.strip().split(':'))
+    f.close()
+    
+    arts.sort(key=lambda x: float(x[1]), reverse=True)
+    
+    for wid, prank in arts[:lim]:
+        art = Article.objects.get(wid=wid)
+        print art.name, prank
+        
     
     
 if __name__ == '__main__':
-    extract_people_graph('testgraph.txt')
+    #extract_people_graph('testgraph.txt')
+    get_top_people('testout.txt')
     #update_inc_volume_score()
 
     '''
