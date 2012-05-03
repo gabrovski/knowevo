@@ -226,10 +226,28 @@ def update_inc_volume_score():
     for art in IArticle.objects.all():
         art.volume_score = (len(art.text)-avg[art.art_ed]) / sdev[art.art_ed]
         art.save()
+
+
+def extract_people_graph(out):
+    f = open(out, 'w')
+    c = 0
+    for art in Article.objects.iterator():
+        f.write(str(art.wid)+' ')
+
+        for ed in art.people.iterator():
+            f.write(str(ed.wid)+' ')
+            
+        f.write('\n')
+
+        print c
+        c+=1
+
+    f.close()
     
     
 if __name__ == '__main__':
-    update_inc_volume_score()
+    extract_people_graph('testgraph.txt')
+    #update_inc_volume_score()
 
     '''
     revw = load('_data/sample_revw.pkl')
