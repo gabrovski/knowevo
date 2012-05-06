@@ -2,6 +2,9 @@ from django.db import models
 
 class MasterArticle(models.Model):
     name = models.CharField(max_length=256, primary_key=True)    
+    
+    def __unicode__(self):
+        return self.name
 
 class Article(models.Model):
     name = models.CharField(max_length=256)
