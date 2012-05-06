@@ -255,12 +255,19 @@ def get_top_people(pranked, lim=200):
     for wid, prank in arts[:lim]:
         art = Article.objects.get(wid=wid)
         print art.name, prank
+
+
+def get_inc_matched_edition():
+    for art in IArticle.objects.iterator():
+        print str(art)+'#'+str(art.art_ed)+'#'+str(art.match_master)
         
     
     
 if __name__ == '__main__':
     #extract_people_graph('testgraph.txt')
-    get_top_people('testout.txt')
+    #get_top_people('testout.txt')
+    get_inc_matched_edition()
+
     #update_inc_volume_score()
 
     '''
