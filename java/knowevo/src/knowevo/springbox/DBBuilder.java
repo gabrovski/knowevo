@@ -134,7 +134,7 @@ public abstract class DBBuilder {
         while (nit.hasNext()) {
             convertNode(nit.next());
         }
-
+        
         Iterator<knowevo.springbox.Edge> eit = getGraph().getEdges();
         while (eit.hasNext()) {
             convertEdge(eit.next());

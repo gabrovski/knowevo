@@ -7,6 +7,7 @@ package knowevo;
 import knowevo.articlerank.*;
 import knowevo.springbox.CategoryScoreMachine;
 import knowevo.springbox.gephibox.GephiDBBuilder;
+import knowevo.springbox.vizster.VizsterDrawer;
 import vizster.Vizster;
 
 /**
@@ -18,6 +19,7 @@ public class main {
     public static void main(String args[]) {
         try {
             //GephiDBBuilder.getGraphFor(new CategoryScoreMachine(), "Abraham Lincoln", 0, "bla2.svg");
+            VizsterDrawer vd = new VizsterDrawer("Abraham Lincoln");
             if (args[0].equals("ranker")) {
                 Graph g = Ranker.buildSeeAlsoGraph(args[1]);
                 System.out.println("Graph built");
