@@ -20,7 +20,7 @@ public class VizsterRunner {
             vd.convertGraph();
             
             VizsterApplet vdr = new VizsterApplet();
-            
+            vdr.init();
             vdr.getVizsterFrame().loadGraph(tmp, null);
         }
         catch (Exception e) {

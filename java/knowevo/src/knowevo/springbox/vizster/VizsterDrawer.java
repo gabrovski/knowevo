@@ -196,17 +196,18 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
         
         // set up the JFrame
         //setJMenuBar(new VizsterMenuBar(this));
-        initUI(); pack();
-        setVisible(true);
+        
+        //initUI(); pack();
+        //setVisible(true);
         
         // wait until graphics are available
-        while ( display.getGraphics() == null );
+        //while ( display.getGraphics() == null );
         
         // load the network data
         //loadGraph(path, null);
     }
     
-    private void initUI() {
+    public void initUI() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         // recenter the display upon resizing
