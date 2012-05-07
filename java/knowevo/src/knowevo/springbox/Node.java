@@ -9,13 +9,20 @@ package knowevo.springbox;
  * @author gabrovski
  */
 public class Node {
-    private String name;
     
-    public Node(String n) {
+    private String name;
+    private int id;
+    
+    public Node(String n, int i) {
         name = n;
+        id = i;
     }
     
     public String getName() {
         return name;
+    }
+    
+    public int getId() {
+        return id;
     }
 }

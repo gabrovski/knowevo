@@ -30,6 +30,7 @@ public abstract class DBBuilder {
     private Connection conn;
     private Graph graph;
     private ScoreMachine smach;
+    private int num_nodes;
 
     public DBBuilder(ScoreMachine sm) {
         try {
@@ -38,6 +39,8 @@ public abstract class DBBuilder {
             
             smach = sm;
             smach.setDBB(this);
+            
+            num_nodes = 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,7 +119,7 @@ public abstract class DBBuilder {
     private Node getOrCreateNode(String name) {
         Node n = graph.getNode(name);
         if (n == null) {
-            n = new Node(name);
+            n = new Node(name, num_nodes++);
             graph.addNode(n);
         }
         return n;
