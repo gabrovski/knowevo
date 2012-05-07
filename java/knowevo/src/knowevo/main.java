@@ -18,10 +18,13 @@ import vizster.Vizster;
 public class main {
     
     public static void main(String args[]) {
+        System.out.println("starting");
         try {
-            //GephiDBBuilder.getGraphFor(new CategoryScoreMachine(), "Abraham Lincoln", 0, "bla2.svg");
+            if (args.length == 0) {
             VizsterRunner.getGraphFor("Abraham Lincoln", 2, "tmp");
-            if (args[0].equals("ranker")) {
+            }
+            
+            else if (args[0].equals("ranker")) {
                 Graph g = Ranker.buildSeeAlsoGraph(args[1]);
                 System.out.println("Graph built");
 

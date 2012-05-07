@@ -131,7 +131,7 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
     // number of login attempts before application exits
     private int loginRetries = 5;
     
-    public VizsterDrawer(String path) {
+    public VizsterDrawer() {
         super(true);
         
         // create the registry
@@ -280,7 +280,7 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
         edu.berkeley.guir.prefuse.graph.Node r = getInitialNode(startUID);
         registry.getDefaultFocusSet().set(r);
         registry.getFocusManager().getFocusSet(CLICK_KEY).set(r);
-        centerDisplay();
+        //centerDisplay();
         
         filter.runNow();
         if ( animate ) {

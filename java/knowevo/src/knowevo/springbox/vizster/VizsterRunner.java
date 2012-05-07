@@ -19,8 +19,9 @@ public class VizsterRunner {
             vd.buildGraph(name, max_depth);
             vd.convertGraph();
             
-            VizsterDrawer vdr = new VizsterDrawer(name);
-            vdr.loadGraph(tmp, null);
+            VizsterApplet vdr = new VizsterApplet();
+            
+            vdr.getVizsterFrame().loadGraph(tmp, null);
         }
         catch (Exception e) {
             e.printStackTrace();
