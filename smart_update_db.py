@@ -23,7 +23,7 @@ catpat  = re.compile('categories="(.+?)"')
 
 
 LIMIT = -1
-START = 16035
+START = -1
 
 def insert_xml(path):
     f = open(path)
@@ -293,6 +293,7 @@ if __name__ == '__main__':
 
     #get_top_people('testout.txt')
     #get_inc_matched_edition()
+
     fill_gr_linked_by()
     fill_gr_peers()
     
