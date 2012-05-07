@@ -269,13 +269,31 @@ def fill_gr_linked_by():
             art_to.linked_by.add(art)
         print c
         c+=1
+
+def fill_gr_peers():
+    c = 0
+    OVERLAP = 15
+    for art in Article.objects.iterator():
+        art.peers.clear()
+        for person in art.people.iterator():
+            if person.birth == -1 or person.death == -1:
+                continue
+        
+        if person.death-art.birth > OVERLAP and art.death-person.birth > OVERLAP:
+            art.peers.add(person)
+            art.save()
+        
+        print c
+        c+=1
+
     
 if __name__ == '__main__':
     #extract_people_graph('testgraph.txt')
     #get_top_people('testout.txt')
     #get_inc_matched_edition()
-    fill_gr_linked_by()
-
+    #fill_gr_linked_by()
+    fill_gr_peers()
+    
     #update_inc_volume_score()
 
     '''
