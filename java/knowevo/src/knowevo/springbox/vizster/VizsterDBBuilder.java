@@ -4,6 +4,8 @@
  */
 package knowevo.springbox.vizster;
 
+import edu.berkeley.guir.prefuse.ItemRegistry;
+import edu.berkeley.guir.prefuse.activity.ActionList;
 import edu.berkeley.guir.prefuse.graph.Graph;
 import edu.berkeley.guir.prefuse.graph.io.XMLGraphReader;
 import knowevo.springbox.DBBuilder;
@@ -12,6 +14,8 @@ import knowevo.springbox.Edge;
 import knowevo.springbox.ScoreMachine;
 
 import java.io.*;
+import java.sql.SQLException;
+import knowevo.springbox.*;
 
 /**
  *
@@ -19,40 +23,23 @@ import java.io.*;
  */
 public class VizsterDBBuilder extends DBBuilder {
     
-    private PipedOutputStream pos;
-    private PipedInputStream pis;
-    private OutputStreamWriter osw;
+    private String out;
+    private BufferedWriter bw;
     
-    private Graph vizsterGraph;
-    
-    public VizsterDBBuilder(ScoreMachine sm) {
+    public VizsterDBBuilder(ScoreMachine sm, String o) {
         super(sm);
-        try {
-            pos = new PipedOutputStream();
-            pis = new PipedInputStream(pos);
-            
-            osw = new OutputStreamWriter(pos);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        out = o;
     }
     
     @Override
     public void convertGraph() {
         try {
-            osw.write("<graph directed=\"1\">\n");
+            bw = new BufferedWriter(new FileWriter(out));
+            bw.write("<graph directed=\"1\">\n");
             super.convertGraph();
-            osw.write("</graph>");
+            bw.write("</graph>");
             
-            osw.close();
-            pos.close();
-            
-            //read in graph
-            XMLGraphReader xgr = new XMLGraphReader();
-            vizsterGraph = xgr.loadGraph(pis);
-            
-            pis.close();
+            bw.close();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -62,9 +49,11 @@ public class VizsterDBBuilder extends DBBuilder {
     @Override
     public void convertNode(Node n) {
         try {
-            osw.write("\t<node id=\""+n.getId()+"\">\n");
-            osw.write("\t\t<att name=\"name\" value=\""+n.getName()+"\">\n");
-            osw.write("\t</node>\n");
+            bw.write("\t<node id=\""+n.getId()+"\">\n");
+            bw.write("\t\t<att name=\"name\" value=\""+n.getName()+"\"> </att>\n");
+            bw.write("\t\t<att name=\"uid\" value=\""+n.getName()+"\"> </att>\n");
+            bw.write("\t</node>\n");
+            
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -78,7 +67,7 @@ public class VizsterDBBuilder extends DBBuilder {
             int id2 = e.getSecond().getId();
             float score = e.getScore();
             
-            osw.write("\t<edge source=\""+id1+"\" target=\""+id2+"\""
+            bw.write("\t<edge source=\""+id1+"\" target=\""+id2+"\""
                     + " weight=\""+score+"\"> </edge>\n");
         }
         catch (Exception ex) {
