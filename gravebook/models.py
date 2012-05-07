@@ -21,6 +21,8 @@ class Article(models.Model):
     people      = models.ManyToManyField('self')
     categories  = models.ManyToManyField(Category)
     other_links = models.ManyToManyField(Other)
+
+    linked_by = models.ManyToManyField('self')
     
     #xpos = models.IntegerField(blank=True, null=True)
     #ypos = models.IntegerField(blank=True, null=True)

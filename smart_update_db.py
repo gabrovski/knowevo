@@ -261,12 +261,20 @@ def get_inc_matched_edition():
     for art in IArticle.objects.iterator():
         print str(art)+'#'+str(art.art_ed)+'#'+str(art.match_master)
         
-    
+
+def fill_gr_linked_by():
+    c = 0
+    for art in Article.objects.iterator():
+        for art_to in art.people.iterator():
+            art_to.linked_by.add(art)
+        print c
+        c+=1
     
 if __name__ == '__main__':
     #extract_people_graph('testgraph.txt')
     #get_top_people('testout.txt')
-    get_inc_matched_edition()
+    #get_inc_matched_edition()
+    fill_gr_linked_by()
 
     #update_inc_volume_score()
 
