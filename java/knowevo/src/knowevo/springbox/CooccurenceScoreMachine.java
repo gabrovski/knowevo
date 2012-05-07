@@ -22,12 +22,21 @@ public class CooccurenceScoreMachine extends ScoreMachine {
 	    String vn = v.getName();
 	    
             ResultSet rs = 
-		getDBB().getQuery("select count",
+		getDBB().getQuery("select count(it.from_article_id) from ("
+                    + "select from_article_id from"
+                    + " gravebook_article_linked_by a" 
+                    + " where to_article_id = ?"
+                    + " intersect"
+                    + " select from_article_id from "
+                    + " gravebook_article_linked_by"
+                    + " where to_article_id = ?"
+                    + ") it",
                     new String[] {un, vn});
 	    
 	  
 	    if (rs.next()) 
 		res += rs.getInt("count");
+            System.out.println(res);
 
 	    return res;
     }

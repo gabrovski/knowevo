@@ -6,6 +6,7 @@ package knowevo;
 
 import knowevo.articlerank.*;
 import knowevo.springbox.CategoryScoreMachine;
+import knowevo.springbox.CooccurenceScoreMachine;
 import knowevo.springbox.gephibox.GephiDBBuilder;
 import knowevo.springbox.gephibox.GraphServer;
 import knowevo.springbox.vizster.VizsterDrawer;
@@ -27,7 +28,8 @@ public class main {
         System.out.println("starting");
         try {
             if (args.length == 0) {
-            VizsterRunner.getGraphFor("Abraham Lincoln", 2, "tmp");
+                //VizsterRunner.getGraphFor("Abraham Lincoln", 2, "tmp");
+                GephiDBBuilder.getGraphFor(new CooccurenceScoreMachine(), "Abraham Lincoln", MAX_DEPTH, "test.svg");
             }
             
             else if (args[0].equals("ranker")) {

@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.*;
 import java.security.*;
 import knowevo.springbox.CategoryScoreMachine;
+import knowevo.springbox.CooccurenceScoreMachine;
 
 
 /**
@@ -54,7 +55,7 @@ public class GraphServer implements Runnable {
             
 	    while((name = br.readLine()) != null) {
                 System.out.println("graph for "+name);
-		GephiDBBuilder.getGraphFor(new CategoryScoreMachine(), name, max_depth, pngpath+name+".svg");
+		GephiDBBuilder.getGraphFor(new CooccurenceScoreMachine(), name, max_depth, pngpath+name+".svg");
 		System.out.println("graph for "+name+" is ready");
                 break;
 	    }            

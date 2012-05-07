@@ -87,7 +87,6 @@ public class GephiDBBuilder extends DBBuilder {
     
     private void export(String name) {
          try {
-             System.out.println(name);
             ec.exportFile(new File(name), exporter);
         } catch (IOException ex) {
             ex.printStackTrace();
