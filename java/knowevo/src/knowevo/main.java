@@ -7,6 +7,7 @@ package knowevo;
 import knowevo.articlerank.*;
 import knowevo.springbox.CategoryScoreMachine;
 import knowevo.springbox.gephibox.GephiDBBuilder;
+import knowevo.springbox.gephibox.GraphServer;
 import knowevo.springbox.vizster.VizsterDrawer;
 import knowevo.springbox.vizster.VizsterRunner;
 import vizster.Vizster;
@@ -16,6 +17,11 @@ import vizster.Vizster;
  * @author gabrovski
  */
 public class main {
+    
+    private static final int PORT = 62541;
+    private static final int MAX_DEPTH = 1;
+    private static final String PNGPATH = "/home/gabrovski/cs/knowevo/static/pngs/";
+    
     
     public static void main(String args[]) {
         System.out.println("starting");
@@ -35,7 +41,13 @@ public class main {
                 g.saveGraph(args[2]);
             }
             else if (args[0].equals("server")) {
-                
+                try {
+                    GraphServer.runServer(PORT, MAX_DEPTH, PNGPATH);
+                    //DBBuilder.getGraphFor("Alan Turing", 1, "test.png");
+                    //testUndirectedGraph();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             else {
                 //args[-1] = null;//trigger error, too lazy to fix
