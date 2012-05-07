@@ -21,7 +21,7 @@ public class VizsterRunner {
             
             VizsterApplet vdr = new VizsterApplet();
             vdr.init();
-            vdr.getVizsterFrame().loadGraph(tmp, null);
+            //vdr.getVizsterFrame().loadGraph(tmp, null);
         }
         catch (Exception e) {
             e.printStackTrace();
