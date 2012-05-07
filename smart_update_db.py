@@ -255,13 +255,13 @@ def get_top_people(pranked, lim=200):
     
     for wid, prank in arts[:lim]:
         art = Article.objects.get(wid=wid)
-        print art.name, prank
+        print '_'.join(str(art).split(' ')), art.birth, art.death
         
     
     
 if __name__ == '__main__':
     #extract_people_graph('testgraph.txt')
-    get_top_people('testout.txt')
+    get_top_people('_data/peoplepranked.txt')
     #update_inc_volume_score()
 
     '''
