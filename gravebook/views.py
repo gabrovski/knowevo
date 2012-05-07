@@ -67,20 +67,26 @@ def article_detail(request, article_name):
         if person.birth == -1 or person.death == -1:
             continue
         
-        if art.birth > person.death:
+        if person.death-art.birth > OVERLAP and art.death-person.birth > OVERLAP:
+            peers.append(person)
+
+        elif art.birth > person.death:
             influences.append(person)
         elif art.death < person.birth:
             influenced.append(person)
-        elif (math.fabs(person.birth-art.birth) > OVERLAP or 
-              math.fabs(person.death-art.death) > OVERLAP):
-            peers.append(person)
-
+            
     chart = None
     res, res_matches = get_master_alist(
         '_'.join(article_name.split(' ')))
     num = len(res_matches)
     if num > 1:
         chart = prep_time_series_chart(res_matches)
+
+
+    '''art_to = art.people.all()[0]
+    score = Article.objects.filter(name__in=art_to.linked_by.iterator).filter(name__in=art.linked_by.iterator).count()
+    print 'scorew', score
+    '''
 
     return render_to_response('gravebook/article_detail.html',
                               { 'article':     art, 

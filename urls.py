@@ -5,9 +5,7 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
-USER_LOCALHOST = False
-
-if USER_LOCALHOST:
+if settings.USER_LOCALHOST:
 	urlpatterns = patterns('',
 			       url(r'^$', 'incunabula.views.index'), #todo portal
 			       url(r'^knowevo/$', 'incunabula.views.index'), #todo portal

@@ -10,7 +10,7 @@ from incunabula.models import Reference as IReference
 from django.db import transaction
 
 import settings
-settings.DEBUG = False
+settings.DEBUG = False #important otherwise run out of memory on server
 
 tpat    = re.compile('title="(.+?)"')
 idpat   = re.compile('id="(.+?)"')
@@ -255,13 +255,48 @@ def get_top_people(pranked, lim=200):
     
     for wid, prank in arts[:lim]:
         art = Article.objects.get(wid=wid)
-        print '_'.join(str(art).split(' ')), art.birth, art.death
+
+
+def get_inc_matched_edition():
+    for art in IArticle.objects.iterator():
+        print str(art)+'#'+str(art.art_ed)+'#'+str(art.match_master)
         
-    
+
+def fill_gr_linked_by():
+    c = 0
+    for art in Article.objects.iterator():
+        for art_to in art.people.iterator():
+            art_to.linked_by.add(art)
+        print c
+        c+=1
+
+def fill_gr_peers():
+    c = 0
+    OVERLAP = 15
+    for art in Article.objects.iterator():
+        art.peers.clear()
+        for person in art.people.iterator():
+            if person.birth == -1 or person.death == -1:
+                continue
+        
+        if person.death-art.birth > OVERLAP and art.death-person.birth > OVERLAP:
+            art.peers.add(person)
+            art.save()
+        
+        print c
+        c+=1
+
     
 if __name__ == '__main__':
     #extract_people_graph('testgraph.txt')
-    get_top_people('_data/peoplepranked.txt')
+    #get_top_people('_data/peoplepranked.txt')
+
+    #get_top_people('testout.txt')
+    #get_inc_matched_edition()
+    fill_gr_linked_by()
+    fill_gr_peers()
+    
+
     #update_inc_volume_score()
 
     '''

@@ -3,6 +3,12 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+USER_LOCALHOST = False
+if USER_LOCALHOST:
+    homepath = 'gabrovski'
+else:
+    homepath = 'sasho'
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -49,7 +55,8 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = '/home/sasho/cs/knowevo/static/pngs/'
+MEDIA_ROOT = '/home/'+homepath+'/cs/knowevo/static/pngs/'
+#'/home/sasho/cs/knowevo/static/pngs/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -60,11 +67,12 @@ MEDIA_URL = '/knowevo/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/home/sasho/cs/knowevo/static/stroot/'
+STATIC_ROOT = '/home/'+homepath+'/cs/knowevo/static/stroot/'
+#'/home/sasho/cs/knowevo/static/stroot/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/knowevo/static/'
+STATIC_URL = '/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
@@ -73,7 +81,9 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    '/home/sasho/cs/knowevo/static/js',
+    #'/home/sasho/cs/knowevo/static/js',
+    '/home/'+homepath+'/cs/knowevo/static/js',
+
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -108,8 +118,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'knowevo.urls'
 
 TEMPLATE_DIRS = (
-    '/home/sasho/cs/knowevo/templates/',
-    #'/home/gabrovski/cs/knowevo/templates/',
+    #'/home/sasho/cs/knowevo/templates/',
+    '/home/'+homepath+'/cs/knowevo/templates/',
 
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
@@ -131,7 +141,7 @@ INSTALLED_APPS = (
     'gravebook',
     'spring',
     'chartit',
-    'south'
+    'south',
 )
 
 # A sample logging configuration. The only tangible logging

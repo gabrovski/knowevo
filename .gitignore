@@ -9,3 +9,11 @@ build/
 *.out
 *.zip
 settings.py
+/java/nbproject/private/
+/knowevo/nbproject/private/
+/java/knowevo/nbproject/private/
+/java/knowevo/dist/
+/java/MyVizster/nbproject/private/
+/java/MyVizster/dist/
+/java/VApplet/nbproject/private/
+/java/VApplet/dist/
