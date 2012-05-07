@@ -20,13 +20,14 @@ public class GraphServer implements Runnable {
     private Socket sockd;
     private int max_depth;
     private String pngpath;
+    private boolean peers_only;
     
-    public static void runServer(int port, int maxd, String path) {	
+    public static void runServer(int port, int maxd, String path, boolean peers_only) {	
 	try{
 	    ServerSocket listener = new ServerSocket(port);
 
 	    while (true) {
-		GraphServer gs = new  GraphServer(listener.accept(), maxd, path);
+		GraphServer gs = new  GraphServer(listener.accept(), maxd, path, peers_only);
                 System.out.println("accepted connection");
 		Thread t = new Thread(gs);
 		t.start();
@@ -38,10 +39,11 @@ public class GraphServer implements Runnable {
     }
 
      
-    public GraphServer(Socket sd, int maxd, String path) {
+    public GraphServer(Socket sd, int maxd, String path, boolean po) {
 	sockd = sd;
 	max_depth = maxd;
 	pngpath = path;
+        peers_only = po;
     }
 
     public void run () {
@@ -55,7 +57,7 @@ public class GraphServer implements Runnable {
             
 	    while((name = br.readLine()) != null) {
                 System.out.println("graph for "+name);
-		GephiDBBuilder.getGraphFor(new CooccurenceScoreMachine(), name, max_depth, pngpath+name+".svg");
+		GephiDBBuilder.getGraphFor(new CooccurenceScoreMachine(), name, max_depth, pngpath+name+".svg", peers_only);
 		System.out.println("graph for "+name+" is ready");
                 break;
 	    }            

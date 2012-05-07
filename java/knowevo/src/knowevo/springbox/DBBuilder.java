@@ -59,7 +59,7 @@ public abstract class DBBuilder {
         return s.executeQuery();
     }
 
-    public void buildGraph(String name, int max_depth)
+    public void buildGraph(String name, int max_depth, boolean peers_only)
             throws SQLException {
         
         Queue<Neighbor> queue = new LinkedList<Neighbor>();
@@ -73,10 +73,10 @@ public abstract class DBBuilder {
             queue.add(new Neighbor(rs.getString("name"), 0));
         }
 
-        buildGraph(queue, max_depth);
+        buildGraph(queue, max_depth, peers_only);
     }
 
-    private void buildGraph(Queue<Neighbor> queue, int max_depth)
+    private void buildGraph(Queue<Neighbor> queue, int max_depth, boolean peers_only)
             throws SQLException {
         Set<String> seen = new HashSet<String>();
         Neighbor curr;
@@ -84,6 +84,10 @@ public abstract class DBBuilder {
         Node child;
         Edge edge;
         String str;
+        
+        String dbname = "gravebook_article_people";
+        if (peers_only)
+            dbname = "gravebook_article_peers";
 
         while (!queue.isEmpty()) {
             curr = queue.remove();
@@ -93,9 +97,9 @@ public abstract class DBBuilder {
 
             seen.add(curr.name);
             parent = getOrCreateNode(curr.name);
-
+            
             ResultSet rs = getQuery("select to_article_id "
-                    + "from gravebook_article_people "
+                    + "from "+dbname+" "
                     + "where from_article_id = ?",
                     new String[]{curr.name});
 

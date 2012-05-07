@@ -36,7 +36,7 @@ public class CooccurenceScoreMachine extends ScoreMachine {
 	  
 	    if (rs.next()) 
 		res += rs.getInt("count");
-            System.out.println(res);
+            //System.out.println(res);
 
 	    return res;
     }

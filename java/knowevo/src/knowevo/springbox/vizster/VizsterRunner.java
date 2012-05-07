@@ -13,10 +13,10 @@ import knowevo.springbox.CategoryScoreMachine;
 public class VizsterRunner {
     
     
-    public static void getGraphFor(String name, int max_depth, String tmp) {
+    public static void getGraphFor(String name, int max_depth, String tmp, boolean peers_only) {
         try {
             VizsterDBBuilder vd = new VizsterDBBuilder(new CategoryScoreMachine(), tmp);
-            vd.buildGraph(name, max_depth);
+            vd.buildGraph(name, max_depth, peers_only);
             vd.convertGraph();
             
             VizsterApplet vdr = new VizsterApplet();

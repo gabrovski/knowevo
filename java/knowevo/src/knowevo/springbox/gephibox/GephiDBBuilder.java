@@ -50,11 +50,11 @@ public class GephiDBBuilder extends DBBuilder {
     
     private PreviewModel previewModel;
     
-    public static void getGraphFor(ScoreMachine sm, String name, int max_depth, String out) 
+    public static void getGraphFor(ScoreMachine sm, String name, int max_depth, String out, boolean peers_only) 
 	throws SQLException
     {
         GephiDBBuilder dbb = new GephiDBBuilder(sm);
-        dbb.buildGraph(name, max_depth);
+        dbb.buildGraph(name, max_depth, peers_only);
         dbb.convertGraph();
 	dbb.converge(100);
         dbb.export(out);
