@@ -13,7 +13,12 @@ settings.py
 /knowevo/nbproject/private/
 /java/knowevo/nbproject/private/
 /java/knowevo/dist/
-/java/MyVizster/nbproject/private/
-/java/MyVizster/dist/
-/java/VApplet/nbproject/private/
-/java/VApplet/dist/
+/java/MyVizster/
+/java/VApplet/
+*#
+*.svg
+tmp
+tmpfile
+rsch/*.py
+migrations/
+*.gz
