@@ -9,6 +9,8 @@ from incunabula.models import Reference as IReference
 
 from django.db import transaction
 
+import settings
+settings.DEBUG = False #important otherwise run out of memory on server
 
 tpat    = re.compile('title="(.+?)"')
 idpat   = re.compile('id="(.+?)"')
@@ -20,9 +22,8 @@ olpat   = re.compile('other_links="(.+?)"')
 catpat  = re.compile('categories="(.+?)"')
 
 
-LIMIT = 1000
+LIMIT = -1
 START = -1
-
 
 def insert_xml(path):
     f = open(path)
@@ -93,8 +94,8 @@ def add_cats(path):
 
 def update_category_size():
     c = 0
-    for cat in Category.objects.all():
-        cat.size = len(cat.article_set.all())
+    for cat in Category.objects.iterator():
+        cat.size = cat.article_set.count()
         cat.save()
 
         print c
@@ -254,7 +255,6 @@ def get_top_people(pranked, lim=200):
     
     for wid, prank in arts[:lim]:
         art = Article.objects.get(wid=wid)
-        print art.name, prank
 
 
 def get_inc_matched_edition():
@@ -289,11 +289,15 @@ def fill_gr_peers():
     
 if __name__ == '__main__':
     #extract_people_graph('testgraph.txt')
+    #get_top_people('_data/peoplepranked.txt')
+
     #get_top_people('testout.txt')
     #get_inc_matched_edition()
-    #fill_gr_linked_by()
+
+    fill_gr_linked_by()
     fill_gr_peers()
     
+
     #update_inc_volume_score()
 
     '''
@@ -303,9 +307,16 @@ if __name__ == '__main__':
     #process_split()
     
 
+
+    #insert_xml('_data/people_articles_filtered.txt')
+    #build_people_graph('_data/people_articles_filtered.txt')
+    #START = -1
+    #add_cats('_data/people_articles_filtered.txt')
+
     insert_xml('_data/test-people_articles_filtered.txt')
     build_people_graph('_data/test-people_articles_filtered.txt')
     add_cats('_data/test-people_articles_filtered.txt')
+
 
     update_category_size()
     '''

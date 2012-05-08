@@ -5,9 +5,7 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
-USER_LOCALHOST = True
-
-if USER_LOCALHOST:
+if settings.USER_LOCALHOST:
 	urlpatterns = patterns('',
 			       url(r'^$', 'incunabula.views.index'), #todo portal
 			       url(r'^knowevo/$', 'incunabula.views.index'), #todo portal
@@ -27,8 +25,8 @@ if USER_LOCALHOST:
 			       url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 			       url(r'^admin/', include(admin.site.urls)),
 )+(
-		static('/knowevo'+settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+
-		static('/knowevo'+settings.STATIC_URL, document_root=settings.STATIC_ROOT))
+		static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+
+		static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
 
 
 #for Apache deployment
@@ -49,5 +47,5 @@ else:
                            url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                            url(r'^admin/', include(admin.site.urls)),
 ) + (
-	    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+
-	    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
+	    static(settings.MEDIA_URL.split('knowevo')[1], document_root=settings.MEDIA_ROOT)+
+	    static(settings.STATIC_URL.split('knowevo')[1], document_root=settings.STATIC_ROOT))
