@@ -62,32 +62,42 @@ def get_edition_matches(ed):
     for art in Article.objects.filter(art_ed=ed).iterator():
         print art.name    
 
+###candidate finding classes follow
+class Dealer:
+    def __init__(self, exisiting_path, edition):
+        self.existing = self.load_existing_names(exisiting_path)
+        self.editon = edition
 
-###candid generation
-class CandidDealer:
-    def __init__(self, exist_brit_path, exist_wiki_path):
-        self.existing_brit = CandidDealer.load_existing_brit_names(exist_brit_path)
-        self.existing_wiki = CandidDealer.load_exisiting_wiki_names(exist_wiki_path)
-
-
-    ###helper functions
-    @staticmethod
-    def get_candids(wname, existing):
-        index = bisect.bisect_left(wname, exisiting)
-        return index], index+1
+    @abstractmethod
+    def load_existing_names(self, fname):
+        pass
     
-    @staticmethod
-    def format_name(name, ed):
+    def format_name(self, name):
         fname = name
-        if ed == 3:
+        if self.ed == 3:
             parts = name.split('_')
             ln = len(parts)
             fname = ' '.join([parts[ln-1]]+parts[:ln-1])
 
         return fname.lower()
 
-    @staticmethod
-    def load_exisiting_wiki_names(fname):
+    def get_candid_indeces(self, wname):
+        wname = self.format_name(wname)
+        index = bisect.bisect_left(wname, self.exisiting)
+        return index, index+1
+
+    def get_candids(self, wname):
+        i1, i2 = self.get_candid_indeces(wname)
+        return self.existing[i1], self.existing[i2]
+
+
+###wiki only candids
+class WikiDealer(Dealer):
+    def __init__(self, exist_wiki_path):
+        super(Dealer,self).__init__(exist_wiki_path, 'wiki')
+
+    #Override
+    def load_exisiting_names(self, fname):
         res = []
 
         f = open(fname)
@@ -97,8 +107,15 @@ class CandidDealer:
         res.sort()
         return res
 
-    @staticmethod
-    def load_existing_brit_names(fname):
+
+###candid generation
+class CandidDealer(Dealer):
+    def __init__(self, exist_brit_path, edition, wikidealer):
+        super(Dealer,self).__init__(exist_brit_path, edition)
+        self.wikidealer = wikidealer
+
+    #Override
+    def load_existing_names(self, fname):
         res = []
         
         f = open(fname)
@@ -106,16 +123,13 @@ class CandidDealer:
             res.append((line.strip().lower(), line[:-1]))
 
         res.sort(key=lambda x: x[0])
-        return res
 
-    
-    ###real stuff
-    def get_wiki_candids(self, wname):
-        i1, i2 = CandidDealer.get_candids(wname, self.existing_wiki)
-        return wname[i1], wname[i2]
+        self.existing_tuples = res
+        return map(lambda x: x[0], res)
 
-    def get_brit_candids_from_wiki_candids(self,wcandids):
+    def get_brit_candids_from_wiki_candids(self, wname):
         res  = []
+        wcandids = self.wikidealer.get_candids(wname)
         for wc in wcandids:
             try:
                 art = Article.get(match_master__name=wc)
@@ -124,15 +138,13 @@ class CandidDealer:
                 pass
         return res
 
-    def get_brit_candids(self, wname, edition):
-        name = format_name(wname, edition)
-        existing = map(lambda x: x[0], self.exisitng_brit)
-        i1, i2 = CandidDealer.get_candids(name, exisitng)
-        return self.exisitng_brit[i1][1], self.exisitng_brit[i2][1]
+    #Override
+    def get_candids(self, wname):
+        i1, i2 = super(Dealer,self).get_candid_indeces(wname)
+        return self.exisitng_tuples[i1][1], self.exisitng_tuples[i2][1]
 
-    def get_all_candids(self, wname, edition):
-        wcandids = get_wiki_candids(wname, self.existing_wiki)
-        bcandids = self.get_brit_candids_from_wiki_candids(wcandids) + self.get_brit_candids(wname, edition)
+    def get_all_candids(self, wname):
+        bcandids = self.get_brit_candids_from_wiki_candids(wname) + self.get_candids(wname)
         return bcandids
 
     def get_best_candidate(self, wname):
