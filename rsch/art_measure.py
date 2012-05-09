@@ -8,9 +8,41 @@ class Cache:
         self.d = d
 CACHE = Cache('',None)
 
+NAME = None
+
+def getCombinedScores(arttxt, title_txts, comp, occp, wt=True, vt=True):
+    wordsa = map(lambda x: x.lower(), tools.splitToWords(arttxt))
+
+    global NAME
+
+    res = []
+    for name, text in title_txts:
+        NAME = name
+        score = 0
+
+        wordsb = map(lambda x: x.lower(), tools.splitToWords(text))
+        score1 = comp(wordsb, wordsa) #reverse
+
+        score2 =  getKeywordVectorScore(arttxt, name, text, occp)
+        score2 = sum(score2.values())
+        
+        if wt:
+            score += score1*100
+        if vt:
+            score += score2
+
+        res.append((name, score))
+        
+    res.sort(key=lambda x: x[1], reverse=True)
+    return res
+
 def getProximityScores(arttxt, title_txts, comp):
     '''to be used to calculate a specific meassure using comp'''
     wordsa = map(lambda x: x.lower(), tools.splitToWords(arttxt))
+
+    global NAME
+    NAME = title_txts[0][0]
+
     res = []
     for name, text in title_txts:
         wordsb = map(lambda x: x.lower(), tools.splitToWords(text))
@@ -40,7 +72,7 @@ def getTFScore(wordsa, wordsb, dfd, N, fnD, params, occp=None):
     try:
         res = tools.getCosOfDictVectors(da, db)
     except:
-        print 'Except!'
+        #print 'Exception at', NAME
         res = 0
     return res
 

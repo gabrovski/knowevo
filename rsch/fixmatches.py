@@ -8,7 +8,12 @@ except:
 
 
 import serialize as ser
+import wiki
+import art_measure as a_m
+from params import PARAMS
+
 import bisect
+from abc import abstractmethod
 
 
 ###check if articles is to be flagged
@@ -62,11 +67,28 @@ def get_edition_matches(ed):
     for art in Article.objects.filter(art_ed=ed).iterator():
         print art.name    
 
+def loadOccupations():
+    name = '_data/occp'
+    res = set()
+    f = open(name)
+    for line in f:
+        res.add(line[:-1].lower())
+    f.close()
+    return res
+
+#wtfidf function
+def get_wt():
+    dfd = ser.loadDict('_data/15_dfd.pkl')
+    occp = loadOccupations()
+    fn = lambda x, y: a_m.getTFScore(x,y,dfd,81697, a_m.getWTFIDFd, PARAMS, occp=occp)
+    return fn
+
+
 ###candidate finding classes follow
 class Dealer:
     def __init__(self, exisiting_path, edition):
-        self.existing = self.load_existing_names(exisiting_path)
-        self.editon = edition
+        self.existing = self.load_existing_names(exisiting_path) #wikipedia articles already matched to
+        self.edition = edition
 
     @abstractmethod
     def load_existing_names(self, fname):
@@ -74,35 +96,34 @@ class Dealer:
     
     def format_name(self, name):
         fname = name
-        if self.ed == 3:
+        if self.edition == 3:
             parts = name.split('_')
             ln = len(parts)
-            fname = ' '.join([parts[ln-1]]+parts[:ln-1])
+            fname = ' '.join([parts[ln-1]]+parts[:ln-1]).lower()
 
-        return fname.lower()
+        return fname
 
     def get_candid_indeces(self, wname):
         wname = self.format_name(wname)
-        index = bisect.bisect_left(wname, self.exisiting)
-        return index, index+1
+        index = bisect.bisect_left(self.existing, wname)
+        return index-1, index
 
     def get_candids(self, wname):
         i1, i2 = self.get_candid_indeces(wname)
-        return self.existing[i1], self.existing[i2]
-
+        return [self.existing[i1], self.existing[i2]]
 
 ###wiki only candids
 class WikiDealer(Dealer):
     def __init__(self, exist_wiki_path):
-        super(Dealer,self).__init__(exist_wiki_path, 'wiki')
+        Dealer.__init__(self, exist_wiki_path, 'wiki')
 
     #Override
-    def load_exisiting_names(self, fname):
+    def load_existing_names(self, fname):
         res = []
 
         f = open(fname)
         for line in f:
-            res.append(line.strip())
+            res.append(line.strip().split('#')[2])
 
         res.sort()
         return res
@@ -110,17 +131,20 @@ class WikiDealer(Dealer):
 
 ###candid generation
 class CandidDealer(Dealer):
-    def __init__(self, exist_brit_path, edition, wikidealer):
-        super(Dealer,self).__init__(exist_brit_path, edition)
+    def __init__(self, exist_brit_path, edition, wikidealer, pickle_path):
+        Dealer.__init__(self,exist_brit_path, edition)
         self.wikidealer = wikidealer
+        self.arts = ser.loadDict(pickle_path)
 
     #Override
     def load_existing_names(self, fname):
         res = []
         
         f = open(fname)
+
         for line in f:
             res.append((line.strip().lower(), line[:-1]))
+        f.close()
 
         res.sort(key=lambda x: x[0])
 
@@ -129,29 +153,126 @@ class CandidDealer(Dealer):
 
     def get_brit_candids_from_wiki_candids(self, wname):
         res  = []
-        wcandids = self.wikidealer.get_candids(wname)
-        for wc in wcandids:
-            try:
-                art = Article.get(match_master__name=wc)
-                res.append(art.name)
-            except:
-                pass
-        return res
+        wis = self.wikidealer.get_candid_indeces(wname)
+        #print self.wikidealer.existing[wis[0]-1:wis[0]+1]
+
+        c = 0
+        for wi in wis:
+            while c < 2:
+                try:
+                    art = Article.objects.get(match_master__name=self.wikidealer.existing[wi], art_ed=self.edition)
+                    #print self.wikidealer.existing[wi]
+                    res.append(art.name)
+                    break
+                except:
+                    if c == 0: wi-=1
+                    else: wi+=1
+            c+=1
+        return map(str, res)
 
     #Override
     def get_candids(self, wname):
-        i1, i2 = super(Dealer,self).get_candid_indeces(wname)
-        return self.exisitng_tuples[i1][1], self.exisitng_tuples[i2][1]
+        i1, i2 = self.get_candid_indeces(wname)
+        if i2 > len(self.existing_tuples)-1:
+            i2 = len(self.existing_tuples)-1
+            i1 = i2 -1
+        return [self.existing_tuples[i1][1], self.existing_tuples[i2][1]]
 
     def get_all_candids(self, wname):
         bcandids = self.get_brit_candids_from_wiki_candids(wname) + self.get_candids(wname)
-        return bcandids
+        return map(str, bcandids)
 
-    def get_best_candidate(self, wname):
+    def get_best_candid(self, wname):
         wtext = wiki.getArticleText(wname)
-        candids = get_all_candids(wname)
-    
+        #candids = self.get_brit_candids_from_wiki_candids(wname)
+        candids = self.get_all_candids(wname)
+        indeces = []
+        
+        c = 0
+        for art in self.arts:
+            if str(art['name']) in candids:
+                indeces.insert(candids.index(art['name']),c)
+            c+=1
+
+        c = 0
+        title_texts = []
+        while c < 2:
+            for i in xrange(indeces[c], indeces[c+1]+1):
+                title_texts.append((self.arts[i]['name'], self.arts[i]['txt']))
+            c+=2
+            
+        occp = loadOccupations()
+
+        scandids = a_m.getCombinedScores(wtext, title_texts, FN, occp)
+        if scandids == []:
+            return None
+
+        return scandids[0]
+
+class SimpleCandidDealer(Dealer):
+    def __init__(self, pickle_path, edition):
+        Dealer.__init__(self, pickle_path, edition)
+        self.fn = get_wt()
+        self.occp = loadOccupations()
+
+    #override
+    def load_existing_names(self, name):
+        return ser.loadDict(name)
+
+    #override
+    def get_candids(self, wname):
+        last = wname.split('_of_')
+        if len(last) == 1:
+            last = wname.split(',_')
+
+        if len(last) > 1:
+            last = last[0].lower()
+        else:
+            last = wname.split('_')[::-1][0].lower()
+        res = []
+
+        while len(res) == 0:
+            res += filter(lambda x: last in x['name'].lower(), self.existing)
+            last = last[:len(last)-1]
+            #print last, 
+        return res
+
+    def get_best_candid(self, wname):
+        candids = self.get_candids(wname)
+        wtext = wiki.getArticleText(wname)
+        
+        title_texts = []
+        for art in candids:
+                title_texts.append((art['name'], art['txt']))
+
+        scandids = a_m.getCombinedScores(wtext, title_texts, self.fn, self.occp, vt=True)
+        if scandids == []:
+            return None
+
+        return scandids[0]
+            
+
+def get_all_corrections(path,ed,cdealer):
+    f = open(path)
+    f.readline()
+    for line in f:
+        name, edition = line.strip().split(' ')
+        if int(edition) == ed:
+            print name, cdealer.get_best_candid(name)
+            #print name, cdealer.get_candids(name)
+    f.close()
 
 if __name__=='__main__':
     #get_missing_articles('top200people')
-    get_edition_matches(3)
+    #get_edition_matches(3)
+
+    #wd = WikiDealer('_data/matchedarts.txt')
+    #cd = CandidDealer('_data/ed3arts', 3, wd, '_data/people_ed_3.pkl')
+    #cd.get_best_candid('William_Shakespeare')
+    #get_all_corrections('_data/tobefilledpeople', 3, cd)
+
+    cd3 = SimpleCandidDealer('_data/3_wiki_full.pkl', 3)
+    cd9 = SimpleCandidDealer('_data/9_wiki_full.pkl', 9)
+    cd11 = SimpleCandidDealer('_data/11_wiki_full.pkl', 11)
+    #print cd.get_candids('William_Shakespeare')
+    get_all_corrections('_data/tobefilledpeople', 3, cd)

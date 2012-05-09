@@ -29,7 +29,7 @@ class UrlCache:
                         #print 'rm'
                         self.cache_dict.pop(self.cache_list.pop(0))
 
-#UCH = UrlCache()
+UCH = UrlCache()
 #print 'UrlCache loaded'
 
 def getURL(url, retry=3, WIKI=True):

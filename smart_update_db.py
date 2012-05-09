@@ -286,7 +286,6 @@ def fill_gr_peers():
         print c
         c+=1
 
-    
 if __name__ == '__main__':
     #extract_people_graph('testgraph.txt')
     #get_top_people('_data/peoplepranked.txt')
