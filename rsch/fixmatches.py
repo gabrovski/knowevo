@@ -252,15 +252,29 @@ class SimpleCandidDealer(Dealer):
         return scandids[0]
             
 
-def get_all_corrections(path,ed,cdealer):
+def get_all_corrections(path,cdealers):
     f = open(path)
     f.readline()
+    
+    missing = dict()
+
     for line in f:
         name, edition = line.strip().split(' ')
-        if int(edition) == ed:
-            print name, cdealer.get_best_candid(name)
-            #print name, cdealer.get_candids(name)
+        if name not in missing:
+            missing[name] = []
+        missing[name].append(int(edition))
+
     f.close()
+
+    for name in missing.keys():
+        print name, '\t',
+        for cd in cdealers:
+            if cd.edition in missing[name]:
+                print cd.get_best_candid(name), '\t',
+            else:
+                print 'skip\t',
+        print ''
+
 
 if __name__=='__main__':
     #get_missing_articles('top200people')
@@ -275,4 +289,4 @@ if __name__=='__main__':
     cd9 = SimpleCandidDealer('_data/9_wiki_full.pkl', 9)
     cd11 = SimpleCandidDealer('_data/11_wiki_full.pkl', 11)
     #print cd.get_candids('William_Shakespeare')
-    get_all_corrections('_data/tobefilledpeople', 3, cd)
+    get_all_corrections('_data/tobefilledpeople', [cd3, cd9, cd11])
