@@ -112,7 +112,8 @@ public class VizsterApplet extends JApplet {
     public void init() {
         final String article_name = getParameter("article_name");
         final String serv_addr = getParameter("server_address");
-        PORT = Integer.parseInt("port");
+        System.out.println("blaa");
+        PORT = Integer.parseInt(getParameter("port"));
         if (serv_addr.equals("remote"))
             SERVER_ADDRESS = "hacktown.cs.dartmouth.edu";
         
