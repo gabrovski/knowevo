@@ -1,6 +1,6 @@
 # Django settings for knowevo project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 USER_LOCALHOST = False
