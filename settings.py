@@ -3,7 +3,7 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-USER_LOCALHOST = False
+USER_LOCALHOST = True
 if USER_LOCALHOST:
     homepath = 'gabrovski'
 else:
@@ -72,7 +72,10 @@ STATIC_ROOT = '/home/'+homepath+'/cs/knowevo/static/stroot/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+if USER_LOCALHOST:
+    STATIC_URL = '/knowevo/static/'
+else:
+    STATIC_URL = '/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
@@ -83,6 +86,7 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 STATICFILES_DIRS = (
     #'/home/sasho/cs/knowevo/static/js',
     '/home/'+homepath+'/cs/knowevo/static/js',
+    '/home/'+homepath+'/cs/knowevo/static/java',
 
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
