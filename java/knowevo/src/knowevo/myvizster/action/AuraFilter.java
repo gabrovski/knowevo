@@ -29,7 +29,7 @@ public class AuraFilter extends Filter {
     public void run(ItemRegistry registry, double frac) {
         FocusManager fman = registry.getFocusManager();
         FocusSet set = fman.getFocusSet(Vizster.SEARCH_KEY);
-        
+        System.out.println(set);
         synchronized ( set ) {
 	        Iterator iter = set.iterator();
 	        while ( iter.hasNext() ) {

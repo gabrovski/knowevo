@@ -197,11 +197,11 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
         // set up the JFrame
         //setJMenuBar(new VizsterMenuBar(this));
         
-        //initUI(); pack();
-        //setVisible(true);
+        initUI(); pack();
+        setVisible(true);
         
         // wait until graphics are available
-        //while ( display.getGraphics() == null );
+        while ( display.getGraphics() == null );
         
         // load the network data
         //loadGraph(path, null);
@@ -278,12 +278,12 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
         }
         
         // retrieve the initial profile and set as focus
-        edu.berkeley.guir.prefuse.graph.Node r = getInitialNode(startUID);
+       edu.berkeley.guir.prefuse.graph.Node r = getInitialNode(startUID);
         registry.getDefaultFocusSet().set(r);
-        registry.getFocusManager().getFocusSet(CLICK_KEY).set(r);
+//        registry.getFocusManager().getFocusSet(CLICK_KEY).set(r);
         //centerDisplay();
         
-        filter.runNow();
+        //filter.runNow();
         if ( animate ) {
             forces.runNow();
         } else {

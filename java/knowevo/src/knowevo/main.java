@@ -11,6 +11,7 @@ import knowevo.springbox.gephibox.GephiDBBuilder;
 import knowevo.springbox.gephibox.GraphServer;
 import knowevo.springbox.vizster.VizsterDrawer;
 import knowevo.springbox.vizster.VizsterRunner;
+import knowevo.springbox.vizster.VizsterServer;
 import vizster.Vizster;
 
 /**
@@ -22,15 +23,15 @@ public class main {
     private static final int PORT = 62541;
     private static final int MAX_DEPTH = 1;
     private static final String PNGPATH = "/home/gabrovski/cs/knowevo/static/pngs/";
-    private static final boolean PEERS_ONLY = true;
+    private static final boolean PEERS_ONLY = false;
     
     
     public static void main(String args[]) {
         System.out.println("starting");
         try {
             if (args.length == 0) {
-                //VizsterRunner.getGraphFor("Abraham Lincoln", 2, "tmp", PEERS_ONLY);
-                GephiDBBuilder.getGraphFor(new CooccurenceScoreMachine(), "Aleister Crowley", MAX_DEPTH, "test.svg", PEERS_ONLY);
+                VizsterRunner.getGraphFor("Abraham Lincoln", 2, "tmp", PEERS_ONLY);
+                //GephiDBBuilder.getGraphFor(new CooccurenceScoreMachine(), "Aleister Crowley", MAX_DEPTH, "test.svg", PEERS_ONLY);
             }
             
             else if (args[0].equals("ranker")) {
@@ -45,7 +46,8 @@ public class main {
             }
             else if (args[0].equals("server")) {
                 try {
-                    GraphServer.runServer(PORT, MAX_DEPTH, PNGPATH, PEERS_ONLY);
+                    //GraphServer.runServer(PORT, MAX_DEPTH, PNGPATH, PEERS_ONLY);
+                    VizsterServer.runServer(PORT, MAX_DEPTH, PEERS_ONLY);
                     //DBBuilder.getGraphFor("Alan Turing", 1, "test.png");
                     //testUndirectedGraph();
                 } catch (Exception e) {

@@ -23,6 +23,7 @@ import edu.berkeley.guir.prefuse.event.FocusListener;
 import edu.berkeley.guir.prefuse.focus.DefaultFocusSet;
 import edu.berkeley.guir.prefuse.focus.FocusSet;
 import edu.berkeley.guir.prefuse.graph.*;
+import edu.berkeley.guir.prefuse.graph.io.XMLGraphReader;
 import edu.berkeley.guir.prefuse.util.display.DisplayLib;
 import edu.berkeley.guir.prefusex.controls.DragControl;
 import edu.berkeley.guir.prefusex.controls.FocusControl;
@@ -39,6 +40,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -62,6 +66,9 @@ import prefusex.lucene.TextSearchPanel;
  * @author gabrovski
  */
 public class VizsterApplet extends JApplet {
+    
+    public static final String SERVER_ADDRESS = null;
+    public static final int PORT = 62541;
     
     public static final String DEFAULT_START_UID = "186297";
     public static final String ID_FIELD = "uid";
@@ -103,6 +110,8 @@ public class VizsterApplet extends JApplet {
     private int loginRetries = 5;
     
     public void init() {
+        final String article_name = getParameter("article_name");
+        //System.out.println(article_name);
         //super.init();
         // create the registry
         registry = new ItemRegistry(new DefaultGraph());
@@ -174,7 +183,7 @@ public class VizsterApplet extends JApplet {
         while ( display.getGraphics() == null );
         
         // load the network data
-        //loadGraph(path, null);
+        loadGraph(article_name);
     }
     
     public void initUI() {
@@ -218,42 +227,53 @@ public class VizsterApplet extends JApplet {
         getContentPane().add(split);
     } //
     
-    public void loadGraph(String datafile, String startUID) {
+    public void loadGraph(String article_name) {
+        Socket sd;
+        DataInputStream in;
+        DataOutputStream out;    
+        BufferedWriter bw;
+        
+        
         // stop any running actions
         forces.cancel();
         
-        // alter settings as needed
-        useDatabase = (datafile==null);
-        
         // load graph
         try {
-	        Graph g = null;
-	        if ( useDatabase ) {
-	            g = new DefaultGraph();
-	        } else {
-	            g = VizsterLib.loadGraph(datafile);
-	        }
-	        registry.setGraph(g);
+	    sd = new Socket(SERVER_ADDRESS, PORT);
+            
+            in = new DataInputStream (sd.getInputStream());
+            out = new DataOutputStream (sd.getOutputStream());
+            bw = new BufferedWriter(new OutputStreamWriter(out));
+            
+            bw.write(article_name+"\n");
+            bw.flush(); out.flush();
+            
+            XMLGraphReader gl = new XMLGraphReader();
+            Graph graph = gl.loadGraph(in);
+            
+            sd.close();bw.close();in.close();out.close();
+            registry.setGraph(graph);
+            
+            System.out.println("graph loaded "+graph.getNodeCount());
+
+            
         } catch ( Exception e ) {
             e.printStackTrace();
             VizsterLib.defaultError(this, "Couldn't load input graph.");
             return;
         }
         
-//        // attempt to login to database if necessary
-//        if ( useDatabase && !(loader.isConnected() ||
-//                VizsterLib.authenticate(this, loginRetries)) ) {
-//            //System.exit(0); // user canceled login so exit
-//            return;
-//        }
         
         // retrieve the initial profile and set as focus
-        edu.berkeley.guir.prefuse.graph.Node r = getInitialNode(startUID);
+        edu.berkeley.guir.prefuse.graph.Node r = getInitialNode(null);
         registry.getDefaultFocusSet().set(r);
-        registry.getFocusManager().getFocusSet(CLICK_KEY).set(r);
-        centerDisplay();
+        //System.out.println("focusm "+registry.getFocusManager().getFocusSet(CLICK_KEY));
+        //registry.getFocusManager().getFocusSet(CLICK_KEY).set(r);
+        //centerDisplay();
         
-        filter.runNow();
+        
+        
+        //filter.runNow();
         if ( animate ) {
             forces.runNow();
         } else {
@@ -262,30 +282,10 @@ public class VizsterApplet extends JApplet {
     } //
     
     public edu.berkeley.guir.prefuse.graph.Node getInitialNode(String uid) {
-        edu.berkeley.guir.prefuse.graph.Node r = null;
-        if ( useDatabase ) {
-	        try {
-	            r = loader.getProfileNode(uid);
-	        } catch ( SQLException e ) {
-	            e.printStackTrace();
-	            VizsterLib.profileLoadError(this, uid);
-	            System.exit(1);
-	        }
-	        // add initial node to the graph
-	        registry.getGraph().addNode(r);
-        } else {
-            if ( uid == null ) {
-                r = GraphLib.getMostConnectedNodes(registry.getGraph())[0]; 
-            } else {
-                edu.berkeley.guir.prefuse.graph.Node[] matches = GraphLib.search(registry.getGraph(), ID_FIELD, uid);
-                if ( matches.length > 0 ) {
-                    r = matches[0];
-                } else {
-                    r = GraphLib.getMostConnectedNodes(registry.getGraph())[0];
-                }
-            }
-        }
-        return r;
+//        edu.berkeley.guir.prefuse.graph.Node r = null;
+//        r = GraphLib.getMostConnectedNodes(registry.getGraph())[0]; 
+//        return r;
+        return (edu.berkeley.guir.prefuse.graph.Node)registry.getGraph().getNodes().next();
     } //
     
     public void centerDisplay() {

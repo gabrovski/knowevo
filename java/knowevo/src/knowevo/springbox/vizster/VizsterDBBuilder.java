@@ -23,23 +23,31 @@ import knowevo.springbox.*;
  */
 public class VizsterDBBuilder extends DBBuilder {
     
-    private String out;
     private BufferedWriter bw;
     
-    public VizsterDBBuilder(ScoreMachine sm, String o) {
+    public VizsterDBBuilder(ScoreMachine sm, String out) {
         super(sm);
-        out = o;
+        
+        try {
+            bw = new BufferedWriter(new FileWriter(out));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public VizsterDBBuilder(ScoreMachine sm) {
+        super(sm);
     }
     
     @Override
     public void convertGraph() {
         try {
-            bw = new BufferedWriter(new FileWriter(out));
             bw.write("<graph directed=\"1\">\n");
             super.convertGraph();
             bw.write("</graph>");
             
-            bw.close();
+            this.close();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -73,5 +81,22 @@ public class VizsterDBBuilder extends DBBuilder {
         catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+    
+    public void close() {
+        try {
+         bw.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public BufferedWriter getBw() {
+        return bw;
+    }
+    
+    public void setBw(BufferedWriter b) {
+        bw = b;
     }
 }
