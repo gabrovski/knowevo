@@ -30,6 +30,8 @@ public class AuraFilter extends Filter {
         FocusManager fman = registry.getFocusManager();
         FocusSet set = fman.getFocusSet(Vizster.SEARCH_KEY);
         System.out.println(set);
+        
+        if (set != null) {
         synchronized ( set ) {
 	        Iterator iter = set.iterator();
 	        while ( iter.hasNext() ) {
@@ -41,7 +43,7 @@ public class AuraFilter extends Filter {
 	            }
 	        }
         }
-        
+        }
         // garbage collect
         super.run(registry, frac);
     } //

@@ -196,13 +196,13 @@ public class VizsterApplet extends JApplet {
             } //
         });
         
-        JScrollPane scroller = new JScrollPane(profilePanel);
-        scroller.setHorizontalScrollBarPolicy(
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scroller.setVerticalScrollBarPolicy(
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        Dimension pd = profilePanel.getPreferredSize();
-        scroller.setPreferredSize(new Dimension(300,pd.height));
+//        JScrollPane scroller = new JScrollPane(profilePanel);
+//        scroller.setHorizontalScrollBarPolicy(
+//                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//        scroller.setVerticalScrollBarPolicy(
+//                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+//        Dimension pd = profilePanel.getPreferredSize();
+//        scroller.setPreferredSize(new Dimension(300,pd.height));
         
         //searchPanel.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         communityPanel.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
@@ -219,7 +219,7 @@ public class VizsterApplet extends JApplet {
         main.add(container, BorderLayout.SOUTH);
         
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                false, main, scroller);
+                false, main, null);
         split.setDividerSize(10);
         split.setResizeWeight(1.0);
         split.setOneTouchExpandable(true);
@@ -282,10 +282,10 @@ public class VizsterApplet extends JApplet {
     } //
     
     public edu.berkeley.guir.prefuse.graph.Node getInitialNode(String uid) {
-//        edu.berkeley.guir.prefuse.graph.Node r = null;
-//        r = GraphLib.getMostConnectedNodes(registry.getGraph())[0]; 
-//        return r;
-        return (edu.berkeley.guir.prefuse.graph.Node)registry.getGraph().getNodes().next();
+        edu.berkeley.guir.prefuse.graph.Node r = null;
+        r = GraphLib.getMostConnectedNodes(registry.getGraph())[0]; 
+        return r;
+        //return (edu.berkeley.guir.prefuse.graph.Node)registry.getGraph().getNodes().next();
     } //
     
     public void centerDisplay() {

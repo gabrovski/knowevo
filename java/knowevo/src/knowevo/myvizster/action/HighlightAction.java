@@ -68,7 +68,7 @@ public class HighlightAction extends AbstractAction {
             }
         }
         
-        boolean restore = (n==null && search.size()==0);
+        boolean restore = search == null;//(n==null && search.size()==0);
         int defaultValue = (restore || search.size()==0 ? 0 : -1);
         Iterator iter = registry.getNodeItems();
         while ( iter.hasNext() ) {

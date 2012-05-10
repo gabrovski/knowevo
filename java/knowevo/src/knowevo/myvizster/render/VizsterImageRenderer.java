@@ -65,7 +65,7 @@ public class VizsterImageRenderer extends TextImageItemRenderer {
 //            } else {
                 return RENDER_TYPE_DRAW_AND_FILL;
 //            }
-        } else if ( (fs || cs) && searchSet.size() > 0 ) {
+        } else if ( (fs || cs) && searchSet != null && searchSet.size() > 0 ) {
             return RENDER_TYPE_DRAW;
         } else if ( fs || cs ) {
             return RENDER_TYPE_DRAW_AND_FILL;
