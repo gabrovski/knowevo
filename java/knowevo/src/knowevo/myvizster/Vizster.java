@@ -216,6 +216,7 @@ public class Vizster extends JFrame {
         // initialize user interface components
         // set up the primary display
         display = new VizsterDisplay(this);
+        
         display.setSize(700,650);
         // create the panel which shows friendster profile data
         profilePanel = new ProfilePanel(this);
