@@ -57,21 +57,21 @@ public class VizsterImageRenderer extends TextImageItemRenderer {
         boolean ms = mouseSet.contains(entity);
         //boolean ss = searchSet.contains(entity);
         
-        if ( ms || item.isHighlighted() ) {
-//            Boolean val = (Boolean)item.getVizAttribute("border-off");
-//            boolean borderOff = (val != null && val.booleanValue());
-//            if ( borderOff ) {
-//                return RENDER_TYPE_FILL;
-//            } else {
-                return RENDER_TYPE_DRAW_AND_FILL;
-//            }
-        } else if ( (fs || cs) && searchSet.size() > 0 ) {
-            return RENDER_TYPE_DRAW;
-        } else if ( fs || cs ) {
-            return RENDER_TYPE_DRAW_AND_FILL;
-        } else if ( item.isHighlighted() )
-            return RENDER_TYPE_FILL;
-        else
+//        if ( ms || item.isHighlighted() ) {
+////            Boolean val = (Boolean)item.getVizAttribute("border-off");
+////            boolean borderOff = (val != null && val.booleanValue());
+////            if ( borderOff ) {
+////                return RENDER_TYPE_FILL;
+////            } else {
+//                return RENDER_TYPE_DRAW_AND_FILL;
+////            }
+//        } else if ( (fs || cs) && searchSet.size() > 0 ) {
+//            return RENDER_TYPE_DRAW;
+//        } else if ( fs || cs ) {
+//            return RENDER_TYPE_DRAW_AND_FILL;
+//        } else if ( item.isHighlighted() )
+//            return RENDER_TYPE_FILL;
+//        else
             return RENDER_TYPE_NONE;
     } //
     

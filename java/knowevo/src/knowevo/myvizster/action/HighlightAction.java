@@ -68,6 +68,7 @@ public class HighlightAction extends AbstractAction {
             }
         }
         
+        if (search != null){
         boolean restore = (n==null && search.size()==0);
         int defaultValue = (restore || search.size()==0 ? 0 : -1);
         Iterator iter = registry.getNodeItems();
@@ -168,6 +169,7 @@ public class HighlightAction extends AbstractAction {
             ArrayList tmp = queue;
             queue = queue2;
             queue2 = tmp;
+        }
         }
     } //
 

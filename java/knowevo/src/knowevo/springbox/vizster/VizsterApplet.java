@@ -154,7 +154,7 @@ public class VizsterApplet extends JApplet {
         display.addControlListener(new HighlightControl(highlight, MOUSE_KEY));
         display.addControlListener(new MyHighlightHoldControl(highlight,
                 HIGHLIGHT_KEY, this, HighlightHoldControl.CLICK_AND_HOLD_MODE));
-        //display.addControlListener(new HighlightFreezeControl(highlight, HIGHLIGHT_KEY));
+        display.addControlListener(new HighlightFreezeControl(highlight, HIGHLIGHT_KEY));
         display.addControlListener(new MyLinkageControl(this));
         display.addControlListener(new DragControl(redraw, true));
         display.addControlListener(new PanControl(true));
@@ -282,10 +282,10 @@ public class VizsterApplet extends JApplet {
     } //
     
     public edu.berkeley.guir.prefuse.graph.Node getInitialNode(String uid) {
-//        edu.berkeley.guir.prefuse.graph.Node r = null;
-//        r = GraphLib.getMostConnectedNodes(registry.getGraph())[0]; 
-//        return r;
-        return (edu.berkeley.guir.prefuse.graph.Node)registry.getGraph().getNodes().next();
+        edu.berkeley.guir.prefuse.graph.Node r = null;
+        r = GraphLib.getMostConnectedNodes(registry.getGraph())[0]; 
+        return r;
+        //return (edu.berkeley.guir.prefuse.graph.Node)registry.getGraph().getNodes().next();
     } //
     
     public void centerDisplay() {

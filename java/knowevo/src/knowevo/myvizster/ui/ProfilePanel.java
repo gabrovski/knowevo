@@ -76,13 +76,13 @@ public class ProfilePanel extends JPanel {
         initUI();
         
         FocusManager fmanager = vizster.getItemRegistry().getFocusManager();
-        searchSet = (TextSearchFocusSet)fmanager.getFocusSet(Vizster.SEARCH_KEY);
-        searchSet.addFocusListener(new FocusListener() {
-            public void focusChanged(FocusEvent e) {
-                updateTextHighlight();
-            } //
-        });
-        searcher = searchSet.getLuceneSearcher();
+//        searchSet = (TextSearchFocusSet)fmanager.getFocusSet(Vizster.SEARCH_KEY);
+//        searchSet.addFocusListener(new FocusListener() {
+//            public void focusChanged(FocusEvent e) {
+//                updateTextHighlight();
+//            } //
+//        });
+//        searcher = searchSet.getLuceneSearcher();
     } //
     
     private void initUI() {

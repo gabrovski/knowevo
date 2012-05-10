@@ -125,7 +125,7 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
     private VizsterDisplay display;
     private ProfilePanel profilePanel;
     private JPanel container;
-    private TextSearchPanel searchPanel;
+    //private TextSearchPanel searchPanel;
     private CommunityPanel communityPanel;
     
     // number of login attempts before application exits
@@ -151,8 +151,8 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
         fmanager.putFocusSet(MOUSE_KEY, new DefaultFocusSet());
         fmanager.putFocusSet(HIGHLIGHT_KEY, new DefaultFocusSet());
         fmanager.putFocusSet(COMMUNITY_KEY, new CommunitySet(true));
-        final TextSearchFocusSet searchSet = new TextSearchFocusSet();
-        fmanager.putFocusSet(SEARCH_KEY, searchSet);
+//        final TextSearchFocusSet searchSet = new TextSearchFocusSet();
+//        fmanager.putFocusSet(SEARCH_KEY, searchSet);
         
         // initialize user interface components
         // set up the primary display
@@ -161,8 +161,8 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
         // create the panel which shows friendster profile data
         profilePanel = new ProfilePanel(this);
         // create the search panel
-        searchPanel = new TextSearchPanel(VizsterDBLoader.ALL_COLUMNS,
-                registry, searchSet, fmanager.getFocusSet(CLICK_KEY));
+//        searchPanel = new TextSearchPanel(VizsterDBLoader.ALL_COLUMNS,
+//                registry, searchSet, fmanager.getFocusSet(CLICK_KEY));
         // create the community explorer panel
         communityPanel = new CommunityPanel(this);
         
@@ -225,7 +225,7 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
         Dimension pd = profilePanel.getPreferredSize();
         scroller.setPreferredSize(new Dimension(300,pd.height));
         
-        searchPanel.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+        //searchPanel.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         communityPanel.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         
         container = new JPanel();
@@ -293,28 +293,29 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
     
     public edu.berkeley.guir.prefuse.graph.Node getInitialNode(String uid) {
         edu.berkeley.guir.prefuse.graph.Node r = null;
-        if ( useDatabase ) {
-	        try {
-	            r = loader.getProfileNode(uid);
-	        } catch ( SQLException e ) {
-	            e.printStackTrace();
-	            VizsterLib.profileLoadError(this, uid);
-	            System.exit(1);
-	        }
-	        // add initial node to the graph
-	        registry.getGraph().addNode(r);
-        } else {
-            if ( uid == null ) {
-                r = GraphLib.getMostConnectedNodes(registry.getGraph())[0]; 
-            } else {
-                edu.berkeley.guir.prefuse.graph.Node[] matches = GraphLib.search(registry.getGraph(), ID_FIELD, uid);
-                if ( matches.length > 0 ) {
-                    r = matches[0];
-                } else {
+//        if ( useDatabase ) {
+//	        try {
+//	            r = loader.getProfileNode(uid);
+//	        } catch ( SQLException e ) {
+//	            e.printStackTrace();
+//	            VizsterLib.profileLoadError(this, uid);
+//	            System.exit(1);
+//	        }
+//	        // add initial node to the graph
+//	        registry.getGraph().addNode(r);
+//        } else {
+//            if ( uid == null ) {
+//                r = GraphLib.getMostConnectedNodes(registry.getGraph())[0]; 
+//            } else {
+//                edu.berkeley.guir.prefuse.graph.Node[] matches = GraphLib.search(registry.getGraph(), ID_FIELD, uid);
+//                if ( matches.length > 0 ) {
+//                    r = matches[0];
+//                } else {
                     r = GraphLib.getMostConnectedNodes(registry.getGraph())[0];
-                }
-            }
-        }
+//                }
+//            }
+//        }
+        //r = (edu.berkeley.guir.prefuse.graph.Node)registry.getGraph().getNodes().next();
         return r;
     } //
     
@@ -497,12 +498,12 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
                     centerDisplay(addedItem.getLocation()); // center display on the new focus
                 }
                     
-                TimerTask task = new TimerTask() {
-                    public void run() {
-                        searchPanel.searchUpdate();
-                    } //
-                };
-                VizsterLib.getTimer().schedule(task,500);
+//                TimerTask task = new TimerTask() {
+//                    public void run() {
+//                        searchPanel.searchUpdate();
+//                    } //
+//                };
+//                VizsterLib.getTimer().schedule(task,500);
             } //
         });
         
@@ -520,13 +521,13 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
             } //
         });
         
-        FocusSet searcher = fmanager.getFocusSet(SEARCH_KEY);
-        searcher.addFocusListener(new FocusListener() {
-            public void focusChanged(FocusEvent e) {
-                if (e.getAddedFoci().length>0 || e.getRemovedFoci().length>0)
-                    aura.runNow();
-            } //
-        });
+//        FocusSet searcher = fmanager.getFocusSet(SEARCH_KEY);
+//        searcher.addFocusListener(new FocusListener() {
+//            public void focusChanged(FocusEvent e) {
+//                if (e.getAddedFoci().length>0 || e.getRemovedFoci().length>0)
+//                    aura.runNow();
+//            } //
+//        });
     } //
     
      public int getLoginRetries() {
@@ -560,8 +561,8 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
         this.setForeground(fg);
         display.setBackground(bg);
         display.setForeground(fg);
-        searchPanel.setBackground(bg);
-        searchPanel.setForeground(fg);
+        //searchPanel.setBackground(bg);
+        //searchPanel.setForeground(fg);
         communityPanel.setBackground(bg);
         communityPanel.setForeground(fg);
         container.setBackground(bg);
@@ -648,9 +649,9 @@ public class VizsterDrawer extends knowevo.myvizster.Vizster {
         }
     } //
     
-    public void search(String query) {
-        searchPanel.setQuery(query);
-    } //
+//    public void search(String query) {
+//        searchPanel.setQuery(query);
+//    } //
     
     public void setShowImages(boolean s) {
         ((VizsterRendererFactory)registry.getRendererFactory()).setDrawImages(s);
