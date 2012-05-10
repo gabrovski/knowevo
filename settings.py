@@ -1,9 +1,9 @@
 # Django settings for knowevo project.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-USER_LOCALHOST = True
+USER_LOCALHOST = False
 if USER_LOCALHOST:
     homepath = 'gabrovski'
 else:
@@ -75,7 +75,7 @@ STATIC_ROOT = '/home/'+homepath+'/cs/knowevo/static/stroot/'
 if USER_LOCALHOST:
     STATIC_URL = '/knowevo/static/'
 else:
-    STATIC_URL = '/static/'
+    STATIC_URL = '/knowevo/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
