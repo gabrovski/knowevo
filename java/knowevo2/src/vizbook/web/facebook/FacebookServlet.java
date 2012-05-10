@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.google.code.facebookapi.FacebookException;
-import com.google.code.facebookapi.FacebookJsonRestClient;
+//import com.google.code.facebookapi.FacebookException;
+//import com.google.code.facebookapi.FacebookJsonRestClient;
 
 @SuppressWarnings("serial")
 @WebServlet(
@@ -24,40 +24,40 @@ public class FacebookServlet extends HttpServlet {
 	private final static String TASK_NAME = VizsterXMLWriter.class.getSimpleName();
 	
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       HttpSession session = request.getSession();
-       
-       String apiKey = getServletConfig().getInitParameter("API_KEY"), 
-       	      secretKey = getServletConfig().getInitParameter("SECRET_KEY"),
-       	      sessionKey = (String)session.getAttribute("restSearchAppSession"), 
-       	      authToken = request.getParameter("auth_token");
-   
-       FacebookJsonRestClient client = null;
-       if (sessionKey != null) {    	   
-    	   client = new FacebookJsonRestClient(apiKey, secretKey, sessionKey);    	   
-       } else if (authToken != null) {    	   
-    	   client = new FacebookJsonRestClient(apiKey, secretKey);         
-           try {
-        	   sessionKey = client.auth_getSession(authToken);
-           } catch (FacebookException e) {			
-        	   e.printStackTrace();
-           }
-           session.setAttribute("restSearchAppSession", sessionKey);         
-       } else {
-    	   //TODO: make this URL a property of the data import task
-    	   response.sendRedirect("http://www.facebook.com/login.php?api_key="+apiKey + 
-    			   "&req_perms=friends_about_me,friends_activities,friends_birthday,friends_education_history,friends_hometown,friends_interests,friends_location,friends_relationships,friends_relationship_details,friends_status,friends_website");
-    	   return;
-       }
-       
-       if(session.getAttribute(TASK_NAME) == null) {
-    	   //TODO: Make taskname, output filename a property of the task    	   
-    	   //TODO: Create FDIT with reflection or move Facebook auth stuff to a base servlet?
-    	   FacebookDataImportTask task = new VizsterXMLWriter(client, TASK_NAME, "xml");
-    	   session.setAttribute(TASK_NAME, task);
-    	   task.start();
-   		}
-       
-       request.getRequestDispatcher("Facebook/FacebookDataViewer.jsp").forward(request, response);       
+//       HttpSession session = request.getSession();
+//       
+//       String apiKey = getServletConfig().getInitParameter("API_KEY"), 
+//       	      secretKey = getServletConfig().getInitParameter("SECRET_KEY"),
+//       	      sessionKey = (String)session.getAttribute("restSearchAppSession"), 
+//       	      authToken = request.getParameter("auth_token");
+//   
+//       FacebookJsonRestClient client = null;
+//       if (sessionKey != null) {    	   
+//    	   client = new FacebookJsonRestClient(apiKey, secretKey, sessionKey);    	   
+//       } else if (authToken != null) {    	   
+//    	   client = new FacebookJsonRestClient(apiKey, secretKey);         
+//           try {
+//        	   sessionKey = client.auth_getSession(authToken);
+//           } catch (FacebookException e) {			
+//        	   e.printStackTrace();
+//           }
+//           session.setAttribute("restSearchAppSession", sessionKey);         
+//       } else {
+//    	   //TODO: make this URL a property of the data import task
+//    	   response.sendRedirect("http://www.facebook.com/login.php?api_key="+apiKey + 
+//    			   "&req_perms=friends_about_me,friends_activities,friends_birthday,friends_education_history,friends_hometown,friends_interests,friends_location,friends_relationships,friends_relationship_details,friends_status,friends_website");
+//    	   return;
+//       }
+//       
+//       if(session.getAttribute(TASK_NAME) == null) {
+//    	   //TODO: Make taskname, output filename a property of the task    	   
+//    	   //TODO: Create FDIT with reflection or move Facebook auth stuff to a base servlet?
+//    	   FacebookDataImportTask task = new VizsterXMLWriter(client, TASK_NAME, "xml");
+//    	   session.setAttribute(TASK_NAME, task);
+//    	   task.start();
+//   		}
+//       
+//       request.getRequestDispatcher("Facebook/FacebookDataViewer.jsp").forward(request, response);       
 	}    
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
