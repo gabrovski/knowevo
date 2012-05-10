@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar java/lib/knowevo.jar server
+nohup java -jar java/lib/knowevo.jar server > jserverlog &
