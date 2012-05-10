@@ -64,6 +64,24 @@ import prefusex.lucene.TextSearchPanel;
  */
 public class VizsterApplet extends JApplet {
     
+    JFrame vizster = Vizster.main();
+
+	@Override
+	public void init() {		
+		super.init();
+	}
+
+	@Override
+	public void start() {		
+		super.start();		
+		vizster.setVisible(true);
+	}
+
+	@Override
+	public void stop() {		
+		super.stop();
+	}
+    
 //    public static final String DEFAULT_START_UID = "186297";
 //    public static final String ID_FIELD = "uid";
 //    

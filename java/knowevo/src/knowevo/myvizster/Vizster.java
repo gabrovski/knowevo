@@ -135,6 +135,13 @@ public class Vizster extends JFrame {
     // number of login attempts before application exits
     private int loginRetries = 5;
     
+     public static Vizster main() {
+    	VizsterLib.setLookAndFeel();
+        //String startUID = argv.length > 0 ? argv[0] : DEFAULT_START_UID;
+        String startUID = DEFAULT_START_UID;
+        return new Vizster(startUID, null);
+    }
+    
     /**
      * Launches the Vizster application
      * @param argv this app takes one optional argument - a friendster user id
