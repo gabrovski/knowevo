@@ -6,6 +6,7 @@ from django.http import HttpResponse
 
 from incunabula.models import Article as IArticle
 from incunabula.views import get_master_alist
+import settings
 
 import gravebook.graphConnect as gcon
 from spring.timeser import prep_time_series_chart
@@ -100,12 +101,27 @@ def article_detail(request, article_name):
                               RequestContext(request))
 
 def load_spring_box(request, article_name):
-    #blocking
     print 'loading sbox'
-    gcon.sendName(article_name)
-    print 'laoded sbox'
-    return HttpResponse(
-        '<embed src="/knowevo/media/'+article_name+'.svg" type="image/svg+xml" />')
+    local = 'local'
+    if not settings.USER_LOCALHOST:
+        local = 'remote'
+    return HttpResponse(''+
+                        '<applet\n'+
+                        'code="knowevo.springbox.vizster.VizsterApplet"\n'+
+
+                        'archive = "/knowevo/static/knowevo.jar,'+
+                        '/knowevo/static/prefuse.jar,'+
+                        '/knowevo/static/gephi-toolkit.jar,'+
+                        '/knowevo/static/vizster.jar"\n'+
+
+                        'width = 900\n'+
+                        'height = 659>\n'+
+                        '<param name="article_name" value="'+article_name+'" />\n'+
+                        '<param name="server_address" value="'+local+'" />\n'+
+                        '<param name="port" value="62541" />\n'+
+                        '</applet>'
+                        )
+
 
 def category_detail(request, category_name):
     cat = Category.objects.get(name=category_name)

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-nohup java -jar java/lib/knowevo.jar server > jserverlog &
+java -cp "java/lib/*" knowevo.main server 62541 2 true;

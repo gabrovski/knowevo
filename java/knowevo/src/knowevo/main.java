@@ -22,7 +22,7 @@ public class main {
     
     private static final int PORT = 62541;
     private static final int MAX_DEPTH = 1;
-    private static final String PNGPATH = "/home/gabrovski/cs/knowevo/static/pngs/";
+    //private static final String PNGPATH = "/home/gabrovski/cs/knowevo/static/pngs/";
     private static final boolean PEERS_ONLY = false;
     
     
@@ -45,9 +45,16 @@ public class main {
                 g.saveGraph(args[2]);
             }
             else if (args[0].equals("server")) {
+                int port = Integer.parseInt(args[1]);
+                int max_depth = Integer.parseInt(args[2]);
+                boolean peers_only = false;
+                if (args[3].equals("true"))
+                    peers_only = true;
+                        
+                System.out.println("server at "+port+" wiht depth "+max_depth+ " with peers only = "+peers_only);
                 try {
                     //GraphServer.runServer(PORT, MAX_DEPTH, PNGPATH, PEERS_ONLY);
-                    VizsterServer.runServer(PORT, MAX_DEPTH, PEERS_ONLY);
+                    VizsterServer.runServer(port, max_depth, peers_only);
                     //DBBuilder.getGraphFor("Alan Turing", 1, "test.png");
                     //testUndirectedGraph();
                 } catch (Exception e) {

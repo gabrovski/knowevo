@@ -68,7 +68,7 @@ import prefusex.lucene.TextSearchPanel;
 public class VizsterApplet extends JApplet {
     
     private static String SERVER_ADDRESS = null;
-    public static final int PORT = 62541;
+    private static int PORT = 62541;
     
     public static final String DEFAULT_START_UID = "186297";
     public static final String ID_FIELD = "uid";
@@ -112,6 +112,8 @@ public class VizsterApplet extends JApplet {
     public void init() {
         final String article_name = getParameter("article_name");
         final String serv_addr = getParameter("server_address");
+        System.out.println("blaa");
+        PORT = Integer.parseInt(getParameter("port"));
         if (serv_addr.equals("remote"))
             SERVER_ADDRESS = "hacktown.cs.dartmouth.edu";
         
