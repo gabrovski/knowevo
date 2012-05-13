@@ -25,6 +25,8 @@ class Article(models.Model):
     other_links = models.ManyToManyField(Other)
 
     linked_by = models.ManyToManyField('self')
+    
+    vscore = models.FloatField(default=0.0)
         
     def __unicode__(self):
         return self.name
