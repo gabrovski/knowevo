@@ -88,7 +88,7 @@ def article_detail(request, article_name):
     res, res_matches = get_master_alist(
         '_'.join(article_name.split(' ')))
     num = len(res_matches)
-    if num > 1:
+    if True or num > 1:
         chart = prep_time_series_chart(res_matches)
 
 
