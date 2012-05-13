@@ -286,6 +286,46 @@ def fill_gr_peers():
         print c, art.name
         c+=1
 
+def update_gr_vscores(path):
+    f = open(path)
+    for line in f:
+        name, score = line.strip().split('\t')
+        try:
+            art = Article.objects.get(name=name.strip())
+            art.vscore = float(score)
+            art.save()
+            
+            print art.name
+        except Article.DoesNotExist:
+            continue
+        except:
+            traceback.print_exc(file=sys.stdout)            
+            pass
+
+    f.close()
+
+def add_inc_wiki_articles():
+    for art in IArticle.objects.iterator():
+        try:
+            master = art.match_master
+            wa = Article.objects.get(name=master.name.replace('_', ' '))
+            if art.name == wa.name:
+                continue
+
+            try:
+                bla = IArticle.objects.filter(name=wa.name+'waw', art_ed=1000)
+                if bla.count() > 0:
+                    continue
+            except:
+                pass
+        
+            a = IArticle(name=wa.name, art_id=wa.wid, art_ed=1000, text='', prank=0.0, 
+                         volume_score=wa.vscore, match_master=master, match_score=1.0)
+            a.save()
+            print a.name, 'incwiki'
+        except:
+            pass
+
 if __name__ == '__main__':
     #extract_people_graph('testgraph.txt')
     #get_top_people('_data/peoplepranked.txt')
@@ -297,7 +337,9 @@ if __name__ == '__main__':
     #fill_gr_peers()
     
 
-    update_inc_volume_score()
+    #update_inc_volume_score()
+    #update_gr_vscores('_data/sizelog')
+    add_inc_wiki_articles()
 
     '''
     revw = load('_data/sample_revw.pkl')
