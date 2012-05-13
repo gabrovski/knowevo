@@ -4,6 +4,7 @@ from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
 from spring.timeser import prep_time_series_chart
+from gravebook.models import Article as GArticle
 
 import re
 
