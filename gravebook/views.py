@@ -16,7 +16,9 @@ import re, md5, math, urllib2
 
 def index(request):
     articles = []
+    searched = False
     if request.method == 'POST':
+        searched = True
         title_words = filter(lambda x: len(x) > 0, 
                              request.POST['title_inp'].split(' '))
         if len(title_words) > 0:
@@ -25,7 +27,8 @@ def index(request):
                 articles = articles.filter(name__icontains=k)
     
     return render_to_response('gravebook/index.html',
-                              {'articles':articles},
+                              {'articles':articles, 
+                               'searched':searched},
                               RequestContext(request))
 
 def prep_img_url(art):
@@ -38,19 +41,24 @@ def prep_img_url(art):
 
         base = 'http://upload.wikimedia.org/wikipedia/'
         url = base+'commons/'+img
+        headers={'User-Agent':"Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11"}
         try:
-            f = urllib2.urlopen(url)
+            r = urllib2.Request(url, headers=headers)
+            f = urllib2.urlopen(r)
             f.close()
             return url
         except:
+            #print url
             pass
 
         url = base+'en/'+img
         try:
-            f = urllib2.urlopen(url)
+            r = urllib2.Request(url, headers=headers)
+            f = urllib2.urlopen(r)
             f.close()
             return url
         except:
+            #print url
             pass
 
 
