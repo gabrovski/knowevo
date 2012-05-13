@@ -6,15 +6,20 @@
     <script src="/knowevo/static/grave.js"></script>
   </head>
   <body>
-    <form name="search_form" action="" method="post" class="grave_search">
-      {% csrf_token %}
-      <input type="text" id="title_inp" name="title_inp" class="grave_search_inp" 
-	     value="Person of interest" onfocus="inputFocus(this)" onblur="inputBlur(this)"/>
-    </form>
-
-    {% if searched and articles|length == 0 %}
-    <p>Sorry, no results found for the provided parameters</p>
-    {% endif %}
+    <div class="header">
+      <span class="header_title">GRAVEBOOK</span>
+      <form name="search_form" action="" method="post" class="grave_search">
+	{% csrf_token %}
+	<input type="text" id="title_inp" name="title_inp" class="grave_search_inp" 
+	       value="Person of interest" onfocus="inputFocus(this)" onblur="inputBlur(this)"/>
+      </form>
+      
+      {% if searched and articles|length == 0 %}
+      <p>Sorry, no results found for the provided parameters</p>
+      {% endif %}
+    </div>
+    
+    <div id="res_container"></div>
 
     {% if articles %} 
     <table id="res_table" name="res_table" class="grave_table">
