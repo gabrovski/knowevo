@@ -11,23 +11,22 @@
     {% endif %}
   </head>
   <body>
-
-    <h2 class="title">{{ article.name }} ({{ article.birth }} - {{ article.death }})</h2>
-
-    {% if image %}
-    <a href="http://en.wikipedia.org/wiki/{{ article.name }}">
-      <img src="{{ image }}"
-	   width="400"/>
-    </a>
-    {% endif %}
+    <div class="front_page">
+      <h2 class="title">{{ article.name }} ({{ article.birth }} - {{ article.death }})</h2>
+      
+      <div class="front_content">
+	<a href="http://en.wikipedia.org/wiki/{{ article.name }}">
+	  <img src="{{ image }}" class="front_image" alt="Image could not be loaded from Wikipedia"/>
+	</a>
+	<div id="evo_container"></div>
+      </div>
+    </div>
 
     <div id="spring_container"> </div>
 
     <script>
       //$("#spring_container").load("_spring_box");
     </script>
-    
-    <div id="evo_container"></div>
     
     <div class="people_div">
       <span class="people">Peers</span>
