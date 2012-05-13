@@ -21,19 +21,11 @@ def get_master_alist(master, keywords=[]):
     kword_match = (len(keywords) == 0)
     pats = [re.compile(keyword+'(?i)') for keyword in keywords]        
 
+    #not used
     for kword in keywords:
         matches = matches.filter(text__icontains=kword)
 
-    for art in matches:
-        
-        '''#filter by anding keywords
-        if not kword_match:
-            curr = True
-            for pat in pats:
-                curr = curr and (pat.search(art.text)!=None)
-            kword_match = kword_match or curr
-        '''
-
+    for art in matches:        
         if art.art_ed == 3:  res_m[0] = art
         if art.art_ed == 9:  res_m[1] = art
         if art.art_ed == 11: res_m[2] = art
@@ -46,8 +38,6 @@ def get_master_alist(master, keywords=[]):
 
 def index(request):
     if request.method == 'POST':
-        keywords = filter(lambda x: len(x) > 0, 
-                          str(request.POST['keyword_inp']).split(' '))
         master_words = filter(lambda x: len(x) > 0, 
                               str(request.POST['title_inp']).split(' '))
 
@@ -64,7 +54,7 @@ def index(request):
 
         res = []
         for master in masters:
-            res_m, res_matches = get_master_alist(master, keywords)
+            res_m, res_matches = get_master_alist(master)
             num = len(res_matches)
             if res_m != None: res.append((master.name, res_m, num))
         
