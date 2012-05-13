@@ -4,6 +4,27 @@ body {
     font-size:1em;
 }
 
+.front_page {
+    text-align:center;
+}
+
+div.front_content {
+    margin: 10 auto 10 auto;
+    width: 1120px;
+}
+
+img.front_image {
+    width:300px;
+    margin:5px;
+    float:left;
+}
+
+#evo_container {
+    width:800px;
+    margin:5px;
+    float:left;
+}
+
 .grave_search {
     margin-left:auto;
     margin-right:auto;
@@ -64,21 +85,21 @@ span.people {
     width:100%;
 }
 
-a.people_link {
+a {
     text-decoration:none;
     color:#000;
     background-color:#eee ;
     font-weight:400;
 }
-a.people_link:visited {
+a:visited {
     text-decoration:none;
 }
 
-a.people_link:hover {
+a:hover {
     text-decoration:none;
     background-color:#ddd;
 }
-a.people_link:active {
+a:active {
     text-decoration:none;
     background-color:#ddd;
 }
