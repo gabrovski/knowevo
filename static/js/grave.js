@@ -20,11 +20,11 @@ function searchSubmit(form) {
     try {
     $.ajax({  
 	type: "POST",  
-	url: "index/",  
+	url: "",  
 	data: dataString,  
 	headers: {'X-CSRFToken': csrf_token},
-	success: function() {  
-	    $('#res_container').html("dwdwadwawa");  
+	success: function(data) {  
+	    $('#res_container').html(data).fadeIn('slow');  
 	}
     });
     }

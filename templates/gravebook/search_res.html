@@ -1,0 +1,31 @@
+<script>
+        $(document).ready(function(){
+	$('a').bind('click',function(event){
+		event.preventDefault();
+		$.get(this.href,{},function(response){
+			$('#res_container').html(response)
+		}) 
+	})
+      });
+</script>
+
+
+{% if articles %} 
+<table id="res_table" name="res_table" class="grave_table">
+  <tr><th>Name</th><th>Birth</th><th>Death</th></tr>
+  {% endif %}
+  {% for article in articles %}
+  <tr><td><a href="/knowevo/gravebook/{{ article.name }}/">{{ article.name }}</a></td>
+    {% if article.birth == -1 %} <td>-</td>
+    {% else %} <td>{{ article.birth }}</td>
+    {% endif %}
+    
+    {% if article.death == -1 %} <td>-</td>
+    {% else %} <td>{{ article.death }}</td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+  
+  {% if articles %}
+</table>
+{% endif %}

@@ -1,61 +1,60 @@
-<html>
-  <head>
-    <title>{{ article.name }}</title>
+<script>
+        $(document).ready(function(){
+	$('a').bind('click',function(event){
+		event.preventDefault();
+		$.get(this.href,{},function(response){
+			$('#res_container').html(response)
+		}) 
+	})
+      });
+</script>
 
-    <link rel="stylesheet" type="text/css" href="/knowevo/static/grave.css" />
-    <script src="/knowevo/static/jquery-1.7.2.js" ></script>
-    <script src="/knowevo/static/highcharts.src.js" ></script>
-    {% if evo_chart %}
-      {% load chartit %}
-      {{ evo_chart|load_charts:"evo_container" }}
-    {% endif %}
-  </head>
-  <body>
-    <div class="front_page">
-      <h2 class="title">{{ article.name }} ({{ article.birth }} - {{ article.death }})</h2>
-      
-      <div class="front_content">
-	<a href="http://en.wikipedia.org/wiki/{{ article.name }}">
-	  <img src="{{ image }}" class="front_image" alt="Image could not be loaded from Wikipedia"/>
-	</a>
-	<div id="evo_container"></div>
-      </div>
-    </div>
+{% if evo_chart %}
+{% load chartit %}
+{{ evo_chart|load_charts:"evo_container" }}
+{% endif %}
+<div class="front_page">
+  <h2 class="title">{{ article.name }} ({{ article.birth }} - {{ article.death }})</h2>
+  
+  <div class="front_content">
+    <a href="http://en.wikipedia.org/wiki/{{ article.name }}">
+      <img src="{{ image }}" class="front_image" alt="Image could not be loaded from Wikipedia"/>
+    </a>
+    <div id="evo_container"></div>
+  </div>
+</div>
 
-    <div id="spring_container"> </div>
+<div id="spring_container"> </div>
 
-    <script>
-      //$("#spring_container").load("_spring_box");
-    </script>
-    
-    <div class="people_div">
-      <span class="people">Peers</span>
-      {% for peer in peers %}
-      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ peer.name }}">{{ peer.name }}</a></div>
-      {% endfor %}
-    </div>
+<script>
+  //$("#spring_container").load("_spring_box");
+</script>
 
-    <div class="people_div">
-      <span class="people">Influenced by</span>
-      {% for art in influences %}
-      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></div>
-      {% endfor %}
-    </div>
+<div class="people_div">
+  <span class="people">Peers</span>
+  {% for peer in peers %}
+  <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ peer.name }}">{{ peer.name }}</a></div>
+  {% endfor %}
+</div>
 
-    <div class="people_div">
-      <span class="people">Influenced</span>
-      {% for art in influenced %}
-      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></div>
-      {% endfor %}
-    </div>
+<div class="people_div">
+  <span class="people">Influenced by</span>
+  {% for art in influences %}
+  <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></div>
+  {% endfor %}
+</div>
 
-    <div class="people_div">
-      <span class="people">Categories</span>
-      {% for cat in categories %}
-      <div class="people"><a class="people_link" href="/knowevo/gravebook/Category:{{ cat.name }}">{{ cat.name }}</a></div>
-      {% endfor %}
-    </div>
+<div class="people_div">
+  <span class="people">Influenced</span>
+  {% for art in influenced %}
+  <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></div>
+  {% endfor %}
+</div>
 
-    
-  </body>
-</html>
+<div class="people_div">
+  <span class="people">Categories</span>
+  {% for cat in categories %}
+  <div class="people"><a class="people_link" href="/knowevo/gravebook/Category:{{ cat.name }}">{{ cat.name }}</a></div>
+  {% endfor %}
+</div>
+
