@@ -220,7 +220,8 @@ def update_inc_volume_score():
     print 'computed variance'
     
     for k in sdev:
-        sdev[k] = sdev[k]**0.5
+        if len(eds[k]) > 0:
+            sdev[k] = (sdev[k]/len(eds[k]))**0.5
 
     
     for art in IArticle.objects.all():
@@ -293,10 +294,10 @@ if __name__ == '__main__':
     #get_inc_matched_edition()
 
     #fill_gr_linked_by()
-    fill_gr_peers()
+    #fill_gr_peers()
     
 
-    #update_inc_volume_score()
+    update_inc_volume_score()
 
     '''
     revw = load('_data/sample_revw.pkl')
