@@ -2,6 +2,7 @@
   <head>
     <title>{{ article.name }}</title>
 
+    <link rel="stylesheet" type="text/css" href="/knowevo/static/grave.css" />
     <script src="/knowevo/static/jquery-1.7.2.js" ></script>
     <script src="/knowevo/static/highcharts.src.js" ></script>
     {% if evo_chart %}
@@ -10,7 +11,8 @@
     {% endif %}
   </head>
   <body>
-    <h2>{{ article.name }} ({{ article.birth }} - {{ article.death }})</h2>
+
+    <h2 class="title">{{ article.name }} ({{ article.birth }} - {{ article.death }})</h2>
 
     {% if image %}
     <a href="http://en.wikipedia.org/wiki/{{ article.name }}">
@@ -19,54 +21,42 @@
     </a>
     {% endif %}
 
-    <br/>
     <div id="spring_container"> </div>
 
     <script>
-      $("#spring_container").load("_spring_box");
+      //$("#spring_container").load("_spring_box");
     </script>
-    <!--embed src="/knowevo/media/{{ article.name }}.svg" type="image/svg+xml" /--> 
-<!--applet
-   code="knowevo.springbox.vizster.VizsterApplet"
-   archive = "/knowevo/static/knowevo.jar,/knowevo/static/gephi-toolkit.jar,/knowevo/static/vizster.jar,/knowevo/static/prefuse.jar"
-   width = 900
-   height = 659>
-  <param name="article_name" value="Abraham Lincoln" />
-  <param name="server_address" value="remote" />
-  <param name="port" value="62541" />
-</applet-->
-
     
-    <br />
     <div id="evo_container"></div>
-
-    <h4>Categories</h4>
-    <ul>
-      {% for cat in categories %}
-      <li><a href="/knowevo/gravebook/Category:{{ cat.name }}">{{ cat.name }}</a></li>
-      {% endfor %}
-    </ul>
     
-    <h4>Peers</h4>
-    <ul>
+    <div class="people_div">
+      <span class="people">Peers</span>
       {% for peer in peers %}
-      <li><a href="/knowevo/gravebook/{{ peer.name }}">{{ peer.name }}</a></li>
+      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ peer.name }}">{{ peer.name }}</a></div>
       {% endfor %}
-    </ul>
+    </div>
 
-    <h4>Influenced by</h4>
-    <ul>
+    <div class="people_div">
+      <span class="people">Influenced by</span>
       {% for art in influences %}
-      <li><a href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></li>
+      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></div>
       {% endfor %}
-    </ul>
+    </div>
 
-    <h4>Influenced</h4>
-    <ul>
+    <div class="people_div">
+      <span class="people">Influenced</span>
       {% for art in influenced %}
-      <li><a href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></li>
+      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></div>
       {% endfor %}
-    </ul>
+    </div>
+
+    <div class="people_div">
+      <span class="people">Categories</span>
+      {% for cat in categories %}
+      <div class="people"><a class="people_link" href="/knowevo/gravebook/Category:{{ cat.name }}">{{ cat.name }}</a></div>
+      {% endfor %}
+    </div>
+
     
   </body>
 </html>
