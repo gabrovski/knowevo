@@ -18,18 +18,25 @@ def index(request):
     articles = []
     searched = False
     if request.method == 'POST':
+        print 'post'
         searched = True
         title_words = filter(lambda x: len(x) > 0, 
                              request.POST['title_inp'].split(' '))
+
         if len(title_words) > 0:
             articles = Article.objects.filter(name__icontains=title_words[0])
             for k in title_words[1:]:
                 articles = articles.filter(name__icontains=k)
-    
-    return render_to_response('gravebook/index.html',
-                              {'articles':articles, 
-                               'searched':searched},
-                              RequestContext(request))
+        
+        return render_to_response('gravebook/search_res.html',
+                                  {'articles':articles, 
+                                   'searched':searched},
+                                  RequestContext(request))
+    else:
+        return render_to_response('gravebook/index.html',
+                                  {'articles':articles, 
+                                   'searched':searched},
+                                  RequestContext(request))
 
 def prep_img_url(art):
     img = None
