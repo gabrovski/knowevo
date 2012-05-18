@@ -1,3 +1,14 @@
 {% for item in items %}
+{% if istext %}
+<span>{{ item }}
+  {% if texted == 1000 %}
+  <a href="en.wikipedia.org/'+str(article_name)+'">More from Wikipedia</a>
+  {% endif %}
+</span>
+
+{% else %}
+
 <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ prefix }}{{ item.name }}/">{{ item.name }}</a></div>
+
+{% endif %}
 {% endfor %}

@@ -117,10 +117,36 @@ def load_spring_box(request, article_name):
                         '</applet>'
                         )
 
+def get_wiki_text(article_name):
+    txt = 'Oops some error occured'
+    article_name = '_'.join(article_name.split(' '))
+
+    base = 'http://en.wikipedia.org/w/api.php'
+    url = base+'?action=query&titles='+article_name+'&format=xml&prop=revisions&rvprop=content&redirects'
+    
+    try:
+        f = urllib2.urlopen(url)
+        txt = f.read()
+        f.close()
+        
+        txt = re.sub('\{\{.+?\}\}(?s)', '', txt)
+        txt = re.sub('^<.+?\'\'\'(?s)|<.+?>', '', txt)
+        txt = re.sub('\|.*?\]\]', ']]', txt)
+        txt = re.sub('[\[\]]', '', txt)
+        txt = txt[:2000]+'... '
+
+    except:
+        raise
+    
+    return txt
+
+
 def load_article_data(request, article_name, id):
     art = Article.objects.get(name=article_name) 
     items = []
+    istext = False
     prefix = ''
+    ed = None
     if id == 'peers_div':
         items = art.peers.iterator()
 
@@ -138,14 +164,30 @@ def load_article_data(request, article_name, id):
             elif art.death < person.birth:
                 items.append(person)
 
-    if id == 'categories_div':
+    elif id == 'categories_div':
         prefix = 'Category:'
         items = art.categories.iterator()
 
+    elif 'text_' in id:
+        ed = int(id.split('_')[2])
+        istext = True
+
+        if ed == WIKI_ED:
+            txt = get_wiki_text(article_name)
+            items.append(txt)
+
+        elif ed == 15:
+            items.append('Sorry, edition 15 text is not available for viewing')
+
+        else:
+            match = art.article_set.get(art_ed=ed)
+            items.append(match.text)
     
     return render_to_response('gravebook/article_data.html',
                               {'items':items,
-                               'prefix':prefix},
+                               'prefix':prefix,
+                               'istext':istext,
+                               'texted':ed},
                               RequestContext(request))
     
 

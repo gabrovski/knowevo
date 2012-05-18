@@ -6,7 +6,7 @@ body {
     margin: 7 15 15 15;
     border: 0.5em solid #380000;
     
-    box-shadow: 1.5em 1.5em 1.5em  #380000;
+    box-shadow: 0.5em 0.5em 0.5em  #380000;
     min-height:960px;
 }
 
@@ -105,8 +105,25 @@ span.people {
     display:block;
     width:300px;
 }
+
 span.people:hover {
     background-color:#EBC4C4;
+}
+
+span#text_span:hover {
+    background-color:#eee;
+}
+
+div#text_div {
+    padding-left:30px;
+    padding-right:30px;
+}
+
+span.text_detail {
+    display:inline;
+    padding-left:20px;
+    padding-right:20px;
+    width:100%;
 }
 
 a {

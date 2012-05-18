@@ -33,6 +33,18 @@
     <script>
       //$("#spring_container").load("_spring_box");
     </script>
+
+    <div class="people_div">
+      <span class="people" id="text_span">Avaialable text</span>
+      {% for match in article.article_set.iterator %}
+      <span class="people text_detail" onclick="loadArticleData('text_div','_{{ match.art_ed }}')">
+	Edition {{ match.art_ed }}
+      </span>
+      {% endfor %}
+      <span class="people text_detail" onclick="loadArticleData('text_div','_1000')">Wikipedia</span>
+
+      <div id="text_div"></div>
+    </div>
     
     <div class="people_div">
       <span class="people" onclick="loadArticleData('peers_div')">Show {{ article.name }}'s peers</span>

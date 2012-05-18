@@ -13,8 +13,12 @@ function inputBlur(i) {
     }
 }
 
-function loadArticleData(id) {
-    $('#'+id).load('_'+id);
+function loadArticleData(id, opt) {
+    var url = id;
+    if (opt) 
+	url += opt;
+
+    $('#'+id).load('_'+url);
 }
 
 function searchSubmit(form) {
