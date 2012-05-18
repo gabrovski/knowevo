@@ -415,7 +415,12 @@ def gr_update_inc_volume_score():
 
     
     for art in Article.objects.filter(art_ed__in=[3,9,11,15]).iterator():
-        art.volume_score = (len(art.text)-avg[art.art_ed]) / sdev[art.art_ed]
+        art.vscore = (len(art.text)-avg[art.art_ed]) / sdev[art.art_ed]
+        art.save()
+
+def gr_add_self_master():
+    for art in Article.objects.filter(art_ed=1000).iterator():
+        art.match_master = art
         art.save()
 
 
@@ -425,7 +430,8 @@ if __name__ == '__main__':
     #-gr_insert_incunabula_articles(revw)
     #fix_gr_years()
     #update_gr_vscores('_data/wiki_vol_zscores')
-    #gr_update_inc_volume_score()
+    gr_update_inc_volume_score()
+    #gr_add_self_master()
 
     #fill_gr_peers()
     #fill_gr_linked_by()
