@@ -347,6 +347,9 @@ def gr_insert_incunabula_articles(revw):
                               vscore = 0.0,
                               match_master=ma)
                 ia.save()
+
+            ma.match_count +=1
+            ma.save()
         except:
             #print k,'not found'
             continue
@@ -374,8 +377,12 @@ if __name__ == '__main__':
     #add_inc_wiki_articles()
     
     #process_split(gravebook=True)
-    revw = load('_data/sample_revw.pkl')
-    gr_insert_incunabula_articles(revw)
+    #revw = load('_data/sample_revw.pkl')
+    #gr_insert_incunabula_articles(revw)
+    for a in Article.objects.iterator():
+        a.match_count = a.article_set.count()
+        a.save()
+
     '''
     revw = load('_data/sample_revw.pkl')    
     insert_incunabula_masters(revw)
