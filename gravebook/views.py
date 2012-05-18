@@ -185,7 +185,8 @@ def load_article_data(request, article_name, id):
                               {'items':items,
                                'prefix':prefix,
                                'istext':istext,
-                               'texted':ed},
+                               'texted':ed,
+                               'article_name':article_name},
                               RequestContext(request))
     
 
