@@ -5,11 +5,23 @@ def edname(ed_num):
     return names[ed_num]
 
 def prep_time_series_chart(models):
-    objdata = DataPool(
-        series = [
-            {'options': { 'source': models },
-             'terms': ['art_ed', 'vscore', 'name'] }])
+    series = []
+    terms = {}
+    for m in models:
+        name = m.all()[0].match_master.name
+        mnames = {}
+        for art in m.all():
+            mnames[art.name]='vscore'
+
+        terms[name+'_ed'] = mnames.keys()
+        series.append(
+            {'options': { 'source': m.all() },
+             'terms': [{name+'_ed':'art_ed'},
+                       mnames]
+             })
     
+    objdata = DataPool(series=series)
+                
     chart = Chart(
         datasource = objdata,
         series_options = [
@@ -18,10 +30,7 @@ def prep_time_series_chart(models):
                     'stacking': False,
                     },
              
-             'terms': {
-                    'art_ed': [
-                        'vscore'],
-                    },
+             'terms': terms,
 
              }],
 

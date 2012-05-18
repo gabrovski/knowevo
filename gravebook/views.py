@@ -77,7 +77,7 @@ def article_detail(request, article_name):
                 
     chart = None
     matches = Article.objects.filter(match_master=article_name).order_by('art_ed')
-    chart = prep_time_series_chart(matches)
+    chart = prep_time_series_chart([matches])
 
 
     '''art_to = art.people.all()[0]
@@ -164,7 +164,7 @@ def load_article_data(request, article_name, id):
 
     elif id == 'categories_div':
         prefix = 'Category:'
-        items = art.categories.iterator()
+        items = art.categories.order_by('-size').iterator()
 
     elif 'text_' in id:
         ed = int(id.split('_')[2])
@@ -193,11 +193,22 @@ def load_article_data(request, article_name, id):
 
 def category_detail(request, category_name):
     cat = Category.objects.get(name=category_name)
-    articles = cat.article_set.all()
+    articles = cat.article_set
     
+    matches = []
+    for art in articles.iterator():
+        mtch = Article.objects.filter(match_master=art.name).order_by('art_ed')
+        if mtch.count() > 1:
+            matches.append(mtch)
+
+    chart = None
+    if len(matches) > 0:
+        chart = prep_time_series_chart(matches)
+
     return render_to_response('gravebook/category_detail.html',
-                              {'carticles':articles,
-                               'category_name': category_name},
+                              {'carticles':articles.iterator(),
+                               'category_name': category_name,
+                               'evo_chart': chart},
                               RequestContext(request))
 
     

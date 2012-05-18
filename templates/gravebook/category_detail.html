@@ -1,15 +1,27 @@
 <html>
   <head>
+    <script src="/knowevo/static/jquery-1.7.2.js" ></script>
+    <script src="/knowevo/static/highcharts.src.js" ></script>
+
     <title>{{ category_name }}</title>
+    {% if evo_chart %}
+      {% load chartit %}
+      {{ evo_chart|load_charts:"evo_container" }}
+    {% endif %}
+
   </head>
   <body>
     {% include "gravebook/search_header.html" %}
 
-    <h4>Category Members</h4>
-    <ul>
+    <div id="evo_container"></div>
+
+    <div class="people_div">
+      <span class="people">Category members</span>
       {% for art in carticles %}
-      <li><a href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></li>
+      {% if art.art_ed == 1000 %}
+      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ art.name }}/">{{ art.name }}</a></div>
+      {% endif %}
       {% endfor %}
-    </ul>
+      </div>
   </body>
 </html>
