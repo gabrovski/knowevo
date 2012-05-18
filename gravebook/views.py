@@ -27,7 +27,7 @@ def index(request):
                 articles = articles.filter(name__icontains=k)
     
     return render_to_response('gravebook/index.html',
-                              {'articles':articles, 
+                              {'sarticles':articles, 
                                'searched':searched},
                               RequestContext(request))
 
@@ -111,6 +111,7 @@ def load_spring_box(request, article_name):
 def load_article_data(request, article_name, id):
     art = Article.objects.get(name=article_name) 
     items = []
+    prefix = ''
     if id == 'peers_div':
         items = art.peers.iterator()
 
@@ -129,11 +130,13 @@ def load_article_data(request, article_name, id):
                 items.append(person)
 
     if id == 'categories_div':
+        prefix = 'Category:'
         items = art.categories.iterator()
 
     
     return render_to_response('gravebook/article_data.html',
-                              {'items':items},
+                              {'items':items,
+                               'prefix':prefix},
                               RequestContext(request))
     
 
@@ -143,7 +146,7 @@ def category_detail(request, category_name):
     articles = cat.article_set.all()
     
     return render_to_response('gravebook/category_detail.html',
-                              {'articles':articles,
+                              {'carticles':articles,
                                'category_name': category_name},
                               RequestContext(request))
 
