@@ -54,10 +54,10 @@ div.front_content {
     float:left;
 }
 
-.grave_table {
+.grave_search_table {
     border-collapse: collapse;
     font-size: 0.8em;
-    width:620px;
+    width:900px;
     margin-top:30px;
     margin-left:auto;
     margin-right:auto;
