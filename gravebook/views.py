@@ -65,25 +65,7 @@ def prep_img_url(art):
 def article_detail(request, article_name):
     art = Article.objects.get(name=article_name)
     img = prep_img_url(art)
-    
-    OVERLAP = 15
-
-    influences = []
-    influenced = []
-    peers = []
-    people = art.people.all()
-    for person in people:
-        if person.birth == -1 or person.death == -1:
-            continue
-        
-        if person.death-art.birth > OVERLAP and art.death-person.birth > OVERLAP:
-            peers.append(person)
-
-        elif art.birth > person.death:
-            influences.append(person)
-        elif art.death < person.birth:
-            influenced.append(person)
-            
+                
     chart = None
     res, res_matches = get_master_alist(
         '_'.join(article_name.split(' ')))
@@ -100,10 +82,6 @@ def article_detail(request, article_name):
     return render_to_response('gravebook/article_detail.html',
                               { 'article':     art, 
                                 'image':       img,
-                                'categories':  art.categories.all(),
-                                'peers':       peers,
-                                'influences':  influences,
-                                'influenced':  influenced,                
                                 'evo_chart':   chart,
                                 },
                               RequestContext(request))
