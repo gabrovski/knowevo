@@ -13,6 +13,7 @@ from spring.timeser import prep_time_series_chart
 
 import re, md5, math, urllib2
 
+WIKI_ED = 1000
 
 def index(request):
     articles = []
@@ -21,11 +22,18 @@ def index(request):
         searched = True
         title_words = filter(lambda x: len(x) > 0, 
                              request.POST['title_inp'].split(' '))
+
         if len(title_words) > 0:
-            articles = Article.objects.filter(name__icontains=title_words[0])
+            articles = Article.objects.filter(name__icontains=title_words[0], art_ed=WIKI_ED)
             for k in title_words[1:]:
                 articles = articles.filter(name__icontains=k)
-    
+            
+        #get all articles
+        else:
+            articles = Article.objects.filter(art_ed=WIKI_ED)
+
+    #optimize history results by caching foregin keys
+    articles.select_related()
     return render_to_response('gravebook/index.html',
                               {'sarticles':articles, 
                                'searched':searched},

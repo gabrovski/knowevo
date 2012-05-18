@@ -17,11 +17,16 @@
 <div id="res_container"></div>
 
 {% if sarticles %} 
-<table id="res_table" name="res_table" class="grave_table">
-  <tr><th>Name</th><th>Birth</th><th>Death</th></tr>
+<table id="res_table" name="res_table" class="grave_search_table">
+  <tr><th>Name</th><th>Birth</th><th>Death</th><th>Avaialbe Britannica Editions</tr>
   {% endif %}
   {% for article in sarticles %}
-  <tr><td><a href="/knowevo/gravebook/{{ article.name }}/">{{ article.name }}</a></td>
+  <tr><td><a href="/knowevo/gravebook/{{ article.name }}/">
+	{{ article.name|slice:"32" }}
+	{% if article.name|length > 32 %}
+	...
+	{% endif %}
+    </a></td>
     {% if article.birth == -1 %} <td>-</td>
     {% else %} <td>{{ article.birth }}</td>
     {% endif %}
@@ -29,6 +34,18 @@
     {% if article.death == -1 %} <td>-</td>
     {% else %} <td>{{ article.death }}</td>
     {% endif %}
+
+    <td>
+      {% if article.article_set.count == 0 %}
+      <span>-</span>
+      
+      {% else %}
+      {% for match in article.article_set.iterator %}
+      <span>{{ match.art_ed }}, </span>
+      {% endfor %}
+      {% endif %}
+    </td>
+
   </tr>
   {% endfor %}
   
