@@ -187,14 +187,20 @@ def insert_incunabula_articles(revw):
             print 'wtf>'
             break
             
-def process_split():
+def process_split(gravebook=True):
     for name in os.listdir('_data/split'):
         revw = load('_data/split/'+name)
-        insert_incunabula_masters(revw)
+
+        if not gravebook:
+            insert_incunabula_masters(revw)
 
     for name in os.listdir('_data/split'):
         revw = load('_data/split/'+name)
-        insert_incunabula_articles(revw)
+
+        if gravebook:
+            gr_insert_incunabula_articles(revw)
+        else:
+            insert_incunabula_articles(revw)
 
 
 def update_inc_volume_score():
@@ -326,6 +332,32 @@ def add_inc_wiki_articles():
         except:
             pass
 
+def gr_insert_incunabula_articles(revw):
+    c = 0
+    sizes = revw['sizes']
+    for k in revw.keys():
+        k = ' '.join(k.split('_'))
+        try:
+            ma = Article.objects.get(name=k)
+
+            for ed in revw[k]['editions']:
+                a = revw[k]['editions'][ed][0]
+
+                ia = Article(name=a['name'], wid=a['id'], art_ed=ed, text=a['txt'],
+                              vscore = 0.0,
+                              match_master=ma)
+                ia.save()
+        except:
+            #print k,'not found'
+            continue
+            
+        print c
+        c+=1
+        if LIMIT > 0 and c > LIMIT:
+            print 'wtf>'
+            break
+
+
 if __name__ == '__main__':
     #extract_people_graph('testgraph.txt')
     #get_top_people('_data/peoplepranked.txt')
@@ -339,10 +371,13 @@ if __name__ == '__main__':
 
     #update_inc_volume_score()
     #update_gr_vscores('_data/sizelog')
-    add_inc_wiki_articles()
-
-    '''
+    #add_inc_wiki_articles()
+    
+    #process_split(gravebook=True)
     revw = load('_data/sample_revw.pkl')
+    gr_insert_incunabula_articles(revw)
+    '''
+    revw = load('_data/sample_revw.pkl')    
     insert_incunabula_masters(revw)
     insert_incunabula_articles(revw)
     #process_split()
