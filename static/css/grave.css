@@ -100,9 +100,13 @@ td {
 
 span.people {
     clear:both;
-    text-align:center;
+    margin-right:auto;
+    margin-left:auto;
     display:block;
-    width:100%;
+    width:300px;
+}
+span.people:hover {
+    background-color:#EBC4C4;
 }
 
 a {
