@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="/knowevo/static/grave.css" />
     <script src="/knowevo/static/jquery-1.7.2.js" ></script>
     <script src="/knowevo/static/highcharts.src.js" ></script>
+    <script src="/knowevo/static/grave.js" ></script>
     {% if evo_chart %}
       {% load chartit %}
       {{ evo_chart|load_charts:"evo_container" }}
@@ -29,31 +30,23 @@
     </script>
     
     <div class="people_div">
-      <span class="people">Peers</span>
-      {% for peer in peers %}
-      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ peer.name }}">{{ peer.name }}</a></div>
-      {% endfor %}
+      <span class="people" onclick="loadArticleData('peers_div')">Show {{ article.name }}'s peers</span>
+      <div id="peers_div"></div>
     </div>
 
     <div class="people_div">
-      <span class="people">Influenced by</span>
-      {% for art in influences %}
-      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></div>
-      {% endfor %}
+      <span class="people" onclick="loadArticleData('influenced_by_div')">Show who {{ article.name }} was influenced by</span>
+      <div id="influenced_by_div"></div>
     </div>
 
     <div class="people_div">
-      <span class="people">Influenced</span>
-      {% for art in influenced %}
-      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></div>
-      {% endfor %}
+      <span class="people" onclick="loadArticleData('influences_div')">Show who {{ article.name }}'s influenced</span>
+      <div id="influences_div"></div>
     </div>
 
     <div class="people_div">
-      <span class="people">Categories</span>
-      {% for cat in categories %}
-      <div class="people"><a class="people_link" href="/knowevo/gravebook/Category:{{ cat.name }}">{{ cat.name }}</a></div>
-      {% endfor %}
+      <span class="people" onclick="loadArticleData('categories_div')">Show {{ article.name }}'s categories</span>
+      <div id="categories_div"></div>
     </div>
 
     

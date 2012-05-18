@@ -17,6 +17,7 @@ if settings.USER_LOCALHOST:
 			       #gravebook links
 			       url(r'^knowevo/gravebook/$', 'gravebook.views.index'),
 			       url(r'^knowevo/gravebook/Category:(?P<category_name>.+?)/$', 'gravebook.views.category_detail'), 
+			       url(r'^knowevo/gravebook/(?P<article_name>.+?)/_(?P<id>.+?)/$', 'gravebook.views.load_article_data'), 
 			       url(r'^knowevo/gravebook/(?P<article_name>.+?)/_spring_box/$', 'gravebook.views.load_spring_box'),
 			       url(r'^knowevo/gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
 
@@ -37,6 +38,7 @@ else:
 			   #gravebook links
 			   url(r'^gravebook/$', 'gravebook.views.index'),
 			   url(r'^gravebook/Category:(?P<category_name>.+?)/$', 'gravebook.views.category_detail'), 
+			   url(r'^gravebook/(?P<article_name>.+?)/_(?P<id>.+?)/$', 'gravebook.views.load_article_data'), 
 			   url(r'^gravebook/(?P<article_name>.+?)/_spring_box/$', 'gravebook.views.load_spring_box'),
 			   url(r'^gravebook/(?P<article_name>.+?)/$', 'gravebook.views.article_detail'),
 

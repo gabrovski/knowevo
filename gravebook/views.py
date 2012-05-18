@@ -130,6 +130,35 @@ def load_spring_box(request, article_name):
                         '</applet>'
                         )
 
+def load_article_data(request, article_name, id):
+    art = Article.objects.get(name=article_name) 
+    items = []
+    if id == 'peers_div':
+        items = art.peers.iterator()
+
+    elif id == 'influenced_by_div':
+        for person in art.people.iterator():
+            if  person.death == -1:
+                continue
+            elif art.birth > person.death:
+                items.append(person)
+
+    elif id == 'influences_div':
+        for person in art.people.iterator():
+            if  person.birth == -1:
+                continue
+            elif art.death < person.birth:
+                items.append(person)
+
+    if id == 'categories_div':
+        items = art.categories.iterator()
+
+    
+    return render_to_response('gravebook/article_data.html',
+                              {'items':items},
+                              RequestContext(request))
+    
+
 
 def category_detail(request, category_name):
     cat = Category.objects.get(name=category_name)

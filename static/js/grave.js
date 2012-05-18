@@ -13,6 +13,10 @@ function inputBlur(i) {
     }
 }
 
+function loadArticleData(id) {
+    $('#'+id).load('_'+id);
+}
+
 function searchSubmit(form) {
     var inp = form.title_inp.value;
     //$('#res_container').load(inp);
