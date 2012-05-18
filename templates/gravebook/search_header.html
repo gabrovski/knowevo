@@ -41,7 +41,11 @@
       
       {% else %}
       {% for match in article.article_set.iterator %}
+
+      {% if match.art_ed != 1000 %}
       <span>{{ match.art_ed }}, </span>
+      {% endif %}
+
       {% endfor %}
       {% endif %}
     </td>

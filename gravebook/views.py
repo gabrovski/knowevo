@@ -4,8 +4,8 @@ from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 
-from incunabula.models import Article as IArticle
-from incunabula.views import get_master_alist
+#from incunabula.models import Article as IArticle
+#from incunabula.views import get_master_alist
 import settings
 
 import gravebook.graphConnect as gcon
@@ -33,7 +33,7 @@ def index(request):
             articles = Article.objects.filter(art_ed=WIKI_ED)
 
     #optimize history results by caching foregin keys
-    articles =  articles.select_related().order_by('-match_count')
+    articles =  articles.select_related().order_by('-match_count').iterator()
 
     return render_to_response('gravebook/index.html',
                               {'sarticles':articles, 
@@ -76,11 +76,8 @@ def article_detail(request, article_name):
     img = prep_img_url(art)
                 
     chart = None
-    res, res_matches = get_master_alist(
-        '_'.join(article_name.split(' ')))
-    num = len(res_matches)
-    if True or num > 1:
-        chart = prep_time_series_chart(res_matches)
+    matches = Article.objects.filter(match_master=article_name)
+    chart = prep_time_series_chart(matches)
 
 
     '''art_to = art.people.all()[0]

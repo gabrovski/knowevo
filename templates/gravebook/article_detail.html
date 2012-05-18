@@ -37,9 +37,11 @@
     <div class="people_div">
       <span class="people" id="text_span">Avaialable text</span>
       {% for match in article.article_set.iterator %}
+      {% if match.art_ed != 1000 %}
       <span class="people text_detail" onclick="loadArticleData('text_div','_{{ match.art_ed }}')">
 	Edition {{ match.art_ed }}
       </span>
+      {% endif %}
       {% endfor %}
       <span class="people text_detail" onclick="loadArticleData('text_div','_1000')">Wikipedia</span>
 
