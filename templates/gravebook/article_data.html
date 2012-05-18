@@ -12,3 +12,7 @@
 
 {% endif %}
 {% endfor %}
+
+{% if not items or items|length == 0 %}
+<span>Sorry, no data found</span>
+{% endif %}

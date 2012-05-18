@@ -18,6 +18,7 @@ function loadArticleData(id, opt) {
     if (opt) 
 	url += opt;
 
+    $('#'+id).html('<span>loading...</span>');
     $('#'+id).load('_'+url);
 }
 
