@@ -297,7 +297,7 @@ def update_gr_vscores(path):
     for line in f:
         name, score = line.strip().split('\t')
         try:
-            art = Article.objects.get(name=name.strip())
+            art = Article.objects.get(name=name.strip(), art_ed=1000)
             art.vscore = float(score)
             art.save()
             
@@ -336,21 +336,29 @@ def gr_insert_incunabula_articles(revw):
     c = 0
     sizes = revw['sizes']
     for k in revw.keys():
-        k = ' '.join(k.split('_'))
+        name = ' '.join(k.split('_'))
         try:
-            ma = Article.objects.get(name=k)
+            ma = Article.objects.get(name=name)
 
             for ed in revw[k]['editions']:
                 a = revw[k]['editions'][ed][0]
-
                 ia = Article(name=a['name'], wid=a['id'], art_ed=ed, text=a['txt'],
-                              vscore = 0.0,
+                              vscore = a['vscore'],
                               match_master=ma)
+
+                ia.save()
+                for cat in ma.categories.iterator():
+                    ia.categories.add(cat)
                 ia.save()
 
             ma.match_count +=1
             ma.save()
+
+        except Article.DoesNotExist:
+            continue
+
         except:
+            #raise
             #print k,'not found'
             continue
             
@@ -379,44 +387,15 @@ def fix_gr_years():
 
                     print art
 
-if __name__ == '__main__':
-    #extract_people_graph('testgraph.txt')
-    #get_top_people('_data/peoplepranked.txt')
-
-    #get_top_people('testout.txt')
-    #get_inc_matched_edition()
-
-    #fill_gr_linked_by()
-    #fill_gr_peers()
-    
-
-    #update_inc_volume_score()
-    #update_gr_vscores('_data/sizelog')
-    #add_inc_wiki_articles()
-    
+if __name__ == '__main__':    
     #process_split(gravebook=True)
-    #revw = load('_data/sample_revw.pkl')
-    #gr_insert_incunabula_articles(revw)
-    fix_gr_years()
+    revw = load('_data/sample_revw.pkl')
+    gr_insert_incunabula_articles(revw)
+    #fix_gr_years()
+    #update_gr_vscores('_data/wiki_vol_zscores')
 
-    '''
-    revw = load('_data/sample_revw.pkl')    
-    insert_incunabula_masters(revw)
-    insert_incunabula_articles(revw)
-    #process_split()
+    #fill_gr_peers()
+    #fill_gr_linked_by()
     
 
-
-    #insert_xml('_data/people_articles_filtered.txt')
-    #build_people_graph('_data/people_articles_filtered.txt')
-    #START = -1
-    #add_cats('_data/people_articles_filtered.txt')
-
-    insert_xml('_data/test-people_articles_filtered.txt')
-    build_people_graph('_data/test-people_articles_filtered.txt')
-    add_cats('_data/test-people_articles_filtered.txt')
-
-
-    update_category_size()
-    '''
-
+    
