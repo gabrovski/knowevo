@@ -6,14 +6,14 @@
     <title>{{ category_name }}</title>
     {% if evo_chart %}
       {% load chartit %}
-      {{ evo_chart|load_charts:"evo_container" }}
+      {{ evo_chart|load_charts:"cat_evo_container" }}
     {% endif %}
 
   </head>
   <body>
     {% include "gravebook/search_header.html" %}
 
-    <div id="evo_container"></div>
+    <div id="cat_evo_container"></div>
 
     <div class="people_div">
       <span class="people">Category members</span>

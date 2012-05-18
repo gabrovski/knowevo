@@ -136,6 +136,11 @@ span.text_detail {
     width:100%;
 }
 
+#cat_evo_container {
+    margin: 20px auto;
+    width:90%;
+}
+
 a {
     text-decoration:none;
     color:#000;

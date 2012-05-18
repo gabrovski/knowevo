@@ -203,6 +203,8 @@ def category_detail(request, category_name):
 
     chart = None
     if len(matches) > 0:
+        matches.sort(key=lambda x:x.count(), reverse=True)
+        matches = matches[:10]
         chart = prep_time_series_chart(matches)
 
     return render_to_response('gravebook/category_detail.html',
