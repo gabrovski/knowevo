@@ -42,7 +42,7 @@ div.front_content {
     width: 1120px;
 }
 
-img.front_image {
+.front_image {
     width:300px;
     margin:5px;
     float:left;

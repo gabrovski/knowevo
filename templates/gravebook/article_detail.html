@@ -17,7 +17,11 @@
       
       <div class="front_content">
 	<a href="http://en.wikipedia.org/wiki/{{ article.name }}">
+	  {% if image %}
 	  <img src="{{ image }}" class="front_image" alt="Image could not be loaded from Wikipedia"/>
+	  {% else %}
+	  <span class="front_image">No image found on Wikipedia</span>
+	  {% endif %}
 	</a>
 	<div id="evo_container"></div>
       </div>
