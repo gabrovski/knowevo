@@ -1,17 +1,18 @@
 <html>
   <head>
-    <title>{{ article.name }}</title>
-
-    <link rel="stylesheet" type="text/css" href="/knowevo/static/grave.css" />
     <script src="/knowevo/static/jquery-1.7.2.js" ></script>
     <script src="/knowevo/static/highcharts.src.js" ></script>
-    <script src="/knowevo/static/grave.js" ></script>
+
+    <title>{{ article.name }}</title>
     {% if evo_chart %}
       {% load chartit %}
       {{ evo_chart|load_charts:"evo_container" }}
     {% endif %}
   </head>
   <body>
+    
+    {% include "gravebook/search_header.html" %}
+
     <div class="front_page">
       <h2 class="title">{{ article.name }} ({{ article.birth }} - {{ article.death }})</h2>
       

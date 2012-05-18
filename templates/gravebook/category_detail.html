@@ -3,9 +3,11 @@
     <title>{{ category_name }}</title>
   </head>
   <body>
+    {% include "gravebook/search_header.html" %}
+
     <h4>Category Members</h4>
     <ul>
-      {% for art in articles %}
+      {% for art in carticles %}
       <li><a href="/knowevo/gravebook/{{ art.name }}">{{ art.name }}</a></li>
       {% endfor %}
     </ul>

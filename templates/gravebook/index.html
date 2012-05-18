@@ -1,45 +1,8 @@
 <html>
   <head>
     <title>Gravebook - Obituaries for the famous dead and the famous living</title>
-
-    <link rel="stylesheet" type="text/css" href="/knowevo/static/grave.css" />
-    <script src="/knowevo/static/grave.js"></script>
   </head>
   <body>
-    <div class="header">
-      <span class="header_title">GRAVEBOOK</span>
-      <form name="search_form" action="" method="post" class="grave_search">
-	{% csrf_token %}
-	<input type="text" id="title_inp" name="title_inp" class="grave_search_inp" 
-	       value="Person of interest" onfocus="inputFocus(this)" onblur="inputBlur(this)"/>
-      </form>
-      
-      {% if searched and articles|length == 0 %}
-      <p>Sorry, no results found for the provided parameters</p>
-      {% endif %}
-    </div>
-    
-    <div id="res_container"></div>
-
-    {% if articles %} 
-    <table id="res_table" name="res_table" class="grave_table">
-      <tr><th>Name</th><th>Birth</th><th>Death</th></tr>
-    {% endif %}
-      {% for article in articles %}
-      <tr><td><a href="/knowevo/gravebook/{{ article.name }}/">{{ article.name }}</a></td>
-	{% if article.birth == -1 %} <td>-</td>
-	{% else %} <td>{{ article.birth }}</td>
-	{% endif %}
-
-	{% if article.death == -1 %} <td>-</td>
-	{% else %} <td>{{ article.death }}</td>
-	{% endif %}
-      </tr>
-      {% endfor %}
-
-    {% if articles %}
-    </table>
-    {% endif %}
-    
+    {% include "gravebook/search_header.html" %}
   </body>
 </html>
