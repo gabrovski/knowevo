@@ -77,7 +77,8 @@ def article_detail(request, article_name):
                 
     chart = None
     matches = Article.objects.filter(match_master=article_name).order_by('art_ed')
-    chart = prep_time_series_chart([matches])
+    if matches.count() > 0:
+        chart = prep_time_series_chart([matches])
 
 
     '''art_to = art.people.all()[0]
@@ -140,7 +141,9 @@ def get_wiki_text(article_name):
 
 
 def load_article_data(request, article_name, id):
-    art = Article.objects.get(name=article_name) 
+    if id != 'cats_div':
+        art = Article.objects.get(name=article_name) 
+
     items = []
     istext = False
     prefix = ''
@@ -180,6 +183,9 @@ def load_article_data(request, article_name, id):
         else:
             match = art.article_set.get(art_ed=ed)
             items.append(match.text)
+
+    elif id == 'cats_div':
+        items = Category.objects.get(name=article_name).article_set.filter(match_count__gt=0).order_by('match_count').iterator()
     
     return render_to_response('gravebook/article_data.html',
                               {'items':items,
@@ -193,22 +199,21 @@ def load_article_data(request, article_name, id):
 
 def category_detail(request, category_name):
     cat = Category.objects.get(name=category_name)
-    articles = cat.article_set
-    
+    articles = cat.article_set.filter(match_count__gt=0)
+
     matches = []
     for art in articles.iterator():
         mtch = Article.objects.filter(match_master=art.name).order_by('art_ed')
-        if mtch.count() > 1:
-            matches.append(mtch)
+        matches.append(mtch)
 
     chart = None
     if len(matches) > 0:
         matches.sort(key=lambda x:x.count(), reverse=True)
-        matches = matches[:10]
+        matches = matches[:15]
         chart = prep_time_series_chart(matches)
 
     return render_to_response('gravebook/category_detail.html',
-                              {'carticles':articles.iterator(),
+                              {
                                'category_name': category_name,
                                'evo_chart': chart},
                               RequestContext(request))

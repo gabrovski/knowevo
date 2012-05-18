@@ -283,6 +283,7 @@ def fill_gr_peers():
     c = 0
     OVERLAP = 15
     for art in Article.objects.iterator():
+        art.peers.clear()
         for person in art.people.iterator():
             if person.birth == -1 or person.death == -1:
                 continue
@@ -296,6 +297,7 @@ def fill_gr_peers():
 
 def update_gr_vscores(path):
     f = open(path)
+    c = 0
     for line in f:
         name, score = line.strip().split('\t')
         try:
@@ -303,7 +305,8 @@ def update_gr_vscores(path):
             art.vscore = float(score)
             art.save()
             
-            print art.name
+            print c, 'vscores'
+            c+=1
         except Article.DoesNotExist:
             continue
         except:
@@ -344,7 +347,10 @@ def gr_insert_incunabula_articles(revw):
 
             for ed in revw[k]['editions']:
                 a = revw[k]['editions'][ed][0]
-                ia = Article(name=a['name'], wid=a['id'], art_ed=ed, text=a['txt'],
+                txt = a['txt']
+                if ed == 15:
+                    txt = ''
+                ia = Article(name=a['name'], wid=a['id'], art_ed=ed, text=txt,
                               vscore = 0.0,
                               match_master=ma)
 
@@ -439,19 +445,45 @@ def fix_names():
             str(m.name)
         '''
 
+def gr_fix_all():
+    print os.getpid(), 'fixing'
+    c = 0
+    for art in Article.objects.iterator():
+        #fix wrong years
+        for cat in art.categories.iterator():
+            if 'births' in cat.name:
+                yr = re.search('\d+', cat.name)
+                if yr != None:
+                    yr = yr.group()
+                    art.birth = int(yr)
+                    art.save()
+
+            if 'deaths' in cat.name:
+                yr = re.search('\d+', cat.name)
+                if yr != None:
+                    yr = int(yr.group())
+                    art.death = yr
+                    art.save()        
+
+        #fix self reference
+        art.match_master = art
+        art.save()
+
+        c+=1
+        if c % 100 == 0:
+            print c, os.getpid(), 'fix all'
+
+        
 
 if __name__ == '__main__':    
-    fix_names()
     #process_split(gravebook=True)
     #-revw = load('_data/sample_revw.pkl')
     #-gr_insert_incunabula_articles(revw)
-    #fix_gr_years()
-    #update_gr_vscores('_data/wiki_vol_zscores')
     #gr_update_inc_volume_score()
-    #gr_add_self_master()
 
-    #fill_gr_peers()
+
+    gr_fix_all()
+    fill_gr_peers()
+    #update_gr_vscores('_data/wiki_vol_zscores')
     #fill_gr_linked_by()
-    
-
     
