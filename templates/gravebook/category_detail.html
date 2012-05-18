@@ -16,12 +16,8 @@
     <div id="cat_evo_container"></div>
 
     <div class="people_div">
-      <span class="people">Category members</span>
-      {% for art in carticles %}
-      {% if art.art_ed == 1000 %}
-      <div class="people"><a class="people_link" href="/knowevo/gravebook/{{ art.name }}/">{{ art.name }}</a></div>
-      {% endif %}
-      {% endfor %}
+      <span class="people" onclick="loadArticleData('cats_div')">Category members with matches</span>
+      <div id="cats_div"></div>
       </div>
   </body>
 </html>
