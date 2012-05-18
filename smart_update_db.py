@@ -360,6 +360,24 @@ def gr_insert_incunabula_articles(revw):
             print 'wtf>'
             break
 
+def fix_gr_years():
+    for art in Article.objects.iterator():
+        for cat in art.categories.iterator():
+            if 'births' in cat.name:
+                yr = re.search('\d+', cat.name)
+                if yr != None:
+                    yr = yr.group()
+                    art.birth = yr
+                    art.save()
+
+            if 'deaths' in cat.name:
+                yr = re.search('\d+', cat.name)
+                if yr != None:
+                    yr = yr.group()
+                    art.death = yr
+                    art.save()
+
+                    print art
 
 if __name__ == '__main__':
     #extract_people_graph('testgraph.txt')
@@ -379,9 +397,7 @@ if __name__ == '__main__':
     #process_split(gravebook=True)
     #revw = load('_data/sample_revw.pkl')
     #gr_insert_incunabula_articles(revw)
-    for a in Article.objects.iterator():
-        a.match_count = a.article_set.count()
-        a.save()
+    fix_gr_years()
 
     '''
     revw = load('_data/sample_revw.pkl')    
