@@ -8,7 +8,7 @@ def prep_time_series_chart(models):
     objdata = DataPool(
         series = [
             {'options': { 'source': models },
-             'terms': ['art_ed', 'volume_score', 'name'] }])
+             'terms': ['art_ed', 'vscore', 'name'] }])
     
     chart = Chart(
         datasource = objdata,
@@ -20,7 +20,7 @@ def prep_time_series_chart(models):
              
              'terms': {
                     'art_ed': [
-                        'volume_score'],
+                        'vscore'],
                     },
 
              }],
