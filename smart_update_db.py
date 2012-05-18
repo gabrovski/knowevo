@@ -343,7 +343,7 @@ def gr_insert_incunabula_articles(revw):
             for ed in revw[k]['editions']:
                 a = revw[k]['editions'][ed][0]
                 ia = Article(name=a['name'], wid=a['id'], art_ed=ed, text=a['txt'],
-                              vscore = a['vscore'],
+                              vscore = 0.0,
                               match_master=ma)
 
                 ia.save()
@@ -387,12 +387,45 @@ def fix_gr_years():
 
                     print art
 
+def gr_update_inc_volume_score():
+    eds = {3 : [], 9 : [], 11 : [], 15 : []}
+    for art in Article.objects.filter(art_ed__in=[3,9,11,15]).iterator():
+        eds[art.art_ed].append(len(art.text))
+
+    print 'prepped text dict'
+
+    avg = dict()
+    for k in eds.keys():
+        if eds[k] == []:
+            continue
+        avg[k] = sum(eds[k]) / len(eds[k])
+
+    print 'computed averages'
+
+    sdev = {3 : 0, 9 : 0, 11 : 0, 15 : 0}
+    for k in eds.keys():
+        for v in eds[k]:
+            sdev[k] += (avg[k] - v)**2
+
+    print 'computed variance'
+    
+    for k in sdev:
+        if len(eds[k]) > 0:
+            sdev[k] = (sdev[k]/len(eds[k]))**0.5
+
+    
+    for art in Article.objects.filter(art_ed__in=[3,9,11,15]).iterator():
+        art.volume_score = (len(art.text)-avg[art.art_ed]) / sdev[art.art_ed]
+        art.save()
+
+
 if __name__ == '__main__':    
     #process_split(gravebook=True)
-    revw = load('_data/sample_revw.pkl')
-    gr_insert_incunabula_articles(revw)
+    #-revw = load('_data/sample_revw.pkl')
+    #-gr_insert_incunabula_articles(revw)
     #fix_gr_years()
     #update_gr_vscores('_data/wiki_vol_zscores')
+    #gr_update_inc_volume_score()
 
     #fill_gr_peers()
     #fill_gr_linked_by()
