@@ -29,11 +29,12 @@ def index(request):
                 articles = articles.filter(name__icontains=k)
             
         #get all articles
-        else:
+        elif settings.USER_LOCALHOST:
             articles = Article.objects.filter(art_ed=WIKI_ED)
 
     #optimize history results by caching foregin keys
-    articles.select_related()
+    articles =  articles.select_related().order_by('-match_count')
+
     return render_to_response('gravebook/index.html',
                               {'sarticles':articles, 
                                'searched':searched},

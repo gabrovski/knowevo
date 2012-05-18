@@ -32,6 +32,7 @@ class Article(models.Model):
     art_ed = models.IntegerField(default=1000)
     text = models.TextField(default='')
     match_master = models.ForeignKey('self', blank=True, null=True)
+    match_count = models.IntegerField(default=0)
         
     def __unicode__(self):
         return self.name
