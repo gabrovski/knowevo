@@ -9,6 +9,8 @@ from incunabula.models import Reference as IReference
 
 from django.db import transaction
 
+from django.utils.encoding import smart_str, smart_unicode
+
 import settings
 settings.DEBUG = False #important otherwise run out of memory on server
 
@@ -423,14 +425,29 @@ def gr_add_self_master():
         art.match_master = art
         art.save()
 
+def fix_names():
+    for art in Article.objects.iterator():
+        print art.name
+        art.name = smart_str(art.name)
+        art.text = smart_str(art.text)
+        art.save()
+
+        '''
+        for m in art.article_set.iterator():
+            m.name = str(m.name.encode("utf-8"))
+            m.save()
+            str(m.name)
+        '''
+
 
 if __name__ == '__main__':    
+    fix_names()
     #process_split(gravebook=True)
     #-revw = load('_data/sample_revw.pkl')
     #-gr_insert_incunabula_articles(revw)
     #fix_gr_years()
     #update_gr_vscores('_data/wiki_vol_zscores')
-    gr_update_inc_volume_score()
+    #gr_update_inc_volume_score()
     #gr_add_self_master()
 
     #fill_gr_peers()
