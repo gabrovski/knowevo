@@ -76,7 +76,7 @@ def article_detail(request, article_name):
     img = prep_img_url(art)
                 
     chart = None
-    matches = Article.objects.filter(match_master=article_name)
+    matches = Article.objects.filter(match_master=article_name).order_by('art_ed')
     chart = prep_time_series_chart(matches)
 
 
@@ -89,6 +89,7 @@ def article_detail(request, article_name):
                               { 'article':     art, 
                                 'image':       img,
                                 'evo_chart':   chart,
+                                'matches':     matches,
                                 },
                               RequestContext(request))
 

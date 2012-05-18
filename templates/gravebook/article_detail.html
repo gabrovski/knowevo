@@ -34,9 +34,32 @@
       //$("#spring_container").load("_spring_box");
     </script>
 
+    {% if matches.count > 1 %}
     <div class="people_div">
-      <span class="people" id="text_span">Avaialable text</span>
-      {% for match in article.article_set.iterator %}
+      <span class="people">Appearance in Encyclopedia Britannica</span>
+      <table class="people other_ed" border="1">
+	<tr>
+	  {% for match in matches %}
+	  {% if match.art_ed != 1000 %}
+	  <th class="other_ed">Edition {{ match.art_ed }}</th>
+	  {% endif %}
+	  {% endfor %}
+	</tr>
+
+	<tr>
+	  {% for match in matches %}
+	  {% if match.art_ed != 1000 %}
+	  <td class="other_ed">{{ match.name }}</td>
+	  {% endif %}
+	  {% endfor %}
+	</tr>
+      </table>
+    </div>
+    {% endif %}
+
+    <div class="people_div">
+      <span class="people" id="text_span">Available text</span>
+      {% for match in matches %}
       {% if match.art_ed != 1000 %}
       <span class="people text_detail" onclick="loadArticleData('text_div','_{{ match.art_ed }}')">
 	Edition {{ match.art_ed }}
