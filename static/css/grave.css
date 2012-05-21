@@ -74,13 +74,21 @@ td {
 }
 
 .other_ed {
-   border-collapse: collapse;
    font-size: 0.9em;
-   width:600px;
+   width:700px;
    margin-top:30px;
    margin-left:auto;
    margin-right:auto;
    text-align:center;
+   border-collapse: collapse;
+}
+
+th.other_ed_th  {
+    padding: 0.5em;
+}
+
+.other_ed_td {
+   padding: 0.5em;
 }
 
 .people_div {

@@ -37,7 +37,7 @@
 	<tr>
 	  {% for match in matches %}
 	  {% if match.art_ed != 1000 %}
-	  <th class="other_ed">Edition {{ match.art_ed }}</th>
+	  <th class="other_ed_th">Edition {{ match.art_ed }}</th>
 	  {% endif %}
 	  {% endfor %}
 	</tr>
@@ -45,7 +45,7 @@
 	<tr>
 	  {% for match in matches %}
 	  {% if match.art_ed != 1000 %}
-	  <td class="other_ed">{{ match.get_name }}</td>
+	  <td class="other_ed_td">{{ match.get_name }}</td>
 	  {% endif %}
 	  {% endfor %}
 	</tr>
