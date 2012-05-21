@@ -17,7 +17,7 @@ public class VizsterRunner {
         try {
             VizsterDBBuilder vd = new VizsterDBBuilder(new CategoryScoreMachine(), tmp);
             vd.buildGraph(name, max_depth, peers_only);
-            vd.convertGraph();
+            vd.convertGraph(50);
             
             VizsterDrawer vdr = new VizsterDrawer();
             vdr.loadGraph(tmp, null);

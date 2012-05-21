@@ -8,7 +8,7 @@ package knowevo.springbox;
  *
  * @author gabrovski
  */
-public class Edge {
+public class Edge implements Comparable {
     private Node first, second;
     private float score;
     private boolean directed;
@@ -18,6 +18,9 @@ public class Edge {
         second = b;
         score = s;
         directed = dir;
+        
+        first.addToScore((int)Math.round(s));
+        second.addToScore((int) Math.round(s));
     }
     
     public Node[] getNodes() {
@@ -38,5 +41,11 @@ public class Edge {
     
     public boolean isDirected() {
         return directed;
+    }
+
+    @Override
+    public int compareTo(Object t) {
+        Edge e = (Edge) t;
+        return (int) Math.round(score -e.getScore());
     }
 }

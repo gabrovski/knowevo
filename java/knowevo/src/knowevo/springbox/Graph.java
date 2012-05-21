@@ -42,4 +42,51 @@ public class Graph {
     public Iterator<Node> getNodes() {
         return nodemap.values().iterator();
     }
+    
+    public void limitEdges(int limit) {
+        Collections.sort(edges);
+        ArrayList<Edge> newlist = new ArrayList<Edge>();
+        for (int j = edges.size()-1, i = 0; i < limit && j > -1; i++, j--)
+            newlist.add(edges.get(j));
+        edges = newlist;
+        
+        nodemap = new HashMap<String, Node>();
+        for (Edge e: edges) {
+            Node ns[] = e.getNodes();
+            for (Node n: ns)
+                if (!nodemap.containsKey(n.getName()))
+                    nodemap.put(n.getName(), n);
+        }
+    }
+    
+    public void limitNodes(int limit) {
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        Iterator<Node> it = nodemap.values().iterator();
+        while (it.hasNext())
+            nodes.add(it.next());
+        
+        Collections.sort(nodes);
+        nodemap = new HashMap<String, Node>();
+        for (int j = nodes.size()-1, i = 0; i < limit && j > -1; i++, j--) {
+            nodemap.put(nodes.get(j).getName(), nodes.get(j));
+        }
+        
+        ArrayList<Edge> newlist = new ArrayList<Edge>();
+        boolean incl = true;
+        for (Edge e: edges) {
+            Node ns[] = e.getNodes();
+            incl = true;
+            for (Node n: ns)
+                if (!nodemap.containsKey(n.getName())) {
+                    incl = false;
+                    break;
+                }
+            
+            if (incl) {
+                //System.out.println("dwadwa");
+                newlist.add(e);
+            }
+        }
+        edges = newlist;
+    }
 }
