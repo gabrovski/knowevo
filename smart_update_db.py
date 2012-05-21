@@ -124,8 +124,8 @@ def build_people_graph(path):
             people = plpat.search(line).group(1)
         
             us = Article.objects.get(name=title)
-            if us.birth == -1 or us.death == -1:
-                continue
+            us.people.clear()
+            us.peers.clear()
 
             for link in people.split('|'):
                 if link == '' or link == title:
@@ -135,9 +135,12 @@ def build_people_graph(path):
                 except:
                     #raise
                     continue
-             
+                
                 us.people.add(them)
-                them.save()
+                if (us.birth != -1 and us.death != -1 and us.death-them.birth > 15 
+                    and them.death-us.birth > 15):
+                    us.peers.add(them)
+
                 us.save()
             us.save()
         except:
@@ -190,12 +193,12 @@ def insert_incunabula_articles(revw):
             break
             
 def process_split(gravebook=True):
-    for name in os.listdir('_data/split'):
-        revw = load('_data/split/'+name)
-
-        if not gravebook:
+    if not gravebook:
+        for name in os.listdir('_data/split'):
+            revw = load('_data/split/'+name)
             insert_incunabula_masters(revw)
 
+    c = 0
     for name in os.listdir('_data/split'):
         revw = load('_data/split/'+name)
 
@@ -203,6 +206,10 @@ def process_split(gravebook=True):
             gr_insert_incunabula_articles(revw)
         else:
             insert_incunabula_articles(revw)
+
+        print c
+        c+=1
+
 
 
 def update_inc_volume_score():
@@ -337,8 +344,27 @@ def add_inc_wiki_articles():
         except:
             pass
 
+def parse_name(name):
+    c = len(name)
+    while c > 0:
+        try:
+            name = smart_unicode(name[:c])
+            return name
+        except:
+            c-=1
+            
+
 def gr_insert_incunabula_articles(revw):
+    #clean up first
     c = 0
+    '''
+    for a in Article.objects.filter(art_ed=15).iterator():
+        a.delete()
+        print c, 'del'
+        c+=1
+    '''
+
+
     sizes = revw['sizes']
     for k in revw.keys():
         name = ' '.join(k.split('_'))
@@ -346,36 +372,44 @@ def gr_insert_incunabula_articles(revw):
             ma = Article.objects.get(name=name)
 
             for ed in revw[k]['editions']:
+                #make matches unique
+                if ma.article_set.filter(art_ed=ed).count() != 0:
+                    continue
+                
                 a = revw[k]['editions'][ed][0]
                 txt = a['txt']
                 if ed == 15:
-                    txt = ''
-                ia = Article(name=a['name'], wid=a['id'], art_ed=ed, text=txt,
+                    pass
+                
+                name = str(ed)+'_'+str(a['id'])+'_'+a['name']
+                name = parse_name(name)
+                if name == None:
+                    continue
+
+                ia = Article(name=name, wid=a['id'], art_ed=ed, text=txt,
                               vscore = 0.0,
                               match_master=ma)
 
                 ia.save()
+                print ia
+                '''
                 for cat in ma.categories.iterator():
                     ia.categories.add(cat)
                 ia.save()
+                '''
 
-            ma.match_count +=1
+            ma.match_count = ma.article_set.count()
             ma.save()
 
         except Article.DoesNotExist:
             continue
 
         except:
-            #raise
+            raise
             #print k,'not found'
             continue
             
-        print c
-        c+=1
-        if LIMIT > 0 and c > LIMIT:
-            print 'wtf>'
-            break
-
+    
 def fix_gr_years():
     for art in Article.objects.iterator():
         for cat in art.categories.iterator():
@@ -448,6 +482,7 @@ def fix_names():
 def gr_fix_all():
     print os.getpid(), 'fixing'
     c = 0
+    #filter for missing self in match master
     for art in Article.objects.iterator():
         #fix wrong years
         for cat in art.categories.iterator():
@@ -473,17 +508,81 @@ def gr_fix_all():
         if c % 100 == 0:
             print c, os.getpid(), 'fix all'
 
-        
+def fix_count():
+    c = 0
+    for art in Article.objects.iterator():
+        art.match_count = art.article_set.count()
+        art.save()
+        print c
+        c+=1
 
-if __name__ == '__main__':    
+def gr_insert_ed_15(split_dir):
+    #for a in Article.objects.filter(art_ed=15).iterator():
+    #    a.delete()
+
+    w = open('15notmatched', 'w')
+    MAXC = 5
+    c = 0
+    for pkl in os.listdir(split_dir):
+
+        pkl = split_dir+pkl
+        f = open(pkl)
+        arts = cPickle.load(f)
+        f.close()
+
+        for a in arts:
+            match = ' '. join(a['matched'][0].split('_'))
+            ma = None
+            try:
+                ma = Article.objects.get(name=match, art_ed=1000)
+            except:
+                for candid in a['candids'][:MAXC]:
+                    try:
+                        match = ' '. join(candids.split('_'))
+                        ma = Article.objects.get(name=match, art_ed=1000)
+                    except:
+                        continue
+
+            if ma == None:
+                w.write(a['name']+' not matched\n')
+                continue
+
+            ed = 15
+            name=str(ed)+'_'+str(a['id'])+'_'+a['name']
+            name = smart_unicode(name)
+            ia = Article(name=name, wid=a['id'], art_ed=ed, text=a['txt'],
+                         vscore = 0.0,
+                         match_master=ma)
+            ia.save()
+
+            ma.match_count = ma.article_set.count()
+            ma.save()
+
+            c+=1
+            print c, 'ed15'
+    w.close()
+
+
+def final_db_update():
+    gr_insert_ed_15('_data/ed_15/')
+    process_split(gravebook=True)
+    gr_update_inc_volume_score()
+
+if __name__ == '__main__':
+    #final_db_update()
     #process_split(gravebook=True)
+    #gr_update_inc_volume_score()
+
     #-revw = load('_data/sample_revw.pkl')
     #-gr_insert_incunabula_articles(revw)
     #gr_update_inc_volume_score()
+    #fix_count()
+    #748587
 
-
-    gr_fix_all()
-    fill_gr_peers()
+    #gr_fix_all()
+    #fill_gr_peers()
     #update_gr_vscores('_data/wiki_vol_zscores')
     #fill_gr_linked_by()
+
+    build_people_graph('_data/people_articles_filtered.txt')
     
