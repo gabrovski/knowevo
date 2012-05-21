@@ -144,4 +144,9 @@ public abstract class DBBuilder {
             convertEdge(eit.next());
         }
     }
+    
+    public void convertGraph(int limit) {
+        graph.limitNodes(limit);
+        convertGraph();
+    }
 }
