@@ -73,7 +73,8 @@ def index(request):
 def master_detail(request, master_name):
     master = MasterArticle.objects.get(name=master_name)
     res, res_matches = get_master_alist(master)
-    chart = prep_time_series_chart(res_matches)
+    #chart = prep_time_series_chart(res_matches)
+    chart = None
 
     return render_to_response('incunabula/master_detail.html',
                        {'master_name':master_name, 
