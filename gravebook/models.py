@@ -33,8 +33,14 @@ class Article(models.Model):
     text = models.TextField(default='')
     match_master = models.ForeignKey('self', blank=True, null=True)
     match_count = models.IntegerField(default=0)
+
+    def get_name(self):
+        try:
+            return self.name.split('_')[2]
+        except:
+            return self.name
         
     def __unicode__(self):
-        return self.name
+        return self.get_name()
 
 

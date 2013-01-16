@@ -30,10 +30,6 @@
 
     <div id="spring_container"> </div>
 
-    <script>
-      //$("#spring_container").load("_spring_box");
-    </script>
-
     {% if matches.count > 1 %}
     <div class="people_div">
       <span class="people">Appearance in Encyclopedia Britannica</span>
@@ -41,7 +37,7 @@
 	<tr>
 	  {% for match in matches %}
 	  {% if match.art_ed != 1000 %}
-	  <th class="other_ed">Edition {{ match.art_ed }}</th>
+	  <th class="other_ed_th">Edition {{ match.art_ed }}</th>
 	  {% endif %}
 	  {% endfor %}
 	</tr>
@@ -49,7 +45,7 @@
 	<tr>
 	  {% for match in matches %}
 	  {% if match.art_ed != 1000 %}
-	  <td class="other_ed">{{ match.name }}</td>
+	  <td class="other_ed_td">{{ match.get_name }}</td>
 	  {% endif %}
 	  {% endfor %}
 	</tr>
@@ -77,12 +73,17 @@
     </div>
 
     <div class="people_div">
-      <span class="people" onclick="loadArticleData('influenced_by_div')">Show who {{ article.name }} was influenced by</span>
+      <span class="people" onclick="loadArticleData('springbox_div')">Visualize {{ article.name }}'s Peers</span>
+      <div id="springbox_div"></div>
+    </div>
+
+    <div class="people_div">
+      <span class="people" onclick="loadArticleData('influenced_by_div')">Show who influenced {{ article.name }}</span>
       <div id="influenced_by_div"></div>
     </div>
 
     <div class="people_div">
-      <span class="people" onclick="loadArticleData('influences_div')">Show who {{ article.name }}'s influenced</span>
+      <span class="people" onclick="loadArticleData('influences_div')">Show who was influenced by {{ article.name }}</span>
       <div id="influences_div"></div>
     </div>
 

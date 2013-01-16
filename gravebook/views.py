@@ -24,7 +24,7 @@ def index(request):
                              request.POST['title_inp'].split(' '))
 
         if len(title_words) > 0:
-            articles = Article.objects.filter(name__icontains=title_words[0], art_ed=WIKI_ED)
+            articles = Article.objects.filter(name__icontains=title_words[0], art_ed=WIKI_ED, match_count__gt=1)
             for k in title_words[1:]:
                 articles = articles.filter(name__icontains=k)
             
@@ -34,6 +34,8 @@ def index(request):
 
     #optimize history results by caching foregin keys
     #articles =  articles.select_related().order_by('-match_count').iterator()
+    if articles != []:
+        articles =  articles.select_related().order_by('-match_count').iterator()
 
     return render_to_response('gravebook/index.html',
                               {'sarticles':articles, 
@@ -186,6 +188,9 @@ def load_article_data(request, article_name, id):
 
     elif id == 'cats_div':
         items = Category.objects.get(name=article_name).article_set.filter(match_count__gt=0).order_by('match_count').iterator()
+
+    elif id == 'springbox_div':
+        return load_spring_box(request, article_name)
     
     return render_to_response('gravebook/article_data.html',
                               {'items':items,
@@ -199,7 +204,7 @@ def load_article_data(request, article_name, id):
 
 def category_detail(request, category_name):
     cat = Category.objects.get(name=category_name)
-    articles = cat.article_set.filter(match_count__gt=0)
+    articles = cat.article_set.filter(match_count__gt=1)
 
     matches = []
     for art in articles.iterator():
