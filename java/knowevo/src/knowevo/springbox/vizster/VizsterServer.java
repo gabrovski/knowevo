@@ -20,16 +20,17 @@ public class VizsterServer implements Runnable {
     private int max_depth;
     private String pngpath;
     private boolean peers_only;
+    private int limit;
     
     private VizsterDBBuilder vdb;
     
-    public static void runServer(int port, int maxd, boolean peers_only) {	
+    public static void runServer(int port, int maxd, boolean peers_only, int limit) {	
         
 	try{
 	    ServerSocket listener = new ServerSocket(port);
 
 	    while (true) {
-		VizsterServer gs = new  VizsterServer(listener.accept(), maxd, peers_only, new CooccurenceScoreMachine());
+		VizsterServer gs = new  VizsterServer(listener.accept(), maxd, peers_only, new CooccurenceScoreMachine(), limit);
                 System.out.println("accepted connection");
 		Thread t = new Thread(gs);
 		t.start();
@@ -41,11 +42,12 @@ public class VizsterServer implements Runnable {
     }
 
      
-    public VizsterServer(Socket sd, int maxd, boolean po, ScoreMachine sm) {
+    public VizsterServer(Socket sd, int maxd, boolean po, ScoreMachine sm, int lim) {
 	sockd = sd;
 	max_depth = maxd;
         peers_only = po;
         vdb = new VizsterDBBuilder(sm);
+        limit = lim;
     }
 
     public void run () {
@@ -62,7 +64,8 @@ public class VizsterServer implements Runnable {
 	    while((name = br.readLine()) != null) {
                 System.out.println("graph for "+name);
                 vdb.buildGraph(name, max_depth, peers_only);
-                vdb.convertGraph();
+                System.out.println("converting graph for "+name);
+                vdb.convertGraph(limit);
 		System.out.println("graph for "+name+" is ready");
                 break;
 	    }            

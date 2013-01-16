@@ -46,8 +46,9 @@ public class main {
     private static final boolean PEERS_ONLY = false;
 
     public static void main(String args[]) {
-        runserver(args);
-        //poetsParser("/home/gabrovski/cs/misha/poets.csv");
+        //runserver(args);
+        Poets p = new Poets ("/home/gabrovski/cs/misha/poets.csv");
+        p.drawGraphs("/home/gabrovski/cs/misha/");
     }
 
     private static void runserver(String args[]) {
@@ -68,15 +69,13 @@ public class main {
             } else if (args[0].equals("server")) {
                 int port = Integer.parseInt(args[1]);
                 int max_depth = Integer.parseInt(args[2]);
-                boolean peers_only = false;
-                if (args[3].equals("true")) {
-                    peers_only = true;
-                }
+                boolean peers_only = args[3].equals("true");
+                int limit = Integer.parseInt(args[4]);
 
                 System.out.println("server at " + port + " wiht depth " + max_depth + " with peers only = " + peers_only);
                 try {
                     //GraphServer.runServer(PORT, MAX_DEPTH, PNGPATH, PEERS_ONLY);
-                    VizsterServer.runServer(port, max_depth, peers_only);
+                    VizsterServer.runServer(port, max_depth, peers_only, limit);
                     //DBBuilder.getGraphFor("Alan Turing", 1, "test.png");
                     //testUndirectedGraph();
                 } catch (Exception e) {
@@ -197,7 +196,7 @@ public class main {
         depthqueue.add(0);
         int depth = 0;
         
-        while (queue.size() != 0 && depth < 3) {
+        while (queue.size() != 0 && depth < 2) {
             String name = queue.remove(0);
             depth = depthqueue.remove(0);
             
@@ -226,14 +225,14 @@ public class main {
         PreviewModel previewModel = Lookup.getDefault().lookup(PreviewController.class).getModel();
         previewModel.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS, Boolean.TRUE);
         previewModel.getProperties().putValue(PreviewProperty.EDGE_COLOR, new EdgeColor(Color.BLUE));
-        previewModel.getProperties().putValue(PreviewProperty.EDGE_THICKNESS, new Float(0.05f));
+        previewModel.getProperties().putValue(PreviewProperty.EDGE_THICKNESS, new Float(0.01f));
         previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_COLOR, new DependantOriginalColor(Color.RED));
-        previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_FONT, previewModel.getProperties().getFontValue(PreviewProperty.NODE_LABEL_FONT).deriveFont(8));
+        previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_FONT, previewModel.getProperties().getFontValue(PreviewProperty.NODE_LABEL_FONT).deriveFont(20));
         
         YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
         layout.setGraphModel(graphModel);
         layout.resetPropertiesValues();
-        layout.setOptimalDistance(200f);
+        layout.setOptimalDistance(100f);
 
         layout.initAlgo();
         for (int i = 0; i < 100 && layout.canAlgo(); i++) {

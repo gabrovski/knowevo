@@ -473,7 +473,7 @@ def gr_fix_all():
         if c % 100 == 0:
             print c, os.getpid(), 'fix all'
 
-        
+    
 
 if __name__ == '__main__':    
     #process_split(gravebook=True)
@@ -482,7 +482,7 @@ if __name__ == '__main__':
     #gr_update_inc_volume_score()
 
 
-    gr_fix_all()
+    #gr_fix_all()
     fill_gr_peers()
     #update_gr_vscores('_data/wiki_vol_zscores')
     #fill_gr_linked_by()

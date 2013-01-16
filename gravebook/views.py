@@ -33,7 +33,7 @@ def index(request):
             articles = Article.objects.filter(art_ed=WIKI_ED)
 
     #optimize history results by caching foregin keys
-    articles =  articles.select_related().order_by('-match_count').iterator()
+    #articles =  articles.select_related().order_by('-match_count').iterator()
 
     return render_to_response('gravebook/index.html',
                               {'sarticles':articles, 
