@@ -28,6 +28,46 @@
       {% endfor %}
     {% if master_arts %}
     </table>
+    {% else %}
+     Welcome to the Knowledge Evolution / Gravebook Project!
+
+This Knowledge Evolution project is an experiment in tracking and mapping reputations and intellectual networks of the past using the text of historical and contemporary editions of Encyclopedia Britannica and Wikipedia.
+
+The project has been funded by NEH ODH Digital Humanities Grant (HD-51128-10), and supported in part by the James O. Freedman Presidential Scholars Program at Dartmouth College.  Data for the project has been generously provided by Encyclopaedia Britannica, Inc. and Google Inc.  The hosting for this website is generously provided Center for New Media and Society.
+
+For the theoretical and methodological framework behind the project, please see [link to white paper].
+
+Prototype tool description
+
+What you see in front of you is an interface to a set of tools for tracking and mapping the social dimension of the history of knowledge about people, or put simply, a history of reputations.
+
+You can also use these tools to investigate social and intellectual connections of persons featured in the current edition of Britannica and Wikipedia, and explore the underlying social graph, effectively, a facebook for the past, or as we term it, Gravebook, an interface for studying history of human connections.
+
+The back-end of these tools is a database that contains all articles about people in different
+Encyclopedia editions (Britannica 3, 9, 11, 15, and Wikipedia). Articles on the same person
+are matched across editions to compile a master list of people. Each subject is characterized
+by measures of importance and centrality in respective editions, by the network of co-occurring
+subjects (“neighbors”), and by the list of categories accompanying this subject in Wikipedia.
+
+Here are the tools available through this interface:
+
+(1) Reputation graph
+
+The user inputs the name of the person of interest, and then, if needed, is offered a choice among namesakes. Once the name is selected, the tool produces a graph that represents the importance of this person in successive historical editions of Britannica and in Wikipedia.
+
+(2) Domain graph
+
+The user picks the domain of interest. The domain is effectively, a Wikipedia category, or a cross-section of Wikipedia categories or lists (e.g. French 19th century composers, chemists, members of the romantic movement, etc). Once the domain is picked, the system produces the historical graph of the changes in relative importance of the participants of the domain through time, across the historical editions of the Britannica and for Wikipedia. The resulting cumulative graph represents the history of the domain, i.e the historical changes in composition and relative hierarchies within the domains.  
+
+Note: currently access to categories is only available from people’s pages.
+
+(3) Gravebook: Peers and influences
+
+This is a feature of Gravebook that allows the user to view the “peers”, i.e. personal acquaintances of the person of interest, the people who influenced this person, as well as those who have been influenced by this person. These three categories are determined by the Gravebook’s social graph, using heuristics based on coccurence in Wikipedia and lifetime dates for each pair of people.
+
+(4) Gravebook “Visualize peers” feature
+
+For each person of interest, the user may obtain a visualization of his or her social networks, based on the “spring-box” algorithms that calculates the relative positions and distances between this person and the peers as represented in Wikipedia.
     {% endif %}
     
   </body>
