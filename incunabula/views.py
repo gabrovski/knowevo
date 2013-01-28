@@ -3,6 +3,10 @@ from incunabula.models import MasterArticle, Article
 from django.template import RequestContext, Context, loader
 from django.shortcuts import render_to_response
 
+from django.core import serializers
+from django.utils import simplejson as json
+from django.forms.models import model_to_dict
+
 from spring.timeser import prep_time_series_chart
 from gravebook.models import Article as GArticle
 
@@ -17,7 +21,12 @@ EMPTY_ART = Dummy('#NA')
 
 def get_master_alist(master, keywords=[]):
     res_m = [EMPTY_ART for x in xrange(4)]
-    matches = Article.objects.filter(match_master=master)
+    ms = Article.objects.filter(match_master=master)
+    map = dict()
+    for art in ms:
+        key = str(art.art_id) + '_' + str(art.art_ed)
+        if key not in map:
+            map[key] = art
     
     kword_match = (len(keywords) == 0)
     pats = [re.compile(keyword+'(?i)') for keyword in keywords]        
@@ -26,14 +35,14 @@ def get_master_alist(master, keywords=[]):
     for kword in keywords:
         matches = matches.filter(text__icontains=kword)
 
-    for art in matches:        
+    for art in map.values():        
         if art.art_ed == 3:  res_m[0] = art
         if art.art_ed == 9:  res_m[1] = art
         if art.art_ed == 11: res_m[2] = art
         if art.art_ed == 15: res_m[3] = art
         
     if kword_match:
-        return res_m, matches
+        return res_m, sorted(map.values(), key=lambda x: x.art_ed)
     else:
         return None
 
@@ -73,12 +82,13 @@ def index(request):
 def master_detail(request, master_name):
     master = MasterArticle.objects.get(name=master_name)
     res, res_matches = get_master_alist(master)
-    #chart = prep_time_series_chart(res_matches)
-    chart = None
+    #data = json.dumps( model_to_dict(res_matches))
+    print len(res_matches)
+    data = serializers.serialize('json', res_matches, ensure_ascii=False, fields=['name', 'volume_score', 'art_ed', 'art_id'])
 
     return render_to_response('incunabula/master_detail.html',
                        {'master_name':master_name, 
-                        'evo_chart':chart,
+                        'evo_data':data,
                         'arts':res},
                        RequestContext(request))
 
