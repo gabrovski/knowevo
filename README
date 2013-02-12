@@ -1,1 +1,85 @@
 Contains the interface for the Evolution of Knowledge Project at Dartmouth College.
+
+This README is split in the following sections
+1. Getting the source
+2. Setting up venv and running local
+3. Setting up the database
+4. Running deployment server (stub)
+5. Updating the database
+
+This assumes you know python and Django 1.3. If any of these two is a little hazy please go through the relevant tutorials (pretty easy to do). For Django make sure to go to the 1.3 version. If you ave any questions shoot me an email, I'll respond before EOD.
+
+So let's start.
+
+=============================================
+1. Getting the source
+
+Best place to get the source code is here:
+https://github.com/gabrovski/knowevo
+
+You would need git to do that. Google github git tutorial for a quick example if unusre what to do.
+I would prefer to keep an eye on the changes so ideally you would use my repository (request access from your github account)
+A less preferrable scenario will be a fork. I don't think that's a good idea.
+
+============================================
+2. Setting up venv
+There are 3 prerequisites for running the project:
+ - PostgreSQL 8
+ - virtualenv
+ - Python2.7
+
+Install all of these.
+
+Then in the main directory of the project (i.e. <your_local_path>/knowevo) do the following:
+
+virtualenv venv --distribute
+
+That creates a python virtual environment in the venv directory. To activate it in your shell do:
+
+source venv/bin/activate
+
+Now you are running the python environment in venv. To install all prerequisites for running the project then do:
+pip install -r install_requirements.txt
+
+that would set up the approrpiate versions of Django and required modules in the venv.
+
+modify settings.py to use the right database user and pw, as well as all local paths (theres a bunch of them).
+
+once donde, run pyhton manage.py runserver.
+
+Go to http://127.0.0.1:8000/knowevo/incunabula/ and verify things are working.
+
+Congrats, if you got this far you are running the project locally.
+
+=============================================
+3. Setting up the database
+Since you won't have anything in the database at that point you would need to import all the data from an existing server. The easiest to do that is using the Heroku server. Please refer to Anna for the instructions, I haven't personally done that. 
+
+Alternatively you could use a pickle from our previous research work. Again refer to Anna for those. Refer to Section 5 for how to import pickles.
+
+=============================================
+4. Running the deployment server
+Once you are ready to deploy your application to a production server you will have to set up a few more modules depending on what you have. I normally use wsgi with Apache. A version of that script can be found in the apache folder. You would need to modify these based on the specific configuration the server has. This is a painful process, but there are many resource online. Allocate at least 4-5 hours for doing this. Once you get the app running ensure static files are also working (if not run python manage.py collectstatic).
+
+Sorry for the stub, this part is really platfrom dependent and messy.
+
+=============================================
+5. Updating the database
+
+This is the most important part for keeping any application up. The best way to screw everything for a couple of days or more is to corrupt the database. Updating app code is generally easy and fast, db entries not so much. Here's a few guidelines on what I find is the best approach for working with that much data:
+
+- set up a small database on your local machine. For me that is the top 500 entries from each database, where for any graph relationships I make sure I have enough foreign keys present to ensure all the code is testable (i.e. in terms of objects if an Article refers to an Author, I make sure I have enough of Authors in my local copy that are referenced by enough Articles in my local copy).
+- run your code there and make sure to test any database updates there
+- once your database altering code is tested, move to the server. If diskspace is cheap dump the current database state on the disk as a backup the night before you run the update. Then run the update code you have. This can take a ton of time depending on what you are doing. 
+- log the current progress for the update operation. This is extremely important. Updating any data entries based off Wikipedia can take many hours and servers do reboot sometimes. You want to make sure that if the code terminates prematurely you are well aware of the state your database is in and can continue from the last successful operation.
+- if you are changing the schema for the code, use django south. I would urge you to avoid that as in production it is terribly expensive.
+
+The way we normally did this was the following:
+We would generate pickle files from our research code. Those pickles acted as a backup in case the database got screwed, so I did not run any epxnsive sql dumps.
+I would copy the pickles in portions to the server code and write Python wrappers around the Django models abstraction. The relevant code is in smart_update_db.py - it basically assumes a pickle as an input and alters or inserts into the existing database. If you are doing that make sure to turn off Debug mode in Django, otherwise you will have miserable performance and you will run out of memory (Debug mode logs everything in memory).
+
+This is ugly script code, but a good reference. The whole process with the pickles was pretty dirty and I am not a fan of it. It was necessary due to the fact that our previous infrastructure did not allow us to use Python with a database, so we had to resort to pickles. You might have to do the same or you might come up with something smarter. Beware that pickles are loaded in their entirety in memory, so if you are using pickles make sure they are not too big. For example, it is generally a bad idea to load all of Wikipedia into a pickle. Also for good performance us the cPickle module.
+
+Alternatively, you could go straight to SQL statements for the database updates and not use Django models at all. I find that approach more error prone. The Django models abstraction provides a lot of shortcusts plus all the sweetness of python included. In terms of performance, the Djangmo models wrappers gets translated into SQL statements which are then interpreted by the database driver - i.e. I am guession the perf is similar to just using SQL.
+
+If anthing seems incomplete shoot me an email.
